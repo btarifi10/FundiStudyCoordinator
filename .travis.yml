@@ -1,0 +1,30 @@
+language: node_js
+node_js: 
+- #include exact version/s here
+cache: npm # specify the node_modules directory rather?
+
+before_install: 
+- npm update
+# not necessary to include the 'install: ' hook since it automatically will include a ' - npm ci 'with node
+script:
+- npm test
+# - npm run build     # Commented out for now since we don't have a build file
+
+deploy:
+    provider: azure_web_apps
+    # default deploys from master branch... otherwise use 
+    # on: different_branch
+    # on:
+    #   all_branches: true
+    ## can also deploy 
+#   Deployment credentials 
+#   - setup user credentials in azure
+#   - setup AZURE_WA_USERNAME, AZURE_WA_PASSWORD and AZURE_WA_SITE in the environment variables
+
+#branches:  #This is implied
+#  only:
+#  - master
+
+## Uncomment this if necessary
+#after_success:
+#- npm run coveralls #check if this is necessary or set up in the coveralls file

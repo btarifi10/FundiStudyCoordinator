@@ -1,0 +1,23 @@
+{
+  "name": "elen4010-project",
+  "version": "1.0.0",
+  "description": "ELEN4010 - Team 8",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: No tests specified\" && exit 0",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/witseie-elen4010/2021-008-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/witseie-elen4010/2021-008-project/issues"
+  },
+  "homepage": "https://github.com/witseie-elen4010/2021-008-project#readme",
+  "dependencies": {
+    "express": "4.17.1"
+  }
+}
