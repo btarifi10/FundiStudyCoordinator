@@ -27,13 +27,13 @@ The following convention will be used when making commits during a sprint:
 - fix: A bug fix
 - docs: Documentation related changes
 - refactor: A code that neither fixes a bug nor adds a feature. (eg: You can use this when there is semantic changes like renaming a variable/ function name)
-- perf: A code that improves performance
-style: A code that is related to styling
+- perf: Code that improves performance
+- style: Code that is related to styling
 - test: Adding new test or making changes to existing test
 
 `scope` is optional and is a noun which refers to the section of the codebase the commit changes
 
-`subject` is a short summary of the commit, explaining what was changed and why. This should generally be less than 50 characters, and not start with a capital letter or end with punctuation. Furthemore, it should use the imperative form of verbs.
+`subject` is a short summary of the commit, explaining what was changed and why. This should generally be less than 50 characters, and not start with a capital letter or end with punctuation. Furthermore, it should use the imperative form of verbs.
 
 `longer description and comments` is optional, and follows an empty line if used. It may be used to provide additional context or information.
 
@@ -54,7 +54,7 @@ The following pull request conventions are used:
 ## Code Review Conventions
 
 #### _Method_
-Two methods will be used depending on circumstance, availability of group members, and code to be reviews:
+Two methods will be used depending on circumstance, availability of group members, and code to be reviewed:
 - Synchronous: The developer will share their screen during an online meeting, or use a collaborative coding tool such the one provided by VS Code. The developer will then walk the reviewer through the code, with the reviewer making notes and providing feedback simultaneously.
 - Asynchronous: The pull request is made and the reviewer reviews the code and makes comments, which the developer fixes on their own time.
 
