@@ -3,6 +3,7 @@
 module.exports = function (app, passport) {
   const router = require('express').Router()
   const path = require('path')
+  const bcrypt = require('bcrypt')
 
   const users = []
 
@@ -28,17 +29,19 @@ module.exports = function (app, passport) {
     res.sendFile(path.join(__dirname, '..', 'views', 'login.html'))
   })
 
-  router.post('/register', checkNotAuthenticated, (req, res) => {
-    const username = req.body.username
-    const password = req.body.password
-    users.push({
-      id: users.length,
-      username: username,
-      password: password
-    })
-
-    console.log(users)
-    res.redirect('/login')
+  router.post('/register', checkNotAuthenticated, async (req, res) => {
+    try {
+      const hashPasswd = await bcrypt.hash(req.body.password, 7)
+      users.push({
+        id: users.length,
+        username: req.body.username,
+        password: hashPasswd
+      })
+      console.log(users)
+      res.redirect('/login')
+    } catch {
+      res.redirect('/register')
+    }
   })
 
   router.post('/login', checkNotAuthenticated, passport.authenticate('local', {

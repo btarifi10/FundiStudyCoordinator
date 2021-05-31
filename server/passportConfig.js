@@ -1,18 +1,22 @@
 'use strict'
 
 const LocalStrategy = require('passport-local').Strategy
+const bcrypt = require('bcrypt')
 
 function initialise (passport, getUserByUsername, getUserById) {
-  const authenticateUser = (username, password, done) => {
+  const authenticateUser = async (username, password, done) => {
     const user = getUserByUsername(username)
 
-    if (user === null) {
+    if (user == null) {
       return done(null, false, { message: `No account created for ${username}` })
     }
-    if (user.password === password) {
-      return done(null, user)
-    } else {
-      return done(null, false, { message: 'Password Incorrect' })
+
+    try {
+      if (await bcrypt.compare(password, user.password)) { return done(null, user) } else {
+        return done(null, false, { message: 'Password Incorrect' })
+      }
+    } catch (error) {
+      return done(error)
     }
   }
 
