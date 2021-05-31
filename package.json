@@ -4,7 +4,8 @@
   "description": "ELEN4010 - Team 8",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: No tests specified\" && exit 0",
+    "test": "jest --coverage ./__tests__",
+    "e2e": "cypress open",
     "start": "node index",
     "dev": "nodemon index"
   },
@@ -25,6 +26,8 @@
     "socket.io": "^4.1.2"
   },
   "devDependencies": {
+    "cypress": "^7.4.0",
+    "jest": "^27.0.3",
     "nodemon": "^2.0.7"
   }
 }
