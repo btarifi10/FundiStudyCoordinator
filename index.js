@@ -3,7 +3,19 @@
 /* Loop through  dropdown buttons to toggle between hiding and showing its dropdown content
 - This allows the user to have multiple dropdowns without any conflict */
 
-const dropdown = document.getElementsByClassName('dropdown-btn')
+
+
+const express = require('express')
+const groupRouter = require('./group-routes')
+const app = express()
+app.use(groupRouter)
+
+const port = process.env.PORT || 3000
+app.listen(port)
+console.log('Express server running on port', port)
+
+
+// const dropdown = document.getElementsByClassName('dropdown-btn')
 
 // const dropMenu = document.getElementsByClassName('dropdown-container')
 // const studyGroups = ['Big Data', 'Software 3', '19th Centuary Spanish Poetry']
@@ -35,23 +47,16 @@ const dropdown = document.getElementsByClassName('dropdown-btn')
 //   }
 // }
 
-for (let i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener('click', function () {
-    this.classList.toggle('active')
-    const dropdownContent = this.nextElementSibling
+// for (let i = 0; i < dropdown.length; i++) {
+//   dropdown[i].addEventListener('click', function () {
+//     this.classList.toggle('active')
+//     const dropdownContent = this.nextElementSibling
 
-    if (dropdownContent.style.display === 'block') {
-      dropdownContent.style.display = 'none'
-    } else {
-      dropdownContent.style.display = 'block'
-    }
-  })
-}
+//     if (dropdownContent.style.display === 'block') {
+//       dropdownContent.style.display = 'none'
+//     } else {
+//       dropdownContent.style.display = 'block'
+//     }
+//   })
+// }
 
-const express = require('express')
-const groupRouter = require('./group-routes')
-const app = express()
-app.use(groupRouter)
-const port = process.env.PORT || 3000
-app.listen(port)
-console.log('Express server running on port', port)
