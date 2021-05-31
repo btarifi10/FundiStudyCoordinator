@@ -7,15 +7,11 @@ function initialise (passport, getUserByUsername, getUserById) {
     const user = getUserByUsername(username)
 
     if (user === null) {
-      console.log(`No account created for ${username}`)
       return done(null, false, { message: `No account created for ${username}` })
     }
-    console.log('found')
     if (user.password === password) {
-      console.log('success')
       return done(null, user)
     } else {
-      console.log('no success')
       return done(null, false, { message: 'Password Incorrect' })
     }
   }
