@@ -1,11 +1,12 @@
+// This file contains all the current group
+// Once database is built these hardcoded paths will be configured to be linked to pages from server
+
 const express = require('express')
 const groupRouter = express.Router()
 const path = require('path')
 
-
 groupRouter.get('/big-data', function (req, res) {
   res.sendFile(path.join(__dirname, 'views', 'big-data.html'))
-//   res.sendFile('./views/big-data.html', { root: __dirname })
 })
 
 groupRouter.get('/software', function (req, res) {
@@ -21,5 +22,3 @@ groupRouter.get('/', function (req, res) {
 })
 
 module.exports = groupRouter
-
-

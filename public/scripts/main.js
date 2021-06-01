@@ -1,11 +1,13 @@
 'use strict'
 
 const dropdown = document.getElementsByClassName('dropdown-btn')
-
 const dropMenu = document.getElementById('dropdown-containerID')
-const studyGroups = ['Big Data', 'Software 3', '19th Centuary Spanish Poetry']
-console.log(studyGroups.length)
-// working select code
+
+// To be replaced with database functionality therefore a more complex container was not implemented
+const studyGroups = ['Big Data', 'Software 3', 'Sociology']
+const hrefValues = ['big-data', 'software', 'sociology']
+
+// working naive select code
 // const select = document.getElementById('studyGroup')
 // for (let i = 0; i < studyGroups.length; i++) {
 //   const groupName = studyGroups[i]
@@ -15,24 +17,20 @@ console.log(studyGroups.length)
 //   select.appendChild(addedElement)
 // }
 
-// Buggy code for using the Bootstrap dropdown menu
-// Continuously adds Big Data to the list on every click
-
 function populateGroups () {
   for (let i = 0; i < studyGroups.length; i++) {
     const groupName = studyGroups[i]
     const addedElement = document.createElement('a')
     addedElement.textContent = groupName
     addedElement.value = groupName
-    addedElement.href = '#'
+    addedElement.href = hrefValues[i]
     addedElement.class = 'dropdown-item'
-    // if (dropMenu.length === studyGroups.length) { return } else {
     dropMenu.appendChild(addedElement)
-    // }
-    console.log(i)
   }
 }
 
+// Populates the inital fropdown menu selection with the study groups listed above and then subsequently highlights them
+// when mouse is hovered over each item
 for (let i = 0; i < dropdown.length; i++) {
   populateGroups()
   dropdown[i].addEventListener('click', function () {
