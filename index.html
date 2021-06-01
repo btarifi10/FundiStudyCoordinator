@@ -19,7 +19,7 @@
     <a href="#profile">My Profile</a>
     <a href="#notifications">Notifications</a>
     <a href="#chat">Chats</a>
-    <a href="#search">Search</a>
+
 
 
     <!-- Using a basic option selection for filling in from a static list -->
@@ -28,12 +28,13 @@
     </select>  -->
 
     <!-- Using the dropdown functionality to go to different groups -->
-    < <button class="dropdown-btn" > Study Groups
+    < <button class="dropdown-btn" id = 'dropdown-buttonID' > Study Groups
       <i class="fa fa-caret-down"></i>
     </button> > 
 
 
     <div class="dropdown-container" id= 'dropdown-containerID'> 
+        <input type="text" placeholder="Search Groups" id="inputValue" onkeyup="groupSearch()">
     </div>  
 
   <!--HardCoded group  Code -->

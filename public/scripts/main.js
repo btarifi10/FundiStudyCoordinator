@@ -44,3 +44,19 @@ for (let i = 0; i < dropdown.length; i++) {
     }
   })
 }
+
+// Functionality enabling the group to be searched for
+function groupSearch () {
+  const searchTerm = document.getElementById('inputValue')
+  // Allows both cases to be correctly identified
+  const filter = searchTerm.value.toLowerCase()
+  const a = dropMenu.getElementsByTagName('a')
+  for (let i = 0; i < a.length; i++) {
+    const groupName = a[i].textContent || a[i].innerText
+    if (groupName.toLowerCase().indexOf(filter) > -1) {
+      a[i].style.display = ''
+    } else {
+      a[i].style.display = 'none'
+    }
+  }
+}
