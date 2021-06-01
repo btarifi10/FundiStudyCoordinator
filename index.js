@@ -9,7 +9,7 @@ const path = require('path')
 const app = express()
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(groupRouter)
-const port = 3300 || process.env.PORT
+const port = 3500 || process.env.PORT
 app.listen(port)
 console.log('Express server running on port', port)
 
