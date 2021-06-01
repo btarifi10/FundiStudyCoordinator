@@ -1,5 +1,8 @@
 'use strict'
 
+// Initialises Authentication procedure for Passport.js using Local Strategy.
+// See http://www.passportjs.org/docs/ for more information.
+// Bcrypt is used for password hashing.
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
 
