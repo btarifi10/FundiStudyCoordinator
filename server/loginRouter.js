@@ -59,7 +59,7 @@ module.exports = function (app, passport) {
     res.sendFile(path.join(__dirname, '..', 'views', 'dashboard.html'))
   })
 
-  router.get('/api/currentUser', (req, res) => {
+  router.get('/api/currentUser', checkAuthenticated, (req, res) => {
     res.json({ id: req.user.id, username: req.user.username })
   })
 
