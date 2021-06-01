@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+    <title>Create empty study group</title>
+</head>
+<body>
+    <label>NEW GROUP:</label>
+    <br>
+    <main>
+        <label>Group Name: </label>
+        <input type="text" id="group-name-input">
+        <button id="add-group-btn">Add Group</button>
+
+        <br><br><br>
+
+        <div id="groupList"></div>
+        
+        <br><br><br><br><br><br>
+
+        <table id="group-list-tbl">
+            <thead>
+                <th>ListNumber</th>
+                <th>Group Name</th>
+                <th>Date Added</th>
+                <th>Delete Group</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+
+    </main>
+    <script src="create-group.js"></script>
+    
+</body>
+</html>
