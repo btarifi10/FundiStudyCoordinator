@@ -24,6 +24,7 @@ function populateGroups () {
     addedElement.textContent = groupName
     addedElement.value = groupName
     addedElement.href = hrefValues[i]
+    addedElement.id = hrefValues[i]
     addedElement.class = 'dropdown-item'
     dropMenu.appendChild(addedElement)
   }
