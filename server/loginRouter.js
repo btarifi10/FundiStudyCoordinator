@@ -30,6 +30,7 @@ module.exports = function (app, passport) {
   })
 
   router.post('/register', checkNotAuthenticated, async (req, res) => {
+    console.log(req.body)
     try {
       const hashPasswd = await bcrypt.hash(req.body.password, 7)
       users.push({
