@@ -38,6 +38,30 @@ const GROUPS = [
     group_num: '6',
     group_url: 'RS.html',
     group_online: '4'
+  },
+  {
+    group_id: '4',
+    group_name: 'A New Hope',
+    date_joined: new Date('1977'),
+    group_num: '6',
+    group_url: 'ANH.html',
+    group_online: '4'
+  },
+  {
+    group_id: '5',
+    group_name: 'The Empire Strikes Back',
+    date_joined: new Date('1980'),
+    group_num: '6',
+    group_url: 'ESB.html',
+    group_online: '4'
+  },
+  {
+    group_id: '6',
+    group_name: 'Return of the Jedi',
+    date_joined: new Date('1983'),
+    group_num: '6',
+    group_url: 'RJ.html',
+    group_online: '4'
   }
 ]
 
