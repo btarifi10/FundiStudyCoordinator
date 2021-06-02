@@ -3,7 +3,7 @@
 import { UserDetails } from '../libraries/models/UserDetails.js'
 
 // TODO: replace hardcoded things
-const baseUrl = 'http://localhost:6969/api'
+const baseUrl = 'http://localhost:4200/api'
 const instance = null
 
 export class UserService {
