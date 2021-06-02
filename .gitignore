@@ -61,6 +61,9 @@ node_modules/
 # ignore jekyll build directory
 /_site
 
+#ignore generated code coverage report
+coverage/
+
 # ignore OS generated files
 ehthumbs.db
 Thumbs.db

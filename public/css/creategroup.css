@@ -3,6 +3,9 @@ main {
     margin: 50px auto;
     text-align: center;
 }
+table {
+    margin: 50px auto;
+}
 
 table, th, td {
     border-collapse: collapse;
