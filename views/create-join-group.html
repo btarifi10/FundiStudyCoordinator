@@ -16,19 +16,19 @@
         <br>
         <form action='#' id="createForm" onsubmit="updateGroupList();return false" >
             <div class="form-control">
-                <label for="groupName">Group Name:</label>
+                <label for="groupName">Group Name (max 30 characters):</label>
                 <input type="text" name="groupName" id="groupName" placeholder="Enter New Study Group..." onfocus=this.value='' required />
                 <br>
                 <!-- The invite feature may be friendlier with a search list -->
                 <label for="inviteList" >Invite (Hold Ctrl to select more than one):</label> 
                 <select id="inviteList" multiple>
-                    <option value="Albus">Albus</option>
-                    <option value="Snape">Snape</option>
-                    <option value="Ron">Ron</option>
+                    <option value="1">Albus</option>
+                    <option value="2">Snape</option>
+                    <option value="3">Ron</option>
                 </select>
 
             </div>
-            <button type="submit" id="create-btn" class="btn btn-secondary">Create</button>
+            <button type="submit" id="create-btn" class="btn btn-secondary" >Create</button>
         </form>
 
         <br><br><br>
@@ -40,7 +40,8 @@
                 <th>Members</th>
                 <th>Admin</th>
                 <th>Date Added</th>
-                <th>Delete Group</th> 
+                <th>Delete Group</th> <!--The user can 'Delete' (not functional) groups they are admin of -->
+                <th>Join Group</th> 
             </thead>
             <tbody></tbody>
         </table>
@@ -54,7 +55,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
 
     <!-- Create Group Script -->
-    <script src="scripts/create-group.js"></script>
+    <script src="scripts/create-join-group.js"></script>
     
 </body>
 </html>
