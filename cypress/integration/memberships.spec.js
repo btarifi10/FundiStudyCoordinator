@@ -1,59 +1,4 @@
 'use strict'
-const GROUPS = [
-  {
-    group_id: '1',
-    group_name: 'Phantom Menace',
-    date_joined: new Date('1999'),
-    group_num: '6',
-    group_url: 'PM.html',
-    group_online: '4'
-  },
-  {
-    group_id: '2',
-    group_name: 'Attack of the Clones',
-    date_joined: new Date('2002'),
-    group_num: '6',
-    group_url: 'AC.html',
-    group_online: '4'
-  },
-  {
-    group_id: '3',
-    group_name: 'Revenge of the Sith',
-    date_joined: new Date('2005'),
-    group_num: '6',
-    group_url: 'RS.html',
-    group_online: '4'
-  },
-  {
-    group_id: '4',
-    group_name: 'A New Hope',
-    date_joined: new Date('1977'),
-    group_num: '6',
-    group_url: 'ANH.html',
-    group_online: '4'
-  },
-  {
-    group_id: '5',
-    group_name: 'The Empire Strikes Back',
-    date_joined: new Date('1980'),
-    group_num: '6',
-    group_url: 'ESB.html',
-    group_online: '4'
-  },
-  {
-    group_id: '6',
-    group_name: 'Return of the Jedi',
-    date_joined: new Date('1983'),
-    group_num: '6',
-    group_url: 'RJ.html',
-    group_online: '4'
-  }
-]
-
-// test('Test that the correct member values are displayed', () => {
-//     loadHTMLTable(GROUPS);
-//     document.body.innerHTML
-// })
 
 describe('Profile testing links', () => {
   it('Navigates from the profile page to the home page and back', () => {
@@ -64,10 +9,36 @@ describe('Profile testing links', () => {
     cy.get('#profile-link').click()
     cy.url().should('eq', Cypress.config().baseUrl + 'profile')
   })
-  it('displays the membership information in the table', () => {
+  it('displays the membership information when the page loads', () => {
+    // By using multiple different methods, it is ensured that nothing is left out from the code
+    // Make sure that the term is found somewhere within the table
     cy.get('#table-body').contains('Revenge of the Sith')
+    // check the contents of the first entry
+    cy.get('#table-body')
+      .find('#1-id')
+      .should('have.length', 1)
+    cy.get('#1-id').should('not.be.empty')
+    cy.get('#1-id').should('not.have.text', '2')
+    cy.get('#1-id').should('not.have.value', '2')
+    cy.get('#1-group-name').should('not.have.text', 'Hercules')
+    cy.get('#1-group-name').should('have.text', 'Phantom Menace')
+    // const newDate = new Date(1999).toLocaleString()
+    cy.get('#1-date-joined').should('have.text', '01/01/1999, 02:00:00')
+    cy.get('#1-num-memb').should('have.text', '6')
+    cy.get('#1-num-online').should('have.text', '4')
+
+    // check the contents of the last entry
+    cy.get('#6-id').should('not.be.empty')
+    cy.get('#6-id').should('not.have.text', '2')
+    cy.get('#6-id').should('not.have.value', '2')
+    cy.get('#6-group-name').should('not.have.text', 'Hercules')
+    cy.get('#6-group-name').should('have.text', 'Return of the Jedi')
+    cy.get('#6-date-joined').should('have.text', '01/01/1983, 02:00:00')
+    cy.get('#6-num-memb').should('have.text', '6')
+    cy.get('#6-num-online').should('have.text', '4')
   })
-  it('refreshes a new set of information when button is pressed', () => {
+
+  it('Changes the information when button is pressed', () => {
     cy.get('#table-body')
       .invoke('text')
       .then((text1) => {
@@ -79,9 +50,40 @@ describe('Profile testing links', () => {
           })
       })
   })
+
+  it('Displays the correct information after the button is pressed', () => {
+    // First entry after the button press should be 'The lion king'
+    cy.get('#1-id').should('not.be.empty')
+    cy.get('#1-group-name').should('not.have.text', 'Hercules')
+    cy.get('#1-group-name').should('have.text', 'The Lion King')
+    cy.get('#1-group-name').contains('The Lion King')
+    cy.get('#1-date-joined').should('have.text', '01/01/1994, 02:00:00')
+    cy.get('#1-num-memb').should('have.text', '200')
+    cy.get('#1-num-online').should('have.text', '5')
+
+    // the second entry is 'Hercules
+    cy.get('#2-group-name').should('have.text', 'Hercules')
+
+    // check the contents of the last entry
+    cy.get('#6-id').should('not.be.empty')
+    cy.get('#6-id').should('not.have.text', '2')
+    cy.get('#6-id').should('not.have.value', '2')
+    cy.get('#6-group-name').should('not.have.text', 'Hercules')
+    cy.get('#6-group-name').should('have.text', 'Coco')
+    cy.get('#6-date-joined').should('have.text', '01/01/2017, 02:00:00')
+    cy.get('#6-num-memb').should('have.text', '3')
+    cy.get('#6-num-online').should('have.text', '1')
+  })
+
   it('redirects to the correct URL when clicking on the membership name', () => {
+    // Selecting 'The Lion King'
     cy.get('#1-url').click()
-    cy.url().should('eq', Cypress.config().baseUrl + 'PM.html')
+    cy.url().should('eq', Cypress.config().baseUrl + 'TLK.html')
+    cy.visit('profile')
+
+    // Selecting 'A New Hope'
+    cy.get('#4-url').click()
+    cy.url().should('eq', Cypress.config().baseUrl + 'ANH.html')
     cy.visit('profile')
   })
 })

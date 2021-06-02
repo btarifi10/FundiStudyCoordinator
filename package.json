@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: No tests specified\" && exit 0",
     "start": "node index",
-    "e2e":"cypress open"
+    "e2e": "cypress open"
   },
   "repository": {
     "type": "git",

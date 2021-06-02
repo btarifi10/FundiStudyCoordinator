@@ -94,7 +94,7 @@ function loadHTMLTable (data) {
   data.forEach(function ({ group_id, group_name, date_joined, group_num, group_online, group_url }) {
     tableHtml += '<tr>'
     tableHtml += `<td id='${group_id}-id'>${group_id}</td>`
-    tableHtml += `<td id = '${group_id}-group-name'><a href= ${group_url} id='${group_id}-url'> ${group_name} </a></td>` //  tableHtml += `<td>${group_name}</td>`;
+    tableHtml += `<td id = '${group_id}-group-name'><a href= ${group_url} id='${group_id}-url'>${group_name}</a></td>` //  tableHtml += `<td>${group_name}</td>`;
     tableHtml += `<td id = '${group_id}-date-joined'>${new Date(date_joined).toLocaleString()}</td>`
     tableHtml += `<td id = '${group_id}-num-memb'>${group_num}</td>`
     tableHtml += `<td id = '${group_id}-num-online'>${group_online}</td>`
