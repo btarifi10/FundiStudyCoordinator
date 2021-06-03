@@ -4,9 +4,10 @@
   "description": "ELEN4010 - Team 8",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: No tests specified\" && exit 0",
+    "test": "jest --coverage ./__tests__",
     "start": "node index",
-    "e2e": "cypress open"
+    "e2e": "cypress open",
+    "dev": "nodemon server/app.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +20,21 @@
   },
   "homepage": "https://github.com/witseie-elen4010/2021-008-project#readme",
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
+    "bootstrap": "^5.0.1",
     "express": "4.17.1",
-    "mysql": "^2.18.1"
+    "path": "^0.12.7",
+    "@popperjs/core": "^2.9.2",
+    "bcrypt": "^5.0.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.2",
+    "node-fetch": "^2.6.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "cypress": "^7.4.0",
+    "jest": "^27.0.3",
+    "dotenv": "^10.0.0",
     "nodemon": "^2.0.7"
   }
 }
