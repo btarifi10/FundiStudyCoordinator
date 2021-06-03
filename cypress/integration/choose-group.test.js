@@ -16,7 +16,7 @@ Run './node_modules/.bin/cypress run'
 ----------------------------------------------------------------------------- */
 describe('Confirming Index page loads correctly', () => {
   it('Index page loads ', () => {
-    cy.visit('http://localhost:3600/')
+    cy.visit('http://localhost:3000/choose-group')
   })
 
   it('Index page contains Study Groups drop down option ', () => {
@@ -40,17 +40,17 @@ describe('Group Selection Testing', () => {
   const studyGroups = ['Big Data', 'Software 3', 'Sociology']
 
   beforeEach(() => {
-    cy.visit('http://localhost:3600/')
+    cy.visit('http://localhost:3000/choose-group')
   })
 
   it('Routes to the big data page when the Big Data Option is selected', () => {
     cy.get('#dropdown-buttonID').click()
     cy.get('#big-data').click()
     cy.location().should((loc) => {
-      expect(loc.host).to.eq('localhost:3600')
+      expect(loc.host).to.eq('localhost:3000')
       expect(loc.hostname).to.eq('localhost')
       expect(loc.href).to.eq(
-        'http://localhost:3600/big-data')
+        'http://localhost:3000/big-data')
     })
   })
 
@@ -58,10 +58,10 @@ describe('Group Selection Testing', () => {
     cy.get('#dropdown-buttonID').click()
     cy.get('#software').click()
     cy.location().should((loc) => {
-      expect(loc.host).to.eq('localhost:3600')
+      expect(loc.host).to.eq('localhost:3000')
       expect(loc.hostname).to.eq('localhost')
       expect(loc.href).to.eq(
-        'http://localhost:3600/software')
+        'http://localhost:3000/software')
     })
   })
 
@@ -69,10 +69,10 @@ describe('Group Selection Testing', () => {
     cy.get('#dropdown-buttonID').click()
     cy.get('#sociology').click()
     cy.location().should((loc) => {
-      expect(loc.host).to.eq('localhost:3600')
+      expect(loc.host).to.eq('localhost:3000')
       expect(loc.hostname).to.eq('localhost')
       expect(loc.href).to.eq(
-        'http://localhost:3600/sociology')
+        'http://localhost:3000/sociology')
     })
   })
 })
@@ -81,7 +81,7 @@ describe('Group Dropdown Population Testing', () => {
   const studyGroups = ['Big Data', 'Software 3', 'Sociology']
 
   beforeEach(() => {
-    cy.visit('http://localhost:3600/')
+    cy.visit('http://localhost:3000/choose-group')
   })
 
   it('Populates the dropdown with all list elements', () => {
@@ -94,7 +94,7 @@ describe('Group Dropdown Population Testing', () => {
 
 describe('Group Searching Testing', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3600/')
+    cy.visit('http://localhost:3000/choose-group')
   })
   const studyGroups = ['Big Data', 'Software 3', 'Sociology']
 

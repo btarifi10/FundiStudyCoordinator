@@ -29,6 +29,9 @@ app.use(express.static(path.join(__dirname, '..', 'public')))
 const loginRouter = require('./loginRouter.js')(app, passport)
 app.use('/', loginRouter)
 
+const groupRouter = require('./group-routes')
+app.use(groupRouter)
+
 // Get port from env variable and listen on port.
 const port = process.env.PORT
 app.listen(port)
