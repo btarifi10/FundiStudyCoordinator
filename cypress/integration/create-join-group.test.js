@@ -13,7 +13,7 @@ developer dependencies)
 ----------------------------------------------------------------------------- */
 describe('The correct page is displayed to the user when entering the create-join-group page', () => {
   before('Fill in form to enter create-join-group form', () => {
-    cy.visit('/')
+    cy.visit('/intermediate-group')
     cy.get('form')
 
     cy.get('input[name="username"]')
