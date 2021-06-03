@@ -115,7 +115,50 @@ app.get('/home', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'home.html'))
 })
 
+// Nathan
+
+/* ------------------------------ Requirements ------------------------------ */
+
+// const path = require('path')
+const http = require('http')
+// const express = require('express')
+const socketio = require('socket.io')
+const handleChatMember = require('../utils/chat-server')
+
+// const app = express()
+const server = http.createServer(app)
+const io = socketio(server)
+
+/* -------------------------------- Routing -------------------------------- */
+
+// app.use(express.static(path.join(__dirname, '..', 'public')))
+
+// TODO - Add proper routing files
+app.get('/chat', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'chat.html'))
+})
+
+// TODO - Add proper routing files
+app.get('/intermediate-chat', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-chat.html'))
+})
+
+/* ------------------------------ Chat Service ------------------------------ */
+
+// Run when a member enters the group
+io.on('connection', socket => {
+  handleChatMember(io, socket)
+})
+
+/* -------------------------------------------------------------------------- */
+
+const PORT = process.env.PORT || 3000
+// server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
+/* -------------------------------------------------------------------------- */
+
 // Get port from env variable and listen on port.
-const port = process.env.PORT
-app.listen(port)
-console.log('Express server running on port', port)
+// const port = process.env.PORT
+// app.listen(port)
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+// console.log('Express server running on port', port)

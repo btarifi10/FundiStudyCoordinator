@@ -1,6 +1,6 @@
 language: node_js
 node_js: 
-- #include exact version/s here
+- 14.16.0
 cache: npm # specify the node_modules directory rather?
 
 before_install: 
@@ -14,7 +14,8 @@ deploy:
     provider: azure_web_apps
     # default deploys from master branch... otherwise use 
     # on: different_branch
-    # on:
+    on:
+        branch: main
     #   all_branches: true
     ## can also deploy 
 #   Deployment credentials 

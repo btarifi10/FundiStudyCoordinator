@@ -1,4 +1,7 @@
-# Study Group Coordinator
+# Study Group Coordinator 
+
+[![Build Status](https://travis-ci.com/witseie-elen4010/2021-008-project.svg?token=V5cp52PcqVwRJucANpvU&branch=main)](https://travis-ci.com/witseie-elen4010/2021-008-project)
+
 ELEN4010 - Group 8 
 
 Nathan Jones (1619191), Yasser Karam (1624228), Tarryn Maggs (719597), Basheq Tarifi (1696842), Taliya Weinstein (1386891)

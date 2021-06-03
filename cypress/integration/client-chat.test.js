@@ -21,7 +21,7 @@ const CHAT_MESSAGE_EVENT = 'chatMessage'
 
 describe('A single client can join and send messages in the group chat', () => {
   before('Fill form to enter group chat', () => {
-    cy.visit('/')
+    cy.visit('/intermediate-chat')
 
     cy.get('form')
 
