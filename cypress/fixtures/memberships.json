@@ -47,5 +47,55 @@
       "group_url": "RJ.html",
       "group_online": "4"
     }
-]
+],
+ "GROUPS2": [
+    {
+      "group_id": "1",
+      "group_name": "The Lion King",
+      "date_joined": "1994",
+      "group_num": "200",
+      "group_url": "TLK.html",
+      "group_online": "5"
+    },
+    {
+      "group_id": "2",
+      "group_name": "Hercules",
+      "date_joined": "1997",
+      "group_num": "150",
+      "group_url": "H.html",
+      "group_online": "10"
+    },
+    {
+      "group_id": "3",
+      "group_name": "Onward",
+      "date_joined": "2020",
+      "group_num": "50",
+      "group_url": "O.html",
+      "group_online": "30"
+    },
+    {
+      "group_id": "4",
+      "group_name": "Tangled",
+      "date_joined": "2010",
+      "group_num": "30",
+      "group_url": "T.html",
+      "group_online": "4"
+    },
+    {
+      "group_id": "5",
+      "group_name": "Zootopia",
+      "date_joined": "2016",
+      "group_num": "10",
+      "group_url": "Z.html",
+      "group_online": "5"
+    },
+    {
+      "group_id": "6",
+      "group_name": "Coco",
+      "date_joined": "2017",
+      "group_num": "3",
+      "group_url": "C.html",
+      "group_online": "1"
+    }
+  ]
 }
