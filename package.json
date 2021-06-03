@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "cypress": "^7.4.0",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.7"
   }
 }
