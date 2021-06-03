@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/profile-style.css">
+    <title>Profile</title>
+</head>
+<body>
+    <div class="Profile">
+        <h1>View your Details</h1>
+		<p> First name: Obi-Wan</p>
+		<p> Surname: Kanobi</p>
+		<p> Username: MayTheForceBeWithYou</p>
+		
+        <!-- The button below will be used to fetch/update the user's membership details -->
+        <button type="submit" id="membership-btn"> Click here to view your current memberships</button>
+
+        <table id="membership-table">
+            <thead>
+                <th>ID</th> <!-- This is important to link the user database entries to the group database entries-->
+                <th>Membership name</th>
+                <th>Date Joined</th>
+                <th>Number of members</th>
+                <th>Number of online members</th>
+                <th>Navigate</th> 
+                <th>Leave</th><!-- Leave the group-->
+            </thead>
+            <tbody id="table-body">
+			<!-- The below will be overwritten, it has been kept here for testing purposes -->
+                <td>Here</td> 
+				<td>lies</td> 
+                <td>Tarryn's</td>
+                <td>Sanity</td>
+                <td>She fought well</td>
+				
+            </tbody>
+        </table>
+		
+    </div>
+    <div style="text-align: center">
+        <a href="home" id="home-link"> Return home </a> <br>
+    </div>
+    <script src="/scripts/memberships.js"></script>
+</body>
+</html>

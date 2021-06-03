@@ -22,20 +22,18 @@
   "dependencies": {
     "bootstrap": "^5.0.1",
     "express": "4.17.1",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "cypress": "^7.4.0",
-    "jest": "^27.0.3",
+    "path": "^0.12.7",
     "@popperjs/core": "^2.9.2",
     "bcrypt": "^5.0.1",
-    "bootstrap": "^5.0.1",
-    "express": "^4.17.1",
     "express-flash": "0.0.2",
     "express-session": "^1.17.2",
     "node-fetch": "^2.6.1",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "cypress": "^7.4.0",
+    "jest": "^27.0.3",
     "dotenv": "^10.0.0",
     "nodemon": "^2.0.7"
   }
