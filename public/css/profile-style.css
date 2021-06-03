@@ -1,0 +1,26 @@
+.Profile {
+    width: 400px;
+    margin: 0 auto;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.Profile h1{
+    text-align: center;
+    width: 200px;
+    margin: 0 auto;
+    font-size: 24px;
+}
+
+table {
+    margin: 80px auto;
+}
+
+
+table, th, td {
+    border-collapse: collapse;
+    border: 1px solid #000
+}
+
+th,td {
+    padding: 5px;
+}
