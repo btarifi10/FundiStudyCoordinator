@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Core Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+    <title>Home</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="page-header"><i class="fas fa-home"></i> Home <span id="group-name"></span></h1>
+        <hr>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-center">
+                <br>
+                <br>
+                <form id="join-form" action="chat">
+                    <div class="form-control">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" id="username" placeholder="Enter username..." required />
+                    </div>
+                    <div class="form-control">
+                        <label for="group">Room</label>
+                        <select name="group" id="group">
+                            <option value="Software Development III">Software Development III</option>
+                            <option value="Network Fundamentals">Network Fundamentals</option>
+                            <option value="Big Data">Big Data</option>
+                            <option value="Quantum Computing">Quantum Computing</option>
+                            <option value="Control">Control</option>
+                            <option value="Sociology">Sociology</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Join Group</button>
+                </form>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+</body>
+
+</html>

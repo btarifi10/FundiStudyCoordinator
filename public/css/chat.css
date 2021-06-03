@@ -1,0 +1,35 @@
+.group-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.message-area {
+	padding: 30px;
+  min-height: 550px;
+	max-height: 550px;
+	overflow-y: scroll;
+}
+
+.message-area .message {
+	padding: 10px;
+	margin-bottom: 15px;
+	background-color: #e6e9ff;
+	border-radius: 5px;
+}
+
+.message-area .message .meta {
+	font-size: 15px;
+	font-weight: bold;
+	color: #7386ff;
+	opacity: 0.7;
+	margin-bottom: 7px;
+}
+
+.message-area .message .text {
+	margin-bottom: 0px;
+}
+
+.message-area .message .meta span {
+	color: #777;
+}

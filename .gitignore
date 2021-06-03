@@ -56,6 +56,9 @@ coverage/
 # ignore generated code coverage report
 coverage/
 
+# ignore generated code coverage report
+coverage/
+
 # ignore composer vendor directory
 /vendor
 

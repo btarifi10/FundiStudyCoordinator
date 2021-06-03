@@ -8,7 +8,7 @@ Group Laboratory: Team 8
 
 #### Linting
 
-The style formatting of any JavaScript code will be automated using the [StandardJS](https://standardjs.com/) linter. A comprehensive list of the conventions enforced by this linter can be found [here](https://standardjs.com/rules.html). Additionally, the `'using strict'` directive must be present at the beginning of each new file so that the compiler can prevent bad practices such as making use of undeclared variables.
+The style formatting of any JavaScript code will be automated using the [StandardJS](https://standardjs.com/) linter. A comprehensive list of the conventions enforced by this linter can be found [here](https://standardjs.com/rules.html). Additionally, the `'use strict'` directive must be present at the beginning of each new file so that the compiler can prevent bad practices such as making use of undeclared variables.
 
 #### Naming Conventions
 
