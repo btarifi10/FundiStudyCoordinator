@@ -27,16 +27,17 @@ const database = [
   }
 ]
 
+const { username } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
+
 document.addEventListener('DOMContentLoaded', function () {
-  loadHTMLTable(database)
+  loadHTMLTable(database, username)
 })
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
-function loadHTMLTable (data) {
+function loadHTMLTable (data, username) {
   const table = document.querySelector('table tbody')
-  const { username } = Qs.parse(location.search, {
-    ignoreQueryPrefix: true
-  })
 
   if (data.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='6'>No Data</td></tr>"
@@ -49,15 +50,14 @@ function loadHTMLTable (data) {
       tableHTML += `<td>${members}</td>`
       tableHTML += `<td>${admin}</td>`
       tableHTML += `<td>${startDate.toLocaleString()}</td>`
+      const groupName_id = groupName.replace(/\s+/g, '')
+
       if (admin.find(name => name === username)) { // id's cannot have spaces, so the group name is collapsed to be the button's unique id
-        const groupName_id = groupName.replace(/\s+/g, '')
         tableHTML += `<td><button class="delete-row-btn" id=${groupName_id}>Delete</td>`
       } else {
         tableHTML += '<td>-</td>'
       }
-
       if (!(members.find(name => name === username))) { // Users cannot join groups they are members of
-        const groupName_id = groupName.replace(/\s+/g, '')
         tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
       } else {
         tableHTML += '<td>-</td>'
@@ -77,9 +77,6 @@ function updateGroupList () {
     return
   }
 
-  const { username } = Qs.parse(location.search, {
-    ignoreQueryPrefix: true
-  })
   const inviteList = document.getElementById('inviteList')
   const userinput = document.getElementById('groupName').value
   const duplicate = database.find(group => group.groupName === userinput)
@@ -93,7 +90,7 @@ function updateGroupList () {
       startDate: new Date()
     }
     database.push(newGroup)
-    loadHTMLTable(database)
+    loadHTMLTable(database, username)
   } else {
     alert('Please enter a VALID group name, that does NOT already EXIST')
   }
@@ -102,13 +99,9 @@ function updateGroupList () {
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_id) {
-  const { username } = Qs.parse(location.search, {
-    ignoreQueryPrefix: true
-  })
   const group = database.find(group => group.groupName.replace(/\s+/g, '') === clicked_id) // Can't have groups differing in whitespace only
-
   group.members.push(username)
-  loadHTMLTable(database)
+  loadHTMLTable(database, username)
 }
 
 // This function returns a list of the selected members from a dropdown <select> menu

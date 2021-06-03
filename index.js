@@ -7,7 +7,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/createGroup', function (req, res) {
-  res.sendFile(path.join(__dirname, '/views/create-join-group.html'))
+  res.sendFile(path.join(__dirname, 'views', 'create-join-group.html'))
 })
 
 const port = process.env.PORT || 3000
