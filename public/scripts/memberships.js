@@ -102,6 +102,7 @@ function loadHTMLTable (data) {
     tableHtml += `<td><button class="delete-row-btn" data-id=${group_id}>Leave</td>`
     tableHtml += '</tr>'
   })
+
   table.innerHTML = tableHtml
 }
 
