@@ -32,6 +32,14 @@ app.use('/', loginRouter)
 const groupRouter = require('./group-routes')
 app.use(groupRouter)
 
+app.get('/intermediate-group', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
+})
+
+app.get('/createGroup', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'create-join-group.html'))
+})
+
 // Get port from env variable and listen on port.
 const port = process.env.PORT
 app.listen(port)
