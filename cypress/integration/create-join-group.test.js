@@ -11,7 +11,7 @@ Steps:
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
-describe('User can create unique group name', () => {
+describe('The correct page is displayed to the user when entering the create-join-group page', () => {
   before('Fill in form to enter create-join-group form', () => {
     cy.visit('/')
     cy.get('form')
@@ -52,7 +52,9 @@ describe('User can create unique group name', () => {
     cy.get('button[class="delete-row-btn"]')
       .should('have.length', 0)
   })
+})
 
+describe('User can create a new group with chosen members invited (automatically added for now)', () => {
   it('Allows user to input group name and select members to invite', () => {
     cy.get('input[name="groupName"]')
       .type('Jonas Brothers')
@@ -97,6 +99,18 @@ describe('User can create unique group name', () => {
     })
   })
 
+  it('Does not allow user to create a group name over 30 alphanumerics', () => {
+    cy.get('input[name="groupName"]')
+      .type('abcdefghijklmnopqrstuvwxyzabc1234')
+      .should('have.value', 'abcdefghijklmnopqrstuvwxyzabc1234')
+
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains('Please Enter a Valid Group Name. Group Name can only be 30 alphanumerics')
+    })
+  })
+})
+
+describe('User can join groups that they are not members of', () => {
   it('Allows user to join groups they are not members of', () => {
     cy.get('table[id="table"]')
       .contains('td', 'LYFE')
