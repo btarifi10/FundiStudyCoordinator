@@ -1,54 +1,56 @@
+import data from '../fixtures/memberships.json'
+const GROUPS = data.GROUPS
 'use strict'
-const GROUPS = [
-  {
-    group_id: '1',
-    group_name: 'Phantom Menace',
-    date_joined: new Date('1999'),
-    group_num: '6',
-    group_url: 'PM.html',
-    group_online: '4'
-  },
-  {
-    group_id: '2',
-    group_name: 'Attack of the Clones',
-    date_joined: new Date('2002'),
-    group_num: '6',
-    group_url: 'AC.html',
-    group_online: '4'
-  },
-  {
-    group_id: '3',
-    group_name: 'Revenge of the Sith',
-    date_joined: new Date('2005'),
-    group_num: '6',
-    group_url: 'RS.html',
-    group_online: '4'
-  },
-  {
-    group_id: '4',
-    group_name: 'A New Hope',
-    date_joined: new Date('1977'),
-    group_num: '6',
-    group_url: 'ANH.html',
-    group_online: '4'
-  },
-  {
-    group_id: '5',
-    group_name: 'The Empire Strikes Back',
-    date_joined: new Date('1980'),
-    group_num: '6',
-    group_url: 'ESB.html',
-    group_online: '4'
-  },
-  {
-    group_id: '6',
-    group_name: 'Return of the Jedi',
-    date_joined: new Date('1983'),
-    group_num: '6',
-    group_url: 'RJ.html',
-    group_online: '4'
-  }
-]
+// const GROUPS = [
+//   {
+//     group_id: '1',
+//     group_name: 'Phantom Menace',
+//     date_joined: new Date('1999'),
+//     group_num: '6',
+//     group_url: 'PM.html',
+//     group_online: '4'
+//   },
+//   {
+//     group_id: '2',
+//     group_name: 'Attack of the Clones',
+//     date_joined: new Date('2002'),
+//     group_num: '6',
+//     group_url: 'AC.html',
+//     group_online: '4'
+//   },
+//   {
+//     group_id: '3',
+//     group_name: 'Revenge of the Sith',
+//     date_joined: new Date('2005'),
+//     group_num: '6',
+//     group_url: 'RS.html',
+//     group_online: '4'
+//   },
+//   {
+//     group_id: '4',
+//     group_name: 'A New Hope',
+//     date_joined: new Date('1977'),
+//     group_num: '6',
+//     group_url: 'ANH.html',
+//     group_online: '4'
+//   },
+//   {
+//     group_id: '5',
+//     group_name: 'The Empire Strikes Back',
+//     date_joined: new Date('1980'),
+//     group_num: '6',
+//     group_url: 'ESB.html',
+//     group_online: '4'
+//   },
+//   {
+//     group_id: '6',
+//     group_name: 'Return of the Jedi',
+//     date_joined: new Date('1983'),
+//     group_num: '6',
+//     group_url: 'RJ.html',
+//     group_online: '4'
+//   }
+// ]
 
 const GROUPS2 = [
   {
@@ -116,7 +118,28 @@ function createStringComparisons (data) {
   return firstTable
 }
 
+function createJSONStringComparisons (data) {
+  let firstTable = ''
+
+  data.forEach(function ({ group_id, group_name, date_joined, group_num, group_online, group_url }) {
+    firstTable += `${group_id}`
+    firstTable += `${group_name}` //  tableHtml += `<td>${group_name}</td>`;
+    firstTable += `${new Date(date_joined).toLocaleString()}`
+    firstTable += `${group_num}`
+    firstTable += `${group_online}`
+    firstTable += 'Navigate'
+    firstTable += 'Leave'
+  })
+  return firstTable
+}
+
 describe('Profile testing links', () => {
+  // beforeEach(function () {
+  //   cy.fixture('memberships.json').then((GROUPS) => {
+  //     this.GROUPS = GROUPS
+  //     // console.log(GROUPS)
+  //   })
+  // })
   it('Navigates from the profile page to the home page and back', () => {
     cy.visit('profile')
 
@@ -128,7 +151,7 @@ describe('Profile testing links', () => {
   it('displays the membership information when the page loads', () => {
     // By using multiple different methods, it is ensured that nothing is left out from the code
     // Make sure that the term is found somewhere within the table
-    const fTable = createStringComparisons(GROUPS)
+    const fTable = createJSONStringComparisons(GROUPS)
     cy.get('#table-body')
       .invoke('text')
       .should((text1) => {
@@ -149,8 +172,10 @@ describe('Profile testing links', () => {
   })
 
   it('Changes the information when button is pressed', () => {
+    cy.fixture('memberships.json').as('GROUPS')
     const fTable = createStringComparisons(GROUPS) // Star Wars
     const fTable2 = createStringComparisons(GROUPS2) // Disney
+    console.log(GROUPS2)
     // show that the current entries are not the same as the Disney entries
     cy.get('#table-body') // Star Wars
       .invoke('text')
