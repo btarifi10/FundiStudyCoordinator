@@ -1,5 +1,7 @@
 'use strict'
 
+/* ------------------------------ Requirements ------------------------------ */
+
 // Use dotenv for environmental variables if not in production.
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -10,11 +12,15 @@ if (process.env.NODE_ENV !== 'production') {
 // Check out http://www.passportjs.org/docs/ for more info.
 const express = require('express')
 const path = require('path')
+const http = require('http')
+const socketio = require('socket.io')
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
+const handleChatMember = require('./chat-server')
 
-// Initial set up.
+/* ----------------------------- Initial Setup ----------------------------- */
+
 const app = express()
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
@@ -24,19 +30,21 @@ app.use(session({
   saveUninitialized: false
 }))
 app.use(express.static(path.join(__dirname, '..', 'public')))
+const server = http.createServer(app)
+const io = socketio(server)
 
-// Basheq
+/* ----------------------------- Basheq's Code ----------------------------- */
 
 // Use the loginRouter for the login and register functionality.
 const loginRouter = require('./loginRouter.js')(app, passport)
 app.use('/', loginRouter)
 
-// Taliya
+/* ----------------------------- Taliya's Code ----------------------------- */
 
 const groupRouter = require('./group-routes')
 app.use(groupRouter)
 
-// Yasser
+/* ----------------------------- Yasser's Code ----------------------------- */
 
 app.get('/intermediate-group', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
@@ -46,7 +54,7 @@ app.get('/createGroup', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'create-join-group.html'))
 })
 
-// Tarrryn
+/* ----------------------------- Tarryn's Code ----------------------------- */
 
 app.post('/insert', (request, response) => {})
 
@@ -115,23 +123,9 @@ app.get('/home', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'home.html'))
 })
 
-// Nathan
+/* ----------------------------- Nathan's Code ----------------------------- */
 
-/* ------------------------------ Requirements ------------------------------ */
-
-// const path = require('path')
-const http = require('http')
-// const express = require('express')
-const socketio = require('socket.io')
-const handleChatMember = require('../utils/chat-server')
-
-// const app = express()
-const server = http.createServer(app)
-const io = socketio(server)
-
-/* -------------------------------- Routing -------------------------------- */
-
-// app.use(express.static(path.join(__dirname, '..', 'public')))
+// Routing
 
 // TODO - Add proper routing files
 app.get('/chat', function (req, res) {
@@ -143,7 +137,7 @@ app.get('/intermediate-chat', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-chat.html'))
 })
 
-/* ------------------------------ Chat Service ------------------------------ */
+// Chat Service
 
 // Run when a member enters the group
 io.on('connection', socket => {
@@ -153,12 +147,4 @@ io.on('connection', socket => {
 /* -------------------------------------------------------------------------- */
 
 const PORT = process.env.PORT || 3000
-// server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-
-/* -------------------------------------------------------------------------- */
-
-// Get port from env variable and listen on port.
-// const port = process.env.PORT
-// app.listen(port)
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-// console.log('Express server running on port', port)

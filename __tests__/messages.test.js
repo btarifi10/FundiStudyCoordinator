@@ -2,7 +2,7 @@
 
 const moment = require('moment')
 
-const formatMessage = require('../utils/messages')
+const formatMessage = require('../server/messages')
 
 describe('Format chat message function', () => {
   test('creates a message object given a username and text', () => {

@@ -1,30 +1,37 @@
 language: node_js
-node_js: 
-- 14.16.0
-cache: npm # specify the node_modules directory rather?
 
-before_install: 
-- npm update
-# not necessary to include the 'install: ' hook since it automatically will include a ' - npm ci 'with node
+node_js: 
+    - 14.16.0
+
+addons:
+    apt:
+        packages:
+            - libgconf-2-4
+
+cache:
+    npm: true
+    directories:
+        - ~/.npm
+        - ./node_modules
+        - ~/.cache
+    override:
+        - npm ci
+        - npm run cy:verify
+
+before_install:
+    - npm update
+
 script:
-- npm test
-# - npm run build     # Commented out for now since we don't have a build file
+    - npm run test:coveralls
+    - npm run cy:setup
+    - npm run cy:run
+    - kill $(jobs -p) || true
 
 deploy:
     provider: azure_web_apps
-    # default deploys from master branch... otherwise use 
-    # on: different_branch
+
     on:
         branch: main
-    #   all_branches: true
-    ## can also deploy 
-#   Deployment credentials 
-#   - setup user credentials in azure
-#   - setup AZURE_WA_USERNAME, AZURE_WA_PASSWORD and AZURE_WA_SITE in the environment variables
-
-#branches:  #This is implied
-#  only:
-#  - master
 
 ## Uncomment this if necessary
 #after_success:

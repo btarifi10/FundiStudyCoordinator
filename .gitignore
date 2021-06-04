@@ -52,6 +52,8 @@
 # ignore node/grunt dependency directories
 node_modules/
 coverage/
+cypress/screenshots
+cypress/videos
 
 # ignore generated code coverage report
 coverage/
