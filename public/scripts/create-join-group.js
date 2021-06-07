@@ -27,13 +27,27 @@ const database = [
   }
 ]
 
+// must replace this 'users' with a get function to the database of all users (user names NOT first names)
+const users = ['Albus', 'Snape', 'Ron', 'Luna', 'Harry', 'Hermoie', 'Draco', 'Cho', 'Cedric', 'Voldemort', 'Lockhart', 'Sirius']
+
 const { username } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 })
 
 document.addEventListener('DOMContentLoaded', function () {
   loadHTMLTable(database, username)
+  populateUsersList(users)
 })
+
+function populateUsersList (users) {
+  users.forEach((element, index) => {
+    const inviteList = document.getElementById('inviteList')
+    const option = document.createElement('option')
+    option.text = element
+    option.value = index
+    inviteList.add(option)
+  })
+}
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
 function loadHTMLTable (data, username) {
@@ -78,7 +92,7 @@ function updateGroupList () {
   }
 
   const inviteList = document.getElementById('inviteList')
-  const userinput = document.getElementById('groupName').value
+  const userinput = document.getElementById('groupName').value.trim()
   const duplicate = database.find(group => group.groupName === userinput)
   const invitedMembers = selectedMembers(inviteList)
 
