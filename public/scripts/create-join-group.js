@@ -27,7 +27,7 @@ const database = [
   }
 ]
 
-// must replace this 'users' with a get function to the database of all users (user names NOT first names)
+// TO DO: must replace this 'users' with a get function to the database of all users (user names NOT first names)
 const users = ['Albus', 'Snape', 'Ron', 'Luna', 'Harry', 'Hermoie', 'Draco', 'Cho', 'Cedric', 'Voldemort', 'Lockhart', 'Sirius']
 
 const { username } = Qs.parse(location.search, {
@@ -117,6 +117,23 @@ function joinGroup (clicked_id) {
   group.members.push(username)
   loadHTMLTable(database, username)
 }
+
+// Search for users in the drop down, and filter drop down accordingly
+function userSearch (searchTerm) {
+  // const searchTerm = document.getElementById('userSearch')
+  // Allows both cases to be correctly identified
+  const filter = searchTerm.toLowerCase()
+  const inviteList = document.getElementById('inviteList')
+  for (let i = 0; i < inviteList.length; i++) {
+    const text = inviteList.options[i].text
+    if (text.toLowerCase().indexOf(filter) > -1) {
+      inviteList.options[i].style.display = 'list-item'
+    } else {
+      inviteList.options[i].style.display = 'none'
+    }
+  }
+}
+
 
 // This function returns a list of the selected members from a dropdown <select> menu
 function selectedMembers (inviteList) {
