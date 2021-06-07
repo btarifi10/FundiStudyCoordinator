@@ -20,7 +20,7 @@
                 <input type="text" name="groupName" id="groupName" placeholder="Enter New Study Group..." onfocus=this.value='' required />
                 <br>
                 <!-- The invite feature may be friendlier with a search list -->
-
+                <select id="inviteList" multiple></select>
             </div>
             <button type="submit" id="create-btn" class="btn btn-secondary" >Create</button>
         </form>
@@ -31,7 +31,6 @@
             <label for="inviteList" >Invite (Hold Ctrl to select more than one):</label> 
                 <br>
                 <input type="text" placeholder="Search for User" id="userSearch" onkeyup="userSearch(this.value)" onfocus="this.value=''">
-                <select id="inviteList" multiple></select>
         </div>
 
         <table id="table">

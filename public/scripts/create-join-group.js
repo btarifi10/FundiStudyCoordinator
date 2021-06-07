@@ -87,7 +87,7 @@ function loadHTMLTable (data, username) {
 function updateGroupList () {
   // Validate the user input first
   if (invalidForm()) {
-    alert('Please Enter a Valid Group Name. Group Name can only be 30 alphanumerics')
+    alert('Please Enter a Valid Group Name. Group Name can only be 40 alphanumerics')
     return
   }
 
@@ -134,7 +134,6 @@ function userSearch (searchTerm) {
   }
 }
 
-
 // This function returns a list of the selected members from a dropdown <select> menu
 function selectedMembers (inviteList) {
   const invitedMembers = []
@@ -158,5 +157,5 @@ function clearSelected (inviteList) {
 // Checks for alphanumerical group name from user
 function invalidForm () {
   const groupName = document.getElementById('groupName').value
-  return ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 30))
+  return ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40))
 }
