@@ -127,15 +127,8 @@ app.get('/home', function (req, res) {
 
 // Routing
 
-// TODO - Add proper routing files
-app.get('/chat', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'chat.html'))
-})
-
-// TODO - Add proper routing files
-app.get('/intermediate-chat', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-chat.html'))
-})
+const chatRouter = require('./chat-routes')
+app.use(chatRouter)
 
 // Chat Service
 
