@@ -92,8 +92,6 @@ app.get('/createGroup', function (req, res) {
 })
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
-const db = require('./database-service')
-
 app.get('/profileViews/:id', (req, res) => {
   const {id} = req.params
   // Make a query to the database

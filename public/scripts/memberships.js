@@ -1,10 +1,6 @@
 import { UserService } from './UserService.js'
 const userService = UserService.getUserServiceInstance()
 let currentUser =  null
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 document.addEventListener('DOMContentLoaded', function () {
   userService.getCurrentUser().then(
     user => {
