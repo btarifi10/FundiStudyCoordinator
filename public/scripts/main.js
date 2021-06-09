@@ -1,6 +1,6 @@
 
 'use strict'
-import { UserService } from './UserService.js'
+// import { UserService } from './UserService.js'
 const dropdown = document.getElementsByClassName('dropdown-btn')
 const dropdownAllGroups = document.getElementsByClassName('dropdown-btn2')
 const dropMenu = document.getElementById('dropdown-containerID')
@@ -9,8 +9,8 @@ const dropMenuAllGroups = document.getElementById('dropdown-containerAllGroups')
 // To be replaced with database functionality therefore a more complex container was not implemented
 const studyGroups = ['Big Data', 'Software 3', 'Sociology']
 const hrefValues = ['big-data', 'software', 'sociology']
-const userService = UserService.getUserServiceInstance()
-let currentUser = null
+// const userService = UserService.getUserServiceInstance()
+const currentUser = null
 
 function populateGroups () {
   for (let i = 0; i < studyGroups.length; i++) {
@@ -57,17 +57,7 @@ function groupSearch () {
   }
 }
 
-// 'http://localhost:3000/profileViews'
-
 document.addEventListener('DOMContentLoaded', function () {
-  userService.getCurrentUser().then(
-    user => {
-      currentUser = user
-      const welcomeDiv = document.getElementById('welcome-div')
-      const welcomeHeading = document.createElement('h2')
-      welcomeHeading.textContent = `Welcome, ${currentUser.username} with ID ${currentUser.id}`
-      welcomeDiv.appendChild(welcomeHeading)
-    })
   fetch('http://localhost:3000/get-groups')//  , {
     .then(response => response.json())
     .then(data => {
@@ -75,11 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
       populateAllGroups(data)
     })
 })
-// fetch('http://localhost:3000/group-getter')//  , {
-//   .then(response => response.json())
-//   .then(data => {
-//     populateAllGroups(data)
-//   })
 
 function populateAllGroups (data) {
   data.recordset.forEach(function ({ group_name }) {
@@ -87,9 +72,7 @@ function populateAllGroups (data) {
     const addedElement = document.createElement('a')
     addedElement.textContent = groupName
     addedElement.value = groupName
-    // addedElement.href = hrefValues[i]
-    // addedElement.id = hrefValues[i]
-    addedElement.class = 'dropdown-item'
+
     dropMenuAllGroups.appendChild(addedElement)
   })
 }
