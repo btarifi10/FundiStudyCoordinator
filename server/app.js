@@ -55,9 +55,6 @@ app.get('/createGroup', function (req, res) {
 })
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
-const id = 2;
-console.log(id)
-
 const db = require('./database-service')
 
 app.get('/profileViews/:id', (req, res) => {
