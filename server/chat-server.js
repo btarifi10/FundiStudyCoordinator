@@ -62,8 +62,11 @@ function handleChatMessage (io, socket, message) {
   // Retrieve the member who sent the message using their socket id
   const member = getCurrentMember(socket.id)
 
+  // TODO - change when formatting occurs on client side
+  const msg = formatMessage(member.username, message)
+
   // Send this message to all members in this member's group chat
-  io.to(member.group).emit(MESSAGE_EVENT, formatMessage(member.username, message))
+  io.to(member.group).emit(MESSAGE_EVENT, msg)
 }
 
 function handleDisconnect (io, socket) {
