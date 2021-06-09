@@ -2,7 +2,7 @@
 
 const express = require('express')
 const path = require('path')
-const db = require('./database-service')
+const db = require('../database-service')
 
 const chatRouter = express.Router()
 chatRouter.use(express.json())
@@ -10,11 +10,11 @@ chatRouter.use(express.json())
 /* ------------------------------ Page Routes ------------------------------ */
 
 chatRouter.get('/chat', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'chat.html'))
+  res.sendFile(path.join(__dirname, '..', '..', 'views', 'chat.html'))
 })
 
 chatRouter.get('/intermediate-chat', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-chat.html'))
+  res.sendFile(path.join(__dirname, '..', '..', 'views', 'intermediate-chat.html'))
 })
 
 /* ---------------------------- Database Routes ---------------------------- */
@@ -52,7 +52,7 @@ chatRouter.get('/get-chat', function (req, res) {
 chatRouter.post('/record-message', function (req, res) {
   // Retrieve the message data
   const message = req.body
-  // console.log(message)
+
   // Make a query to the database
   db.pools
     // Run query

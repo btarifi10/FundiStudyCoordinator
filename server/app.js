@@ -17,7 +17,7 @@ const socketio = require('socket.io')
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
-const handleChatMember = require('./chat-server')
+const handleChatMember = require('./group-chat/chat-server')
 
 /* ----------------------------- Initial Setup ----------------------------- */
 
@@ -127,8 +127,7 @@ app.get('/home', function (req, res) {
 
 // Routing
 
-const chatRouter = require('./chat-routes')
-// app.use(express.json)
+const chatRouter = require('./group-chat/chat-routes')
 app.use(chatRouter)
 
 // Chat Service
