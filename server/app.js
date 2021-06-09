@@ -59,21 +59,6 @@ const id = 2;
 console.log(id)
 
 const db = require('./database-service')
-// this currently gives errors, used 
-// app.post('/insertINTOdatabase', (request, response) => { 
-//   const {user_id,group_id,date_joined} = request.body;
-//   const query = "INSERT INTO memberships (user_id, group_id, date_joined) VALUES (?,?,?)";
-//   db.pools
-//     .then((pool) =>{
-//       return pool.request()
-//         .query(query, [user_id,group_id, date_joined])
-//         //.query('INSERT INTO memberships (user_id, group_id, date_joined) VALUES (2,1,2021-06-08 08:52:23)')//, ['1','1','2021-06-08 08:52:23'])
-//     })
-//     .then(result => {
-//       response.send(result)
-//       //console.log(result)
-//     })
-// })
 
 app.get('/profileViews/:id', (req, res) => {
   const {id} = req.params
