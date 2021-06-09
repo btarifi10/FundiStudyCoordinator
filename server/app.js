@@ -80,6 +80,7 @@ app.get('/get-groups', function (req, res) {
     })
 })
 
+
 /* ----------------------------- Yasser's Code ----------------------------- */
 
 app.get('/intermediate-group', function (req, res) {
@@ -91,6 +92,31 @@ app.get('/createGroup', function (req, res) {
 })
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
+const db = require('./database-service')
+
+app.get('/profileViews/:id', (req, res) => {
+  const {id} = req.params
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        // retrieve all recordsets with the following information to be displayed on the profile page
+        // want to retrieve the specific users personal details
+        .query(`SELECT * FROM users WHERE users.user_id = (${id})`)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      //console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 app.get('/membershipViews/:id', function (req, res) {
   // save the currentUser ID as a variable to use in the select query
@@ -118,12 +144,6 @@ app.get('/membershipViews/:id', function (req, res) {
         Error: err
       })
     })
-})
-
-// read user database entry - called when the page is loaded
-app.get('/getAll', (request, response) => {
-  response.json(GROUPS)
-  // console.log('test');
 })
 
 app.get('/profile', function (req, res) {
@@ -154,8 +174,6 @@ app.get('/intermediate-chat', function (req, res) {
 io.on('connection', socket => {
   handleChatMember(io, socket)
 })
-
-/* ----------------------------- Database Test ----------------------------- */
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

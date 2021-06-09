@@ -1,13 +1,25 @@
 import { UserService } from './UserService.js'
 const userService = UserService.getUserServiceInstance()
 let currentUser =  null
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 document.addEventListener('DOMContentLoaded', function () {
-  fetch('http://localhost:3000/getAll')
-    .then(response => response.json())
-    .then(data => {
-      userGroups = data
-      loadHTMLTable(userGroups)
+  userService.getCurrentUser().then(
+    user => {
+      currentUser = user
+      const welcomeDiv = document.getElementById('welcome-div')
+      const welcomeHeading = document.createElement('h2')
+      welcomeHeading.textContent = `Welcome, ${currentUser.username} with ID ${currentUser.id}`
+      welcomeDiv.appendChild(welcomeHeading)
+
+      fetch('http://localhost:3000/profileViews/'+ currentUser.id)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        loadProfile(data)
+      })
     })
 })
 
@@ -23,6 +35,26 @@ document.querySelector('table tbody').addEventListener('click', function (event)
 function handleNavigation () {
   location.href = 'memberships.html'
 }
+
+// const insertBtn = document.querySelector('#insert-btn')
+// insertBtn.onclick = function () {
+//   fetch('http://localhost:3000/insertINTOdatabase', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({
+//       user_id : '2',
+//       group_id : '1',
+//       date_joined :'2021-06-08 08:52:23'
+//     })
+//   })
+//   .then(response => response.json())
+//     .then(data => {
+//       console.log(data)
+//       loadHTMLTable(data)
+//     })
+// }
 
 const membBtn = document.querySelector('#membership-btn')
 membBtn.onclick = function () {
@@ -63,8 +95,25 @@ function loadHTMLTable (data) {
   table.innerHTML = tableHtml
 }
 
+
+function loadProfile(data) {
+  const profile = document.querySelector('#user_details'); 
+  if (data.recordset.length === 0) {
+    profile.innerHTML = "<p class='no-data'>No Informations</p>"
+    return
+  }
+  let tableHtml = ''
+
+  data.recordset.forEach(function ({ username, first_name, last_name, rating}) {//group_num, group_online, group_url }) {
+    tableHtml += `<p id='${username}-id'>Username: ${username}</p>`
+    tableHtml += `<p id='${first_name}-id'>First name: ${first_name}</p>`
+    tableHtml += `<p id='${last_name}-id'>Last name: ${last_name}</p>`
+    tableHtml += `<p id='${rating}-id'>rating: ${rating}</p>`
+  })
+  profile.innerHTML = tableHtml
+}
+
 function LeaveGroup (membership_id) {
-  console.log(membership_id)
   fetch('http://localhost:3000/delete/' + membership_id, {
     method: 'DELETE'
   })
