@@ -46,6 +46,19 @@ app.use(groupRouter)
 
 const db = require('./database-service')
 
+app.delete('/delete/:membership_id', (request, response) => {
+  const { membership_id } = request.params
+  console.log(membership_id)
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query(`DELETE FROM memberships WHERE memberships.membership_id = ${membership_id}`)
+    })
+    .then(result => {
+      response.json({ success: data })
+    })
+})
+
 app.get('/get-groups', function (req, res) {
   // Make a query to the database
   db.pools
@@ -79,58 +92,33 @@ app.get('/createGroup', function (req, res) {
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 
-app.post('/insert', (request, response) => { })
+app.get('/membershipViews/:id', function (req, res) {
+  // save the currentUser ID as a variable to use in the select query
+  const { id } = req.params
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+      // retrieve all recordsets with the following information to be displayed on the profile page
 
-const GROUPS = [
-  {
-    group_id: '1',
-    group_name: 'Phantom Menace',
-    date_joined: new Date('1999'),
-    group_num: '6',
-    group_url: 'PM.html',
-    group_online: '4'
-  },
-  {
-    group_id: '2',
-    group_name: 'Attack of the Clones',
-    date_joined: new Date('2002'),
-    group_num: '6',
-    group_url: 'AC.html',
-    group_online: '4'
-  },
-  {
-    group_id: '3',
-    group_name: 'Revenge of the Sith',
-    date_joined: new Date('2005'),
-    group_num: '6',
-    group_url: 'RS.html',
-    group_online: '4'
-  },
-  {
-    group_id: '4',
-    group_name: 'A New Hope',
-    date_joined: new Date('1977'),
-    group_num: '6',
-    group_url: 'ANH.html',
-    group_online: '4'
-  },
-  {
-    group_id: '5',
-    group_name: 'The Empire Strikes Back',
-    date_joined: new Date('1980'),
-    group_num: '6',
-    group_url: 'ESB.html',
-    group_online: '4'
-  },
-  {
-    group_id: '6',
-    group_name: 'Return of the Jedi',
-    date_joined: new Date('1983'),
-    group_num: '6',
-    group_url: 'RJ.html',
-    group_online: '4'
-  }
-]
+        // want to retrieve the specific users personal details
+        // then search the memberships table for the entries corresponding to the user_id
+        // retrieve the groups that correspond to the user_id in the memberships table
+        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (${id}) = memberships.user_id`)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 // read user database entry - called when the page is loaded
 app.get('/getAll', (request, response) => {
@@ -169,5 +157,5 @@ io.on('connection', socket => {
 
 /* ----------------------------- Database Test ----------------------------- */
 
-const PORT = process.env.PORT||3000
+const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
