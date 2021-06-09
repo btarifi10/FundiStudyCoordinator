@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="css/group-selector.css">
 <link rel="stylesheet" href="css/bootstrap.min.css">
 
-<script defer src="scripts/main.js"></script>
+<script defer src="scripts/main.js" type = "module"></script>
 
 </head>
 <body>
@@ -20,6 +20,14 @@
     <a href="#notifications">Notifications</a>
     <a href="#chat">Chats</a>
 
+    < <button class="dropdown-btn2" id = 'dropdown-buttonAllGroups' > All Groups
+      <i class="fa fa-caret-down" id = 'id1'></i>
+    </button> > 
+    <div class="dropdown-container" id= 'dropdown-containerAllGroups'> 
+      <input type="text" placeholder="Search All Groups" id="inputGroupSearch" onkeyup=entireGroupSearch ()  ">
+  </div>  
+   
+
 
 
     <!-- Using a basic option selection for filling in from a static list -->
@@ -28,13 +36,13 @@
     </select>  -->
 
     <!-- Using the dropdown functionality to go to different groups -->
-    < <button class="dropdown-btn" id = 'dropdown-buttonID' > Study Groups
+    < <button class="dropdown-btn" id = 'dropdown-buttonID' > My Study Groups
       <i class="fa fa-caret-down"></i>
     </button> > 
 
 
     <div class="dropdown-container" id= 'dropdown-containerID'> 
-        <input type="text" placeholder="Search Groups" id="inputValue" onkeyup="groupSearch()">
+        <input type="text" placeholder="Search My Groups" id="inputValue" onkeyup="groupSearch()">
     </div>  
 
   <!--HardCoded group  Code -->
