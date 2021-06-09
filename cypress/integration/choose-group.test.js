@@ -10,8 +10,7 @@ Steps:
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 
-
-Or 
+Or
 Run './node_modules/.bin/cypress run'
 ----------------------------------------------------------------------------- */
 describe('Confirming Index page loads correctly', () => {
@@ -161,7 +160,6 @@ describe('Group Searching Testing', () => {
       .type('S')
       .get('#dropdown-containerID')
       .contains(studyGroups[1]).should('be.visible')
-
 
     cy.get('#inputValue')
       .clear()

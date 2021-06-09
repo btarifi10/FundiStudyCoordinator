@@ -44,6 +44,43 @@ app.use('/', loginRouter)
 const groupRouter = require('./group-routes')
 app.use(groupRouter)
 
+const db = require('./database-service')
+
+app.delete('/delete/:membership_id', (request, response) => {
+  const { membership_id } = request.params
+  console.log(membership_id)
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query(`DELETE FROM memberships WHERE memberships.membership_id = ${membership_id}`)
+    })
+    .then(result => {
+      response.json({ success: data })
+    })
+})
+
+app.get('/get-groups', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        // This is only a test query, change it to whatever you need
+        .query('SELECT group_name FROM groups')
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+
 /* ----------------------------- Yasser's Code ----------------------------- */
 
 app.get('/intermediate-group', function (req, res) {
@@ -55,8 +92,6 @@ app.get('/createGroup', function (req, res) {
 })
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
-const db = require('./database-service')
-
 app.get('/profileViews/:id', (req, res) => {
   const {id} = req.params
   // Make a query to the database
@@ -83,18 +118,18 @@ app.get('/profileViews/:id', (req, res) => {
 
 app.get('/membershipViews/:id', function (req, res) {
   // save the currentUser ID as a variable to use in the select query
-  const {id} = req.params
+  const { id } = req.params
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
       return pool.request()
-        // retrieve all recordsets with the following information to be displayed on the profile page
+      // retrieve all recordsets with the following information to be displayed on the profile page
 
         // want to retrieve the specific users personal details
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
-        .query(`SELECT date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (${id}) = memberships.user_id`)
+        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (${id}) = memberships.user_id`)
     })
     // Send back the result
     .then(result => {
@@ -137,31 +172,6 @@ app.get('/intermediate-chat', function (req, res) {
 io.on('connection', socket => {
   handleChatMember(io, socket)
 })
-
-/* ----------------------------- Database Test ----------------------------- */
-
-//const db = require('./database-service')
-/*
-app.get('/database', function (req, res) {
-  // Make a query to the database
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        // This is only a test query, change it to whatever you need
-        .query('SELECT * FROM users')
-    })
-    // Send back the result
-    .then(result => {
-      res.send(result)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})*/
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

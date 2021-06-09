@@ -17,15 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
         loadProfile(data)
       })
     })
-
 })
 
 document.querySelector('table tbody').addEventListener('click', function (event) {
   if (event.target.className == 'delete-row-btn') {
-    LeaveGroup(event.target.dataset.group_id)
+    LeaveGroup(event.target.dataset.id)
   }
   if (event.target.className == 'navigate-group-btn') {
-    handleNavigation(event.target.dataset.group_id)
+    handleNavigation(event.target.dataset.id)
   }
 })
 
@@ -58,16 +57,18 @@ membBtn.onclick = function () {
   userService.getCurrentUser().then(
     user => {
       currentUser = user
-      fetch('http://localhost:3000/membershipViews/'+ currentUser.id)
-      .then(response => response.json())
+      fetch('http://localhost:3000/membershipViews/' + currentUser.id)
+        .then(response => response.json())
         .then(data => {
           console.log(data)
           loadHTMLTable(data)
         }
-)})}
+        )
+    })
+}
 
 function loadHTMLTable (data) {
-  const table = document.querySelector('table tbody'); 
+  const table = document.querySelector('table tbody')
   console.log(data.recordset.length)
   if (data.recordsets.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='7'>No Memberships</td></tr>"
@@ -76,19 +77,20 @@ function loadHTMLTable (data) {
 
   let tableHtml = ''
 
-  data.recordset.forEach(function ({ group_id, group_name, date_joined}) {//group_num, group_online, group_url }) {
+  data.recordset.forEach(function ({ group_id, group_name, date_joined, membership_id }) { // group_num, group_online, group_url }) {
     tableHtml += '<tr>'
     tableHtml += `<td id='${group_id}-id'>${group_id}</td>`
     tableHtml += `<td id = '${group_id}-group-name'>${group_name}</td>`
     tableHtml += `<td id = '${group_id}-date-joined'>${date_joined}</td>`
-    tableHtml += `<td id = '${group_id}-num-memb'>group_num</td>`//${group_num}</td>`
-    tableHtml += `<td id = '${group_id}-num-online'>group_online</td>`//${group_online}</td>`
+    tableHtml += `<td id = '${group_id}-num-memb'>group_num</td>`// ${group_num}</td>`
+    tableHtml += `<td id = '${group_id}-num-online'>group_online</td>`// ${group_online}</td>`
     tableHtml += `<td><button class="navigate-group-btn" data-id=${group_id}>Navigate</td>`
-    tableHtml += `<td><button class="delete-row-btn" data-id=${group_id}>Leave</td>`
+    tableHtml += `<td><button class="delete-row-btn" data-id=${membership_id}>Leave</td>`
     tableHtml += '</tr>'
   })
   table.innerHTML = tableHtml
 }
+
 
 function loadProfile(data) {
   const profile = document.querySelector('#user_details'); 
@@ -107,8 +109,8 @@ function loadProfile(data) {
   profile.innerHTML = tableHtml
 }
 
-function LeaveGroup (group_id) {
-  fetch('http://localhost:3000/leaveGroup/' + group_id, {
+function LeaveGroup (membership_id) {
+  fetch('http://localhost:3000/delete/' + membership_id, {
     method: 'DELETE'
   })
     .then(response => response.json())

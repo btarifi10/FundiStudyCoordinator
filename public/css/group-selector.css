@@ -2,9 +2,6 @@ body {
     font-family: "Lato", sans-serif;
   }
 
-
-
-  
   
   /* Fixed sidenav, full height */
   .sidenav {
@@ -33,6 +30,26 @@ body {
     cursor: pointer;
     outline: none;
   }
+
+    /* Style the sidenav links and the dropdown button */
+    .sidenav a, .dropdown-btn2 {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 20px;
+      color: #818181;
+      display: block;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      outline: none;
+    }
+    
+  /* On mouse-over */
+  .sidenav a:hover, .dropdown-btn2:hover {
+    color: #f1f1f1;
+  } 
   
   /* On mouse-over */
   .sidenav a:hover, .dropdown-btn:hover {
@@ -55,7 +72,7 @@ body {
   /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
   .dropdown-container {
     display: none;
-    background-color: #262626;
+    background-color: #a9d8a5;
     padding-left: 8px;
   }
   
