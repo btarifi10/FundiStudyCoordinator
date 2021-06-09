@@ -1,9 +1,6 @@
-
-import {​​​​​​​​ UserService }​​​​​​​​ from'./UserService.js'
-constuserService = UserService.getUserServiceInstance()
+import { UserService } from './UserService.js'
+const userService = UserService.getUserServiceInstance()
 let currentUser =  null
-
-
 
 document.addEventListener('DOMContentLoaded', function () {
   fetch('http://localhost:3000/getAll')
@@ -12,8 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
       userGroups = data
       loadHTMLTable(userGroups)
     })
-    // .then(data => console.log(data))
-  // loadHTMLTable([''])
 })
 
 document.querySelector('table tbody').addEventListener('click', function (event) {
