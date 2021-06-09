@@ -59,26 +59,32 @@ const id = 2;
 console.log(id)
 
 const db = require('./database-service')
+// this currently gives errors, used 
 // app.post('/insertINTOdatabase', (request, response) => { 
+//   const {user_id,group_id,date_joined} = request.body;
+//   const query = "INSERT INTO memberships (user_id, group_id, date_joined) VALUES (?,?,?)";
 //   db.pools
 //     .then((pool) =>{
 //       return pool.request()
-//         .query("INSERT INTO memberships (,,,) VALUES ()", [])
+//         .query(query, [user_id,group_id, date_joined])
+//         //.query('INSERT INTO memberships (user_id, group_id, date_joined) VALUES (2,1,2021-06-08 08:52:23)')//, ['1','1','2021-06-08 08:52:23'])
+//     })
+//     .then(result => {
+//       response.send(result)
+//       //console.log(result)
 //     })
 // })
 
-app.get('/profileViews', function (req, res) {
+app.get('/profileViews/:id', (req, res) => {
+  const {id} = req.params
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
       return pool.request()
         // retrieve all recordsets with the following information to be displayed on the profile page
-
         // want to retrieve the specific users personal details
-        // // then search the memberships table for the entries corresponding to the user_id
-        // // retrieve the groups that correspond to the user_id in the memberships table
-        .query('SELECT * FROM users WHERE users.user_id = 2')//WHERE users.user_id = user_id'
+        .query(`SELECT * FROM users WHERE users.user_id = (${id})`)
     })
     // Send back the result
     .then(result => {
@@ -93,7 +99,8 @@ app.get('/profileViews', function (req, res) {
     })
 })
 
-app.get('/membershipViews', function (req, res) {
+app.get('/membershipViews/:id', function (req, res) {
+  const {id} = req.params
   // Make a query to the database
   db.pools
     // Run query
@@ -104,7 +111,8 @@ app.get('/membershipViews', function (req, res) {
         // want to retrieve the specific users personal details
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
-        .query('SELECT date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE 2 = memberships.user_id')
+        // change the value '2' to the specific user_id
+        .query(`SELECT date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (${id}) = memberships.user_id`)
         //.query('SELECT * FROM memberships')
     })
     // Send back the result
@@ -119,7 +127,6 @@ app.get('/membershipViews', function (req, res) {
       })
     })
 })
-
 
 app.get('/profile', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
