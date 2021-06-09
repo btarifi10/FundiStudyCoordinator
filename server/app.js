@@ -100,6 +100,7 @@ app.get('/profileViews/:id', (req, res) => {
 })
 
 app.get('/membershipViews/:id', function (req, res) {
+  // save the currentUser ID as a variable to use in the select query
   const {id} = req.params
   // Make a query to the database
   db.pools
@@ -111,9 +112,7 @@ app.get('/membershipViews/:id', function (req, res) {
         // want to retrieve the specific users personal details
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
-        // change the value '2' to the specific user_id
         .query(`SELECT date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (${id}) = memberships.user_id`)
-        //.query('SELECT * FROM memberships')
     })
     // Send back the result
     .then(result => {
