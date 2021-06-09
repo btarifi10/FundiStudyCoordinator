@@ -1,62 +1,36 @@
-const GROUPS = [
-  {
-    group_id: '1',
-    group_name: 'The Lion King',
-    date_joined: new Date('1994'),
-    group_num: '200',
-    group_url: 'TLK.html',
-    group_online: '5'
-  },
-  {
-    group_id: '2',
-    group_name: 'Hercules',
-    date_joined: new Date('1997'),
-    group_num: '150',
-    group_url: 'H.html',
-    group_online: '10'
-  },
-  {
-    group_id: '3',
-    group_name: 'Onward',
-    date_joined: new Date('2020'),
-    group_num: '50',
-    group_url: 'O.html',
-    group_online: '30'
-  },
-  {
-    group_id: '4',
-    group_name: 'Tangled',
-    date_joined: new Date('2010'),
-    group_num: '30',
-    group_url: 'T.html',
-    group_online: '4'
-  },
-  {
-    group_id: '5',
-    group_name: 'Zootopia',
-    date_joined: new Date('2016'),
-    group_num: '10',
-    group_url: 'Z.html',
-    group_online: '5'
-  },
-  {
-    group_id: '6',
-    group_name: 'Coco',
-    date_joined: new Date('2017'),
-    group_num: '3',
-    group_url: 'C.html',
-    group_online: '1'
-  }
-]
+import { UserService } from './UserService.js'
+// import { currentUser } from './dashboard.js'
+//let currentUser = null
+// const {
+//   currentUser
+// } = require('./dashboard.js')
 
-let userGroups = null
+// console.log(currentUser.username)
+
+const userService = UserService.getUserServiceInstance()
 
 document.addEventListener('DOMContentLoaded', function () {
-  fetch('http://localhost:3000/getAll')
+  userService.getCurrentUser().then(
+    user => {
+      currentUser = user
+      const welcomeDiv = document.getElementById('welcome-div')
+      const welcomeHeading = document.createElement('h2')
+      welcomeHeading.textContent = `Welcome, ${currentUser.username} with ID ${currentUser.id}`
+      welcomeDiv.appendChild(welcomeHeading)
+    })
+  fetch('http://localhost:3000/profileViews')//  , {
+    // headers: {
+    //     'Content-type': 'application/json'
+    // },
+    // method: 'POST',
+    // body: JSON.stringify({user_id : userService.getCurrentUser().id})
+    // })
     .then(response => response.json())
     .then(data => {
-      userGroups = data
-      loadHTMLTable(userGroups)
+      console.log(data)
+      loadProfile(data)
+      //loadHTMLTable(data)
+      //console.log(userGroups)
     })
     // .then(data => console.log(data))
   // loadHTMLTable([''])
@@ -77,33 +51,54 @@ function handleNavigation () {
 
 const membBtn = document.querySelector('#membership-btn')
 membBtn.onclick = function () {
-  loadHTMLTable(GROUPS)
-  // location.href=("http://127.0.0.1:5500/views/home.html");
-}
+  fetch('http://localhost:3000/membershipViews')
+  .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      loadHTMLTable(data)
+})}
 
 function loadHTMLTable (data) {
-  const table = document.querySelector('table tbody'); 5
-
-  if (data.length === 0) {
+  const table = document.querySelector('table tbody'); 
+  console.log(data.recordset.length)
+  //userGroups = data.recordset[1].group_id//[['group_id', 'group_name', 'date_created']]
+  if (data.recordsets.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='7'>No Memberships</td></tr>"
     return
   }
 
   let tableHtml = ''
 
-  data.forEach(function ({ group_id, group_name, date_joined, group_num, group_online, group_url }) {
+  data.recordset.forEach(function ({ group_id, group_name, date_created}) {//group_num, group_online, group_url }) {
     tableHtml += '<tr>'
     tableHtml += `<td id='${group_id}-id'>${group_id}</td>`
-    tableHtml += `<td id = '${group_id}-group-name'><a href= ${group_url} id='${group_id}-url'>${group_name}</a></td>` //  tableHtml += `<td>${group_name}</td>`;
-    tableHtml += `<td id = '${group_id}-date-joined'>${new Date(date_joined).toLocaleString()}</td>`
-    tableHtml += `<td id = '${group_id}-num-memb'>${group_num}</td>`
-    tableHtml += `<td id = '${group_id}-num-online'>${group_online}</td>`
+    tableHtml += `<td id = '${group_id}-group-name'>${group_name}</td>` //  tableHtml += `<td>${group_name}</td>`;
+    tableHtml += `<td id = '${group_id}-date-joined'>${date_created}</td>`
+    tableHtml += `<td id = '${group_id}-num-memb'>group_num</td>`//${group_num}</td>`
+    tableHtml += `<td id = '${group_id}-num-online'>group_online</td>`//${group_online}</td>`
     tableHtml += `<td><button class="navigate-group-btn" data-id=${group_id}>Navigate</td>`
     tableHtml += `<td><button class="delete-row-btn" data-id=${group_id}>Leave</td>`
     tableHtml += '</tr>'
   })
 
   table.innerHTML = tableHtml
+}
+
+function loadProfile(data) {
+  const profile = document.querySelector('#user_details'); 
+  //userGroups = data.recordset[1].group_id//[['group_id', 'group_name', 'date_created']]
+  if (data.recordset.length === 0) {
+    profile.innerHTML = "<p class='no-data'>No Informations</p>"
+    return
+  }
+  let tableHtml = ''
+
+  data.recordset.forEach(function ({ username, first_name, last_name}) {//group_num, group_online, group_url }) {
+    tableHtml += `<p id='${username}-id'>Username: ${username}</p>`
+    tableHtml += `<p id='${first_name}-id'>First name: ${first_name}</p>`
+    tableHtml += `<p id='${last_name}-id'>Last name: ${last_name}</p>`
+  })
+  profile.innerHTML = tableHtml
 }
 
 function LeaveGroup (group_id) {

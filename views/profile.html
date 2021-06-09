@@ -7,11 +7,12 @@
     <title>Profile</title>
 </head>
 <body>
+    <div id="welcome-div">
+
+    </div>
     <div class="Profile">
         <h1>View your Details</h1>
-		<p> First name: Obi-Wan</p>
-		<p> Surname: Kanobi</p>
-		<p> Username: MayTheForceBeWithYou</p>
+        <p id="user_details"></p>
 		
         <!-- The button below will be used to fetch/update the user's membership details -->
         <button type="submit" id="membership-btn"> Click here to view your current memberships</button>
@@ -39,8 +40,8 @@
 		
     </div>
     <div style="text-align: center">
-        <a href="home" id="home-link"> Return home </a> <br>
+        <a href="dashboard" id="home-link"> Return home </a> <br>
     </div>
-    <script src="/scripts/memberships.js"></script>
+    <script type="module" src="/scripts/memberships.js"></script>
 </body>
 </html>
