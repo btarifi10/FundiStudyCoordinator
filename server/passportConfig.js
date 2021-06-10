@@ -15,7 +15,7 @@ function initialise (passport, getUserByUsername, getUserById) {
     }
 
     try {
-      if (await bcrypt.compare(password, user.password)) { return done(null, user) } else {
+      if (await bcrypt.compare(password, user.userPassword)) { return done(null, user) } else {
         return done(null, false, { message: 'Password Incorrect' })
       }
     } catch (error) {
@@ -25,7 +25,7 @@ function initialise (passport, getUserByUsername, getUserById) {
 
   passport.use(new LocalStrategy({ usernameField: 'username' }, authenticateUser))
 
-  passport.serializeUser((user, done) => { return done(null, user.id) })
+  passport.serializeUser((user, done) => { return done(null, user.userId) })
   passport.deserializeUser((id, done) => { return done(null, getUserById(id)) })
 }
 

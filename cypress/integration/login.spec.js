@@ -1,4 +1,5 @@
 describe('Login test with new registration and successive login and log out', () => {
+  /*
   it('Fill register form', () => {
     cy.visit('register')
     cy.get('form')
@@ -15,8 +16,9 @@ describe('Login test with new registration and successive login and log out', ()
 
     cy.url().should('eq', Cypress.config().baseUrl + 'login')
   })
-
+  */
   it('Login as created user', () => {
+    cy.visit('login')
     cy.get('form')
 
     cy.get('input[name="username"]')
@@ -61,7 +63,7 @@ describe('Login test with new registration and successive login and log out', ()
 })
 
 describe('Multiple registered users', () => {
-  it('A second unique user can be registered', () => {
+  /* it('A second unique user can be registered', () => {
     cy.visit('register')
     cy.get('form')
 
@@ -77,6 +79,7 @@ describe('Multiple registered users', () => {
 
     cy.url().should('eq', Cypress.config().baseUrl + 'login')
   })
+  */
 
   it('An existing user cannot be registered', () => {
     cy.visit('register')

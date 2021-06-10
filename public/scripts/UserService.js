@@ -3,7 +3,6 @@
 import { UserDetails } from '../libraries/models/UserDetails.js'
 
 // TODO: replace hardcoded things
-const baseUrl = 'http://localhost:3000/api'
 const instance = null
 
 export class UserService {
@@ -16,10 +15,10 @@ export class UserService {
   async getCurrentUser () {
     try {
       const user = await new Promise((resolve, reject) => {
-        fetch(baseUrl + '/currentUser')
+        fetch('api/currentUser')
           .then(response => response.json())
           .then(data => {
-            resolve(new UserDetails(data.id, data.username))
+            resolve(new UserDetails(data.userId, data.username, data.firstName, data.lastName))
           })
       })
       return user

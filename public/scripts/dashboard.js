@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentUser = user
       const welcomeDiv = document.getElementById('welcome-div')
       const welcomeHeading = document.createElement('h2')
-      welcomeHeading.textContent = `Welcome, ${currentUser.username} with ID ${currentUser.id}`
+      welcomeHeading.textContent = `Welcome, ${currentUser.firstName} ${currentUser.lastName}`
       welcomeDiv.appendChild(welcomeHeading)
     }
   )

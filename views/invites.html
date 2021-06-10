@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Invites</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+</head>
+
+<body>
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-md-8 m-5 p-5">
+                <div class="card text-center bg-light m-3 p-3">
+                    <div id='invite-msg'></div>
+
+                    <table class="table" id="invite-table">
+                        <thead>
+                            <th>Group</th>
+                            <th>Course Code</th>
+                            <th>Invitation Date</th>
+                            <th>Accept</th>
+                            <th>Decline</th> 
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- Link to dashboard page -->
+                <div class="card text-center bg-light m-3 p-3">
+                    <a href="/dashboard"> Back to dashboard </a> <br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/invites.js"></script>
+
+</body>
+
+</html>

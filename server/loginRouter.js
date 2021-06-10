@@ -5,16 +5,27 @@ module.exports = function (app, passport) {
   const router = require('express').Router()
   const path = require('path')
   const bcrypt = require('bcrypt')
+  const { UserService } = require('./user-service')
+  const userService = UserService.getUserServiceInstance()
 
-  // TODO: Replace hardcoded users with database (and database service).
-  const users = []
+  let users = []
+
+  function updateUsers () {
+    userService.getAllUsers().then(
+      data => {
+        users = data
+      }
+    )
+  }
+
+  updateUsers()
 
   // Initialise Passport.js
   const initialisePassport = require('./passportConfig.js')
   initialisePassport(
     passport,
     username => users.find(user => user.username === username),
-    id => users.find(user => user.id === id)
+    id => users.find(user => user.userId === id)
   )
   app.use(passport.initialize())
   app.use(passport.session())
@@ -37,19 +48,32 @@ module.exports = function (app, passport) {
   // Post request to create user - checks if user is authenticated and if username already exists
   router.post('/register', checkNotAuthenticated, async (req, res) => {
     if (users.findIndex(user => user.username === req.body.username) >= 0) {
+      console.log('existing')
       return res.redirect('/register')
     }
 
     try {
       // Use bcrypt to hash the password for security purposes.
       const hashPasswd = await bcrypt.hash(req.body.password, 7)
-      users.push({
-        id: users.length,
+
+      const user = {
         username: req.body.username,
-        password: hashPasswd
+        user_password: hashPasswd,
+        first_name: req.body.firstName,
+        last_name: req.body.lastName
+      }
+
+      const success = new Promise((resolve, reject) => {
+        userService.addNewUser(user)
+          .then(result => resolve(result))
       })
-      console.log(users)
-      res.redirect('/login')
+
+      if (success) {
+        updateUsers()
+        res.redirect('/login')
+      } else {
+        res.redirect('/register')
+      }
     } catch {
       res.redirect('/register')
     }
@@ -70,7 +94,12 @@ module.exports = function (app, passport) {
 
   // Retrieve current user details.
   router.get('/api/currentUser', checkAuthenticated, (req, res) => {
-    res.json({ id: req.user.id, username: req.user.username })
+    res.json({
+      userId: req.user.userId,
+      username: req.user.username,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName
+    })
   })
 
   // Log out.
@@ -94,7 +123,6 @@ module.exports = function (app, passport) {
 
     return res.redirect('/')
   }
-
   // Export router.
   return router
 }
