@@ -17,7 +17,7 @@ const socketio = require('socket.io')
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
-const handleChatMember = require('./chat-server')
+const handleChatMember = require('./group-chat/chat-server')
 
 /* ----------------------------- Initial Setup ----------------------------- */
 
@@ -158,15 +158,8 @@ app.get('/home', function (req, res) {
 
 // Routing
 
-// TODO - Add proper routing files
-app.get('/chat', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'chat.html'))
-})
-
-// TODO - Add proper routing files
-app.get('/intermediate-chat', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-chat.html'))
-})
+const chatRouter = require('./group-chat/chat-routes')
+app.use(chatRouter)
 
 // Chat Service
 
@@ -175,5 +168,6 @@ io.on('connection', socket => {
   handleChatMember(io, socket)
 })
 
+/* ------------------------------------------------------------------------- */
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
