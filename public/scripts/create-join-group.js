@@ -118,10 +118,12 @@ function updateGroupList () {
       admin: [username],
       startDate: new Date()
     }
+
     database.push(newGroup)
     const { groupName: group_name, courseCode: course_code, startDate: start_date } = newGroup
     createGroupEntry({ group_name, course_code, start_date })
       .then(loadDatabaseGroups())
+    // sendInvites(inviteList)
   } else {
     alert('Please enter a VALID group name, that does NOT already EXIST')
   }
@@ -145,24 +147,14 @@ function createGroupEntry (newGroup) {
   })
 }
 
-// function createGroupEntry (newGroup) {
-//   const form = document.createElement('form')
-//   form.method = 'post'
-//   form.action = '/createGroup'
-
-//   for (const key in newGroup) {
-//     if (newGroup.hasOwnProperty(key)) {
-//       const hiddenField = document.createElement('input')
-//       hiddenField.type = 'hidden'
-//       hiddenField.name = 'newGroup'
-//       hiddenField.value = key
-//       hiddenField.value = newGroup[key]
-
-//       form.appendChild(hiddenField)
-//     }
-//   }
-//   document.body.appendChild(form)
-//   form.submit()
+// function sendInvites (inviteList) {
+//   fetch('/sendInvites', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify(inviteList)
+//   })
 // }
 
 // Search for users in the drop down, and filter drop down accordingly
