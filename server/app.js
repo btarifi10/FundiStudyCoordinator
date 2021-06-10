@@ -48,14 +48,14 @@ const db = require('./database-service')
 
 app.delete('/delete/:membership_id', (request, response) => {
   const { membership_id } = request.params
-  console.log(membership_id)
   db.pools
     .then((pool) => {
       return pool.request()
-        .query(`DELETE FROM memberships WHERE memberships.membership_id = ${membership_id}`)
+        .input('membership_id', db.sql.Int, membership_id)
+        .query(`DELETE FROM memberships WHERE memberships.membership_id = @membership_id`)
     })
     .then(result => {
-      response.json({ success: data })
+      response.json({ success: result })
     })
 })
 
@@ -101,7 +101,8 @@ app.get('/profileViews/:id', (req, res) => {
       return pool.request()
         // retrieve all recordsets with the following information to be displayed on the profile page
         // want to retrieve the specific users personal details
-        .query(`SELECT * FROM users WHERE users.user_id = (${id})`)
+        .input('id', db.sql.Int, id)
+        .query(`SELECT * FROM users WHERE users.user_id = (@id)`)
     })
     // Send back the result
     .then(result => {
@@ -129,7 +130,8 @@ app.get('/membershipViews/:id', function (req, res) {
         // want to retrieve the specific users personal details
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
-        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (${id}) = memberships.user_id`)
+        .input('id', db.sql.Int, id)
+        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id`)
     })
     // Send back the result
     .then(result => {
