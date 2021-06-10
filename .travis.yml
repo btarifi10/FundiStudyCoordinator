@@ -22,7 +22,8 @@ before_install:
     - npm update
 
 script:
-    - npm run test:coveralls
+    # - npm run test:coveralls
+    - npm run test
     - npm run cy:setup
     - npm run cy:run
     - kill $(jobs -p) || true
