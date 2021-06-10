@@ -19,7 +19,7 @@ export class UserService {
         fetch(baseUrl + '/currentUser')
           .then(response => response.json())
           .then(data => {
-            resolve(new UserDetails(data.id, data.username))
+            resolve(new UserDetails(data.userId, data.username, data.firstName, data.lastName))
           })
       })
       return user
