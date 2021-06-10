@@ -14,17 +14,23 @@
 
         <label><strong>Create A New Group:</strong></label>
         <br>
-        <form action='#' id="createForm" onsubmit="updateGroupList();return false">
+        <form action="#" id="createForm" onsubmit="updateGroupList();return false">
             <div class="form-control">
                 <label for="groupName">Group Name (max 30 characters):</label>
                 <input type="text" name="groupName" id="groupName" placeholder="Enter New Study Group..." onfocus=this.value='' required />
                 <br>
-                <!-- The invite feature may be friendlier with a search list -->
-                <select id="inviteList" multiple></select>
+                <!-- Consider allowing the selected user to invite to remain until unselected or 'create' is clicked -->
+                <select id="inviteList" multiple></select> 
             </div>
-            <button type="submit" id="create-btn" class="btn btn-secondary" >Create</button>
+            <button type="submit" id="create-btn" class="btn btn-secondary" value="tingy">Create</button>
         </form>
 
+        <br><br><br>
+        <!-- <form action="/createGroup" method="POST">
+            <h1>Welcome to the test</h1>
+            <input type="submit" id="tingy" name="ting" value="Invite results" />
+
+        </form> -->
         <br><br><br>
 
         <div>

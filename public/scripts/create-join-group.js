@@ -1,5 +1,7 @@
 'use strict'
 
+// const { post } = require('../../server/group-routes')
+
 const database = [
   {
     groupName: 'Software',
@@ -28,23 +30,32 @@ const database = [
 ]
 
 // TO DO: must replace this 'users' with a get function to the database of all users (user names NOT first names)
-const users = ['Albus', 'Snape', 'Ron', 'Luna', 'Harry', 'Hermoie', 'Draco', 'Cho', 'Cedric', 'Voldemort', 'Lockhart', 'Sirius']
+
+// const users = ['Albus', 'Snape', 'Ron', 'Luna', 'Harry', 'Hermoie', 'Draco', 'Cho', 'Cedric', 'Voldemort', 'Lockhart', 'Sirius']
 
 const { username } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 })
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Load group and member data from database to show in table
+
   loadHTMLTable(database, username)
-  populateUsersList(users)
+
+  // Load list of usernames to invite
+  fetch('/get-users?username=${username}')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(populateUsersList)
 })
 
 function populateUsersList (users) {
-  users.forEach((element, index) => {
+// 'users' should have records from database
+  users.forEach(element => {
     const inviteList = document.getElementById('inviteList')
     const option = document.createElement('option')
-    option.text = element
-    option.value = index
+    option.text = element.username
+    option.value = element.user_id
     inviteList.add(option)
   })
 }
@@ -104,6 +115,7 @@ function updateGroupList () {
       startDate: new Date()
     }
     database.push(newGroup)
+    createGroupEntry(newGroup)
     loadHTMLTable(database, username)
   } else {
     alert('Please enter a VALID group name, that does NOT already EXIST')
@@ -118,9 +130,38 @@ function joinGroup (clicked_id) {
   loadHTMLTable(database, username)
 }
 
+function createGroupEntry (newGroup) {
+  fetch('/createGroup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newGroup)
+  })
+}
+
+// function createGroupEntry (newGroup) {
+//   const form = document.createElement('form')
+//   form.method = 'post'
+//   form.action = '/createGroup'
+
+//   for (const key in newGroup) {
+//     if (newGroup.hasOwnProperty(key)) {
+//       const hiddenField = document.createElement('input')
+//       hiddenField.type = 'hidden'
+//       hiddenField.name = 'newGroup'
+//       hiddenField.value = key
+//       hiddenField.value = newGroup[key]
+
+//       form.appendChild(hiddenField)
+//     }
+//   }
+//   document.body.appendChild(form)
+//   form.submit()
+// }
+
 // Search for users in the drop down, and filter drop down accordingly
 function userSearch (searchTerm) {
-  // const searchTerm = document.getElementById('userSearch')
   // Allows both cases to be correctly identified
   const filter = searchTerm.toLowerCase()
   const inviteList = document.getElementById('inviteList')

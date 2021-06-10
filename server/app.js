@@ -46,13 +46,76 @@ app.use(groupRouter)
 
 /* ----------------------------- Yasser's Code ----------------------------- */
 
+const db = require('./database-service')
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }))
+
 app.get('/intermediate-group', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
 })
 
 app.get('/createGroup', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'create-join-group.html'))
+  // Add code here to get stuff from the database
 })
+
+app.use(express.json())
+
+app.get('/get-users', function (req, res) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, req.query.username)
+        .query(`
+          SELECT user_id, username 
+          FROM users
+          WHERE username <> (@username)
+          ORDER BY username ASC;     
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      //console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// app.post('/createGroup', function (req, res) {
+//   const newGroup = req.body.newGroup
+
+//   const sql = 'INSERT INTO groups () VALUES ?'
+//   const values = ['1', newGroup.groupName, 'ELEN1000', 'newGroup.startDate']
+//   // Make a query to the database
+//   db.pools
+//     // Run query
+//     .then((pool) => {
+//       return pool.request()
+//       // This is only a test query, change it to whatever you need
+
+//         .query(sql, [values], function (err, result) {
+//           if (err) throw err
+//           console.log('number of records inserted: ' + result.affectedRows)
+//         })
+//     })
+//     // Send back the result
+//     .then(result => {
+//       res.send(result)// Send this back to the web page?
+//       console.log(result)
+//     })
+//     // If there's an error, return that with some description
+//     .catch(err => {
+//       res.send({
+//         Error: err
+//       })
+//     })
+// })
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 
@@ -145,29 +208,30 @@ io.on('connection', socket => {
 })
 
 /* ----------------------------- Database Test ----------------------------- */
-/*
-const db = require('./database-service')
 
-app.get('/database', function (req, res) {
-  // Make a query to the database
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        // This is only a test query, change it to whatever you need
-        .query('SELECT * FROM users')
-    })
-    // Send back the result
-    .then(result => {
-      res.send(result)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
-*/
+// const db = require('./database-service')
+
+// app.get('/database', function (req, res) {
+// // Make a query to the database
+// db.pools
+//   // Run query
+//   .then((pool) => {
+//     return pool.request()
+//       // This is only a test query, change it to whatever you need
+//       .query('SELECT * FROM users')
+//   })
+//   // Send back the result
+//   .then(result => {
+//     res.send(result)// Send this back to the web page?
+//     console.log(result)
+//   })
+//   // If there's an error, return that with some description
+//   .catch(err => {
+//     res.send({
+//       Error: err
+//     })
+//   })
+// })
+
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
