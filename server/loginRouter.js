@@ -48,6 +48,7 @@ module.exports = function (app, passport) {
   // Post request to create user - checks if user is authenticated and if username already exists
   router.post('/register', checkNotAuthenticated, async (req, res) => {
     if (users.findIndex(user => user.username === req.body.username) >= 0) {
+      console.log('existing')
       return res.redirect('/register')
     }
 

@@ -5,7 +5,6 @@ const profileRouter = express.Router()
 const path = require('path')
 const db = require('./database-service')
 const moment = require('moment')
-const { ok } = require('assert')
 
 profileRouter.get('/invites', checkAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'views', 'invites.html'))
@@ -16,7 +15,7 @@ profileRouter.get('/api/getInvites', checkAuthenticated, (req, res) => {
     // Run query
     .then((pool) => {
       return pool.request()
-        // This is only a test query, change it to whatever you need
+        // Retrieve ALL invites for current user
         .input('user', db.sql.Char, req.user.userId)
         .query(`
                 SELECT invites.invite_id, groups.group_id, groups.group_name, groups.course_code, invites.time_sent
@@ -42,10 +41,9 @@ profileRouter.post('/api/acceptInvite', checkAuthenticated, (req, res) => {
   const groupId = req.query.groupId
 
   db.pools
-    // Run query
+    // Run query to delete invite and join group
     .then((pool) => {
       return pool.request()
-        // This is only a test query, change it to whatever you need
         .input('invite', db.sql.Char, inviteId)
         .input('group', db.sql.Char, groupId)
         .input('user', db.sql.Char, req.user.userId)
@@ -68,7 +66,7 @@ profileRouter.post('/api/declineInvite', checkAuthenticated, (req, res) => {
   const inviteId = req.query.inviteId
 
   db.pools
-  // Run query
+  // Run query to delete invite
     .then((pool) => {
       return pool.request()
       // This is only a test query, change it to whatever you need
