@@ -146,6 +146,7 @@ io.on('connection', socket => {
 
 /* ----------------------------- Database Test ----------------------------- */
 
+/*
 const db = require('./database-service')
 
 app.get('/database', function (req, res) {
@@ -169,6 +170,12 @@ app.get('/database', function (req, res) {
       })
     })
 })
+*/
+
+/* ------------------------------ Invites: Basheq ---------------------------------- */
+
+const profileRouter = require('./profile-router')
+app.use('/', profileRouter)
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

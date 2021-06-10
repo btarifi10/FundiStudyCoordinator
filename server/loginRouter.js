@@ -14,7 +14,6 @@ module.exports = function (app, passport) {
     userService.getAllUsers().then(
       data => {
         users = data
-        console.log('users', users)
       }
     )
   }
