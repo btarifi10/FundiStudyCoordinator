@@ -39,8 +39,11 @@ const { username } = Qs.parse(location.search, {
 
 document.addEventListener('DOMContentLoaded', function () {
   // Load group and member data from database to show in table
-
-  loadHTMLTable(database, username)
+  fetch('get-groups?username=${username}')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(loadHTMLTable)
+  // loadHTMLTable(database, username)
 
   // Load list of usernames to invite
   fetch('/get-users?username=${username}')
@@ -61,27 +64,24 @@ function populateUsersList (users) {
 }
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
-function loadHTMLTable (data, username) {
+function loadHTMLTable (groupsData) {
   const table = document.querySelector('table tbody')
 
-  if (data.length === 0) {
+  if (groupsData.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='6'>No Data</td></tr>"
   } else {
     let tableHTML = ''
 
-    data.forEach(function ({ groupName, members, admin, startDate }) {
+    groupsData.forEach(element =>  {
+      const { group_name, course_code, members = ['Everyone'], admin = username, date_created } = element
       tableHTML += '<tr>'
-      tableHTML += `<td>${groupName}</td>`
+      tableHTML += `<td>${group_name}</td>`
+      tableHTML += `<td>${course_code}</td>`
       tableHTML += `<td>${members}</td>`
       tableHTML += `<td>${admin}</td>`
-      tableHTML += `<td>${startDate.toLocaleString()}</td>`
-      const groupName_id = groupName.replace(/\s+/g, '')
+      tableHTML += `<td>${date_created.toLocaleString()}</td>`
+      const groupName_id = group_name.replace(/\s+/g, '')
 
-      if (admin.find(name => name === username)) { // id's cannot have spaces, so the group name is collapsed to be the button's unique id
-        tableHTML += `<td><button class="delete-row-btn" id=${groupName_id}>Delete</td>`
-      } else {
-        tableHTML += '<td>-</td>'
-      }
       if (!(members.find(name => name === username))) { // Users cannot join groups they are members of
         tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
       } else {
@@ -104,18 +104,20 @@ function updateGroupList () {
 
   const inviteList = document.getElementById('inviteList')
   const userinput = document.getElementById('groupName').value.trim()
+  const courseCode = document.getElementById('courseCode').value.trim()
   const duplicate = database.find(group => group.groupName === userinput)
   const invitedMembers = selectedMembers(inviteList)
 
   if (duplicate === undefined) {
     const newGroup = {
       groupName: userinput,
+      courseCode: courseCode,
       members: [username, invitedMembers],
       admin: [username],
       startDate: new Date()
     }
     database.push(newGroup)
-    createGroupEntry(newGroup)
+    // createGroupEntry({groupName, courseCode, startDate})
     loadHTMLTable(database, username)
   } else {
     alert('Please enter a VALID group name, that does NOT already EXIST')

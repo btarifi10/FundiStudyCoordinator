@@ -23,6 +23,9 @@
                 <select id="inviteList" multiple></select> 
             </div>
             <button type="submit" id="create-btn" class="btn btn-secondary" value="tingy">Create</button>
+            <br>
+            <label for="courseCode">Course Code (max 8 characters)</label>
+            <input type="text" name="courseCode" id="courseCode" placeholder="Enter Course Code..." onfocus=this.value='' required />
         </form>
 
         <br><br><br>
@@ -42,10 +45,10 @@
         <table id="table">
             <thead>
                 <th>Group Name</th>
+                <th>Course Code</th>
                 <th>Members</th>
                 <th>Admin</th>
                 <th>Date Added</th>
-                <th>Delete Group</th> <!--The user can 'Delete' (not functional) groups they are admin of -->
                 <th>Join Group</th> 
             </thead>
             <tbody></tbody>

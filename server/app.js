@@ -87,6 +87,31 @@ app.get('/get-users', function (req, res) {
     })
 })
 
+app.get('/get-groups', function (req, res) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, req.query.username)
+        .query(`
+          SELECT group_name, course_code, date_created 
+          FROM groups
+          ORDER BY date_created ASC;     
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 // app.post('/createGroup', function (req, res) {
 //   const newGroup = req.body.newGroup
 
