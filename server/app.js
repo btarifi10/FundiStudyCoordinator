@@ -83,7 +83,7 @@ app.get('/get-groups', function (req, res) {
 
 /* ----------------------------- Yasser's Code ----------------------------- */
 
-const db = require('./database-service')
+// const db = require('./database-service')
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }))
 
