@@ -12,35 +12,35 @@ NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
 describe('The correct page is displayed to the user when entering the create-join-group page', () => {
-  before('Fill in form to enter create-join-group form', () => {
-     cy.visit('/intermediate-group')
-     cy.get('form')
+  // before('Fill in form to enter create-join-group form', () => {
+  //    cy.visit('/intermediate-group')
+  //    cy.get('form')
 
-    cy.get('input[name="username"]')
-      .type('Joe')
-      .should('have.value', 'Joe')
+  //   cy.get('input[name="username"]')
+  //     .type('Joe')
+  //     .should('have.value', 'Joe')
 
-    cy.contains('Create And Join Groups')
-      .click()
-  })
+  //   cy.contains('Create And Join Groups')
+  //     .click()
+  // })
 
   it('Displays the create-join-group page', () => {
-    cy.url()
-      .should('include', '/createGroup?username=Joe')
+    // cy.url()
+    //   .should('include', '/createGroup?username=Joe')
 
-    cy.get('input[name="groupName"]')
-      .should('have.value', '')
+    // cy.get('input[name="groupName"]')
+    //   .should('have.value', '')
 
     // cy.get('select[id="inviteList"]')
     //   .find('option')
     //   .should('have.length', 3)
 
-    cy.get('button[id="create-btn"]')
-      .should('exist')
+    // cy.get('button[id="create-btn"]')
+    //   .should('exist')
 
-    cy.get('table[id="table"]')
-      .find('th')
-      .should('have.length', 6)
+    // cy.get('table[id="table"]')
+    //   .find('th')
+    //   .should('have.length', 6)
 
     // cy.get('table[id="table"]')
     //   .find('tbody').find('tr')
@@ -86,28 +86,28 @@ describe('The correct page is displayed to the user when entering the create-joi
   //     .should('have.id', 'JonasBrothers')
   // })
 
-  it('Does not allow user to create an existing group', () => {
-    cy.get('input[name="groupName"]')
-      .type('Jonas Brothers')
-      .should('have.value', 'Jonas Brothers')
+  // it('Does not allow user to create an existing group', () => {
+  //   cy.get('input[name="groupName"]')
+  //     .type('Jonas Brothers')
+  //     .should('have.value', 'Jonas Brothers')
 
-    cy.get('button[id="create-btn"]')
-      .click()
+  //   cy.get('button[id="create-btn"]')
+  //     .click()
 
-    cy.on('window:alert', (txt) => {
-      expect(txt).to.contains('Please enter a VALID group name, that does NOT already EXIST')
-    })
-  })
+  //   cy.on('window:alert', (txt) => {
+  //     expect(txt).to.contains('Please enter a VALID group name, that does NOT already EXIST')
+  //   })
+  // })
 
-  it('Does not allow user to create a group name over 30 alphanumerics', () => {
-    cy.get('input[name="groupName"]')
-      .type('abcdefghijklmnopqrstuvwxyzabc1234')
-      .should('have.value', 'abcdefghijklmnopqrstuvwxyzabc1234')
+  // it('Does not allow user to create a group name over 30 alphanumerics', () => {
+  //   cy.get('input[name="groupName"]')
+  //     .type('abcdefghijklmnopqrstuvwxyzabc1234')
+  //     .should('have.value', 'abcdefghijklmnopqrstuvwxyzabc1234')
 
-    cy.on('window:alert', (txt) => {
-      expect(txt).to.contains('Please Enter a Valid Group Name. Group Name can only be 30 alphanumerics')
-    })
-  })
+  //   cy.on('window:alert', (txt) => {
+  //     expect(txt).to.contains('Please Enter a Valid Group Name. Group Name can only be 30 alphanumerics')
+  //   })
+  // })
 })
 
 describe('User can join groups that they are not members of', () => {
