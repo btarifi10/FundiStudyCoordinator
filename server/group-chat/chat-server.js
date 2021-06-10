@@ -2,7 +2,7 @@
 
 /* ------------------------------ Requirements ------------------------------ */
 
-const formatMessage = require('./messages')
+// const formatMessage = require('../public/scripts/group-chat/chat-messages')
 const {
   addChatMember,
   getCurrentMember,
@@ -12,7 +12,7 @@ const {
 
 /* ------------------------------- CONSTANTS ------------------------------- */
 
-const BOT_NAME = 'Study Bot'
+// const BOT_NAME = 'Study Bot'
 const JOIN_CHAT_EVENT = 'joinChat'
 const MESSAGE_EVENT = 'message'
 const CHAT_MESSAGE_EVENT = 'chatMessage'
@@ -41,15 +41,17 @@ function handleJoinEvent (io, socket, username, group) {
   const member = addChatMember(socket.id, username, group)
   socket.join(member.group)
 
+  // TODO - display welcome message only when member joins group for the first time
   // Welcome the member that has just joined
-  const welcomeText = `Hey ${member.username}! Welcome to the ${member.group} group chat!`
-  const welcomeMessage = formatMessage(BOT_NAME, welcomeText)
-  socket.emit(MESSAGE_EVENT, welcomeMessage)
+  // const welcomeText = `Hey ${member.username}! Welcome to the ${member.group} group chat!`
+  // const welcomeMessage = formatMessage(BOT_NAME, welcomeText)
+  // socket.emit(MESSAGE_EVENT, welcomeMessage)
 
+  // TODO - display join message only when member joins group for the first time
   // Notify the other members in the group of the new member's arrival
-  const joinText = `${member.username} has joined the chat!`
-  const joinMessage = formatMessage(BOT_NAME, joinText)
-  socket.broadcast.to(member.group).emit(MESSAGE_EVENT, joinMessage)
+  // const joinText = `${member.username} has joined the chat!`
+  // const joinMessage = formatMessage(BOT_NAME, joinText)
+  // socket.broadcast.to(member.group).emit(MESSAGE_EVENT, joinMessage)
 
   // Send the updated list of chat members to be rendered on the client
   io.to(member.group).emit(GROUP_INFO_EVENT, {
@@ -63,19 +65,20 @@ function handleChatMessage (io, socket, message) {
   const member = getCurrentMember(socket.id)
 
   // Send this message to all members in this member's group chat
-  io.to(member.group).emit(MESSAGE_EVENT, formatMessage(member.username, message))
+  io.to(member.group).emit(MESSAGE_EVENT, message)
 }
 
 function handleDisconnect (io, socket) {
   // Find and remove the member using their socket id
   const member = removeChatMember(socket.id)
 
-  // If a member was found, display the leaving message to the others in the chat
+  // Continue only if a member is found
   if (!member) { return }
 
-  const leavingText = `${member.username} has left the chat...`
-  const leavingMessage = formatMessage(BOT_NAME, leavingText)
-  io.to(member.group).emit(MESSAGE_EVENT, leavingMessage)
+  // TODO - display leaving message only when member leaves group
+  // const leavingText = `${member.username} has left the chat...`
+  // const leavingMessage = formatMessage(BOT_NAME, leavingText)
+  // io.to(member.group).emit(MESSAGE_EVENT, leavingMessage)
 
   // Send the updated list of chat members to be rendered on the client
   io.to(member.group).emit(GROUP_INFO_EVENT, {

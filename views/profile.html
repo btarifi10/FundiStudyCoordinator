@@ -7,14 +7,16 @@
     <title>Profile</title>
 </head>
 <body>
+    <div id="welcome-div">
+
+    </div>
     <div class="Profile">
         <h1>View your Details</h1>
-		<p> First name: Obi-Wan</p>
-		<p> Surname: Kanobi</p>
-		<p> Username: MayTheForceBeWithYou</p>
+        <p id="user_details"></p>
 		
         <!-- The button below will be used to fetch/update the user's membership details -->
         <button type="submit" id="membership-btn"> Click here to view your current memberships</button>
+        <!-- <button type="submit" id="insert-btn"> Click here to insert membership -developer only</button> -->
 
         <table id="membership-table">
             <thead>
@@ -28,19 +30,19 @@
             </thead>
             <tbody id="table-body">
 			<!-- The below will be overwritten, it has been kept here for testing purposes -->
-                <td>Here</td> 
+                <!-- <td>Here</td> 
 				<td>lies</td> 
                 <td>Tarryn's</td>
                 <td>Sanity</td>
-                <td>She fought well</td>
+                <td>She fought well</td> -->
 				
             </tbody>
         </table>
 		
     </div>
     <div style="text-align: center">
-        <a href="home" id="home-link"> Return home </a> <br>
+        <a href="dashboard" id="home-link"> Return home </a> <br>
     </div>
-    <script src="/scripts/memberships.js"></script>
+    <script src="/scripts/memberships.js" type = "module"></script>
 </body>
 </html>
