@@ -77,7 +77,7 @@ app.get('/get-users', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      //console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -102,7 +102,7 @@ app.get('/get-groups', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      console.log(result)
+      //console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -112,35 +112,33 @@ app.get('/get-groups', function (req, res) {
     })
 })
 
-// app.post('/createGroup', function (req, res) {
-//   const newGroup = req.body.newGroup
-
-//   const sql = 'INSERT INTO groups () VALUES ?'
-//   const values = ['1', newGroup.groupName, 'ELEN1000', 'newGroup.startDate']
-//   // Make a query to the database
-//   db.pools
-//     // Run query
-//     .then((pool) => {
-//       return pool.request()
-//       // This is only a test query, change it to whatever you need
-
-//         .query(sql, [values], function (err, result) {
-//           if (err) throw err
-//           console.log('number of records inserted: ' + result.affectedRows)
-//         })
-//     })
-//     // Send back the result
-//     .then(result => {
-//       res.send(result)// Send this back to the web page?
-//       console.log(result)
-//     })
-//     // If there's an error, return that with some description
-//     .catch(err => {
-//       res.send({
-//         Error: err
-//       })
-//     })
-// })
+app.post('/createGroup', function (req, res) {
+  const newGroup = req.body
+  //console.log(newGroup)
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('group_name', db.sql.Char, newGroup.group_name)
+        .input('course_code', db.sql.Char, newGroup.course_code)
+        .input('start_date', db.sql.DateTimeOffset, newGroup.start_date)
+        .query(`
+          INSERT INTO groups (group_name, course_code, date_created)
+          VALUES ((@group_name),(@course_code),(@start_date));
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 

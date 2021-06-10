@@ -39,18 +39,20 @@ const { username } = Qs.parse(location.search, {
 
 document.addEventListener('DOMContentLoaded', function () {
   // Load group and member data from database to show in table
-  fetch('get-groups?username=${username}')
-    .then(response => response.json())
-    .then(data => data.recordset)
-    .then(loadHTMLTable)
-  // loadHTMLTable(database, username)
-
+  loadDatabaseGroups()
   // Load list of usernames to invite
   fetch('/get-users?username=${username}')
     .then(response => response.json())
     .then(data => data.recordset)
     .then(populateUsersList)
 })
+
+function loadDatabaseGroups () {
+  fetch('get-groups?username=${username}')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(loadHTMLTable)
+}
 
 function populateUsersList (users) {
 // 'users' should have records from database
@@ -66,13 +68,13 @@ function populateUsersList (users) {
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
 function loadHTMLTable (groupsData) {
   const table = document.querySelector('table tbody')
-
+  console.log(groupsData)
   if (groupsData.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='6'>No Data</td></tr>"
   } else {
     let tableHTML = ''
 
-    groupsData.forEach(element =>  {
+    groupsData.forEach(element => {
       const { group_name, course_code, members = ['Everyone'], admin = username, date_created } = element
       tableHTML += '<tr>'
       tableHTML += `<td>${group_name}</td>`
@@ -117,8 +119,9 @@ function updateGroupList () {
       startDate: new Date()
     }
     database.push(newGroup)
-    // createGroupEntry({groupName, courseCode, startDate})
-    loadHTMLTable(database, username)
+    const { groupName: group_name, courseCode: course_code, startDate: start_date } = newGroup
+    createGroupEntry({ group_name, course_code, start_date })
+      .then(loadDatabaseGroups())
   } else {
     alert('Please enter a VALID group name, that does NOT already EXIST')
   }
