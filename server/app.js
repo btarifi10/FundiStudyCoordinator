@@ -145,7 +145,7 @@ io.on('connection', socket => {
 })
 
 /* ----------------------------- Database Test ----------------------------- */
-/*
+
 const db = require('./database-service')
 
 app.get('/database', function (req, res) {
@@ -159,7 +159,8 @@ app.get('/database', function (req, res) {
     })
     // Send back the result
     .then(result => {
-      res.send(result)
+      // console.log(result)
+      res.send(result.recordset)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -168,6 +169,6 @@ app.get('/database', function (req, res) {
       })
     })
 })
-*/
+
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
