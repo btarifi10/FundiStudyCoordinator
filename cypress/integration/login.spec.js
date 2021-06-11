@@ -1,6 +1,5 @@
 describe('Login test with new registration and successive login and log out', () => {
-  /*
-  it('Fill register form', () => {
+  it.skip('Fill register form', () => {
     cy.visit('register')
     cy.get('form')
 
@@ -16,8 +15,8 @@ describe('Login test with new registration and successive login and log out', ()
 
     cy.url().should('eq', Cypress.config().baseUrl + 'login')
   })
-  */
-  it('Login as created user', () => {
+
+  it.skip('Login as created user', () => {
     cy.visit('login')
     cy.get('form')
 
@@ -36,7 +35,7 @@ describe('Login test with new registration and successive login and log out', ()
     cy.request('GET', 'api/currentUser').its('body').then((body) => expect(body).property('username').to.equal('btarifi10'))
   })
 
-  it('Log out', () => {
+  it.skip('Log out', () => {
     cy.get('form')
 
     cy.get('form').submit()
@@ -44,7 +43,7 @@ describe('Login test with new registration and successive login and log out', ()
     cy.url().should('eq', Cypress.config().baseUrl)
   })
 
-  it('Incorrect password redirects back to login page', () => {
+  it.skip('Incorrect password redirects back to login page', () => {
     cy.visit('login')
     cy.get('form')
 
@@ -63,7 +62,7 @@ describe('Login test with new registration and successive login and log out', ()
 })
 
 describe('Multiple registered users', () => {
-  /* it('A second unique user can be registered', () => {
+  it.skip('A second unique user can be registered', () => {
     cy.visit('register')
     cy.get('form')
 
@@ -79,9 +78,8 @@ describe('Multiple registered users', () => {
 
     cy.url().should('eq', Cypress.config().baseUrl + 'login')
   })
-  */
 
-  it('An existing user cannot be registered', () => {
+  it.skip('An existing user cannot be registered', () => {
     cy.visit('register')
     cy.get('form')
 
@@ -98,7 +96,7 @@ describe('Multiple registered users', () => {
     cy.url().should('eq', Cypress.config().baseUrl + 'register')
   })
 
-  it('The second user can also log in', () => {
+  it.skip('The second user can also log in', () => {
     cy.visit('login')
     cy.get('form')
 
@@ -117,13 +115,13 @@ describe('Multiple registered users', () => {
 })
 
 describe('Access to pages based on authentication', () => {
-  it('Unauthenticated user cannot access dashboard', () => {
+  it.skip('Unauthenticated user cannot access dashboard', () => {
     cy.visit('dashboard')
 
     cy.url().should('eq', Cypress.config().baseUrl)
   })
 
-  it('Authenticated user cannot access login page', () => {
+  it.skip('Authenticated user cannot access login page', () => {
     cy.visit('login')
 
     cy.get('input[name="username"]')
@@ -141,11 +139,10 @@ describe('Access to pages based on authentication', () => {
     cy.visit('login')
 
     cy.url().should('eq', Cypress.config().baseUrl + 'dashboard')
+  })
+  it.skip('Authenticated user cannot access register page', () => {
+    cy.visit('register')
 
-    it('Authenticated user cannot access register page', () => {
-      cy.visit('register')
-
-      cy.url().should('eq', Cypress.config().baseUrl + 'dashboard')
-    })
+    cy.url().should('eq', Cypress.config().baseUrl + 'dashboard')
   })
 })
