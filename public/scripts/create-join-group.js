@@ -179,8 +179,14 @@ function selectedMembers (inviteList) {
 }
 
 function clearForm () {
+  // clear inputs
   const myForm = document.getElementById('createForm')
   myForm.reset()
+
+  // reset drop down menu
+  const userSearch = document.getElementById('userSearch')
+  userSearch.value = ''
+  userSearch.onkeyup()
 }
 
 // Checks for alphanumerical group name from user
