@@ -9,10 +9,10 @@ const messageArea = document.querySelector('.message-area')
 const groupName = document.getElementById('group-name')
 const chatMembers = document.getElementById('chat-members')
 
-/* ------------------------------- Functions ------------------------------- */
+/* ----------------------------- Main Functions ----------------------------- */
 
 // Displays the existing chat history
-function displayChat(prevMessages) {
+function displayChat (prevMessages) {
   prevMessages.forEach(message => {
     const username = message.username
     const text = message.text_sent
@@ -24,12 +24,15 @@ function displayChat(prevMessages) {
 }
 
 // Adds a formatted chat message to the DOM
-function displayMessage(message) {
+function displayMessage (message) {
+  // Convert links to anchor elements
+  const messageWithLinks = embedLinks(message.text)
+
   const div = document.createElement('div')
   div.classList.add('message')
   div.innerHTML =
     `<p class="meta"> ${message.username} <span> ${message.time} </span></p>
-     <p class="text">${message.text}</p>`
+     <p class="text">${messageWithLinks}</p>`
 
   messageArea.appendChild(div)
 
@@ -38,13 +41,38 @@ function displayMessage(message) {
 }
 
 // Adds the group name to the DOM
-function displayGroupName(group) {
+function displayGroupName (group) {
   groupName.innerText = group
 }
 
 // Adds the chat members list to the DOM
-function displayChatMembers(members) {
+function displayChatMembers (members) {
   chatMembers.innerHTML = `
     ${members.map(member => `<li>${member.username}</li>`).join('')}
   `
+}
+
+/* ---------------------------- Helper Functions ---------------------------- */
+
+// Links are truncated from the middle to 40 characters and open in a new window
+function embedLinks (text) {
+  return anchorme({
+    input: text,
+
+    options: {
+      truncate: 40,
+      middleTruncation: true,
+
+      attributes: function (string) {
+        const attributes = {
+          target: '_blank'
+        }
+
+        if (string.endsWith('zip')) {
+          attributes.download = true
+        }
+        return attributes
+      }
+    }
+  })
 }
