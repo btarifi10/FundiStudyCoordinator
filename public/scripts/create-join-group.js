@@ -106,11 +106,10 @@ function updateGroupList () {
       date_created: new Date()
     }
 
-    const newMembers = [invitedMembers, username]
     database.push(newGroup) // update the table array
 
     createGroupEntry(newGroup) // update the database
-    const membershipInfo = { members: newMembers, group_name: newGroup.group_name, date_created: newGroup.date_created }
+    const membershipInfo = { members: invitedMembers, group_name: newGroup.group_name, date_created: newGroup.date_created }
     createMembershipEntry(membershipInfo)
     // .then(loadDatabaseGroups())
     // sendInvites(inviteList)
@@ -186,7 +185,7 @@ function selectedMembers (inviteList) {
       invitedMembers.push(opt.text)
     }
   }
-  // clearSelected(inviteList)
+  invitedMembers.push(username)
   return invitedMembers
 }
 

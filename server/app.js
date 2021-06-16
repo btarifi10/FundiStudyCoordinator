@@ -114,7 +114,6 @@ app.get('/get-groups', function (req, res) {
 
 app.post('/createGroup', function (req, res) {
   const newGroup = req.body
-  // console.log(newGroup)
   // Make a query to the database
   db.pools
     // Run query
@@ -142,24 +141,27 @@ app.post('/createGroup', function (req, res) {
 
 app.post('/createMembership', function (req, res) {
   const membershipInfo = req.body
-  // console.log(newGroup)
+
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
       membershipInfo.members.forEach(member => {
-        member = 
+        console.log(member)
+        console.log(membershipInfo.group_name)
+        console.log(membershipInfo.date_created)
+        return pool.request()
+          .input('username', db.sql.Char, member)
+          .input('group_name', db.sql.Char, membershipInfo.group_name)
+          .input('date_joined', db.sql.DateTimeOffset, membershipInfo.date_created)
+          .query(`
+            INSERT INTO memberships (user_id, group_id, date_joined)
+            SELECT user_id, group_id, (@date_joined)
+            FROM users AS u, groups AS g
+            WHERE u.username = (@username)
+            AND g.group_name = (@group_name);
+          `)
       })
-      
-      return pool.request()
-      
-        .input('username', db.sql.Char, membershipInfo.username)
-        .input('groupname', db.sql.Char, membershipInfo.group_name)
-        .input('date_created', db.sql.DateTimeOffset, membershipInfo.date_created)
-        .query(`
-          INSERT INTO groups (group_name, course_code, date_created)
-          VALUES ((@group_name),(@course_code),(@date_created));
-        `)
     })
     // Send back the result
     .then(result => {
