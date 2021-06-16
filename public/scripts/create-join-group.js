@@ -1,16 +1,15 @@
 'use strict'
 
-// TO DO: must replace this 'users' with a get function to the database of all users (user names NOT first names)
-
-// const users = ['Albus', 'Snape', 'Ron', 'Luna', 'Harry', 'Hermoie', 'Draco', 'Cho', 'Cedric', 'Voldemort', 'Lockhart', 'Sirius']
-
 let database = []
+const usersGroups = [] // update this after creating a group
 
 const { username } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 })
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Load list of groups user is a member of
+  // loadUsersGroups()
   // Load group and member data from database to show in table
   loadDatabaseGroups()
   // Load list of usernames to invite
@@ -40,34 +39,52 @@ function loadUsersList () {
 function populateUsersList (users) { // TO DO: Remove the username from the list
 // 'users' should have records from database
   users.forEach(element => {
-    const inviteList = document.getElementById('inviteList')
-    const option = document.createElement('option')
-    option.text = element.username
-    option.value = element.user_id
-    inviteList.add(option)
+    if (element.username.trim() !== username) {
+      const inviteList = document.getElementById('inviteList')
+      const option = document.createElement('option')
+      option.text = element.username
+      option.value = element.user_id
+      inviteList.add(option)
+    }
   })
 }
 
+// Bring list of groups that user is a member of ('memberships' table), and if groupname appears in list
+// don't give them a 'join' button
+// function loadUsersGroups () {
+//   fetch('/getUsersGroups?username=${username}')
+//     .then(response => response.json())
+//     .then(data => data.recordset)
+//     .then(populateUsersGroups)
+// }
+
+// function populateUsersGroups (groups) {
+//   usersGroups = []
+//   groups.forEach(g => {
+//     usersGroups.push(g)
+//   })
+// }
+
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
-function loadHTMLTable (groupsData) {
+function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get a 'join' button
   const table = document.querySelector('table tbody')
-  // console.log(groupsData)
   if (groupsData.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='6'>No Data</td></tr>"
   } else {
     let tableHTML = ''
 
     groupsData.forEach(element => {
-      const { group_name, course_code, members = ['Everyone'], admin = username, date_created } = element
+      const { group_name, courseCode, members = ['Everyone'], admin = username, date_created } = element
       tableHTML += '<tr>'
       tableHTML += `<td>${group_name}</td>`
-      tableHTML += `<td>${course_code}</td>`
+      tableHTML += `<td>${courseCode}</td>`
       tableHTML += `<td>${members}</td>`
       tableHTML += `<td>${admin}</td>`
       tableHTML += `<td>${date_created.toLocaleString()}</td>`
       const groupName_id = group_name.replace(/\s+/g, '')
 
-      if (!(members.find(name => name === username))) { // Users cannot join groups they are members of
+      const usersGroups = ['Jobe']
+      if (!(usersGroups.find(gn => gn === element.group_name))) { // Users cannot join groups they are members of
         tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
       } else {
         tableHTML += '<td>-</td>'
@@ -108,14 +125,19 @@ function updateGroupList () {
 
     database.push(newGroup) // update the table array
 
-    createGroupEntry(newGroup) // update the database
-    const membershipInfo = { members: invitedMembers, group_name: newGroup.group_name, date_created: newGroup.date_created }
+    const allMembers = invitedMembers
+    allMembers.push(username) // username and all invited members
+    const inviteObj = { invitedMembers: invitedMembers, group_name: newGroup.group_name, time_sent: newGroup.date_created }
+    const membershipInfo = { members: allMembers, group_name: newGroup.group_name, date_created: newGroup.date_created }
+    createGroupEntry(newGroup) // TO DO: check if any members/username are a part of the max 10 groups already
     createMembershipEntry(membershipInfo)
-    // .then(loadDatabaseGroups())
-    // sendInvites(inviteList)
+    // update usersGroups
+    // usersGroups.push(newGroup.group_name)
+    sendInvites(inviteObj)
 
     loadHTMLTable(database)
     clearForm()
+
     alert(`${userinput} is now a group`)
   } else {
     alert('Please enter a VALID group name, that does NOT already EXIST')
@@ -123,7 +145,6 @@ function updateGroupList () {
 }
 
 function createMembershipEntry (info) {
-  console.log(info)
   fetch('/createMembership', {
     method: 'POST',
     headers: {
@@ -136,8 +157,11 @@ function createMembershipEntry (info) {
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_id) {
-  const group = database.find(group => group.groupName.replace(/\s+/g, '') === clicked_id) // Can't have groups differing in whitespace only
-  group.members.push(username)
+  // add the user to 'memberships' table
+  // reload the database
+
+  // const group = database.find(group => group.groupName.replace(/\s+/g, '') === clicked_id) // Can't have groups differing in whitespace only
+  // loadHTMLTable(database)
   // loadHTMLTable(database, username)
 }
 
@@ -151,15 +175,15 @@ function createGroupEntry (newGroup) {
   })
 }
 
-// function sendInvites (inviteList) {
-//   fetch('/sendInvites', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify(inviteList)
-//   })
-// }
+function sendInvites (inviteList) {
+  fetch('/sendInvites', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(inviteList)
+  })
+}
 
 // Search for users in the drop down, and filter drop down accordingly
 function userSearch (searchTerm) {
@@ -185,7 +209,6 @@ function selectedMembers (inviteList) {
       invitedMembers.push(opt.text)
     }
   }
-  invitedMembers.push(username)
   return invitedMembers
 }
 
