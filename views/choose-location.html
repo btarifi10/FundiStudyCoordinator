@@ -29,22 +29,33 @@
           <br>
           <p><b>The following is intended to be included within the form to create a face-to-face meeting event</b></p>
         </div>
+
         <form id="meeting-form" class="mx-3">
+          <!-- date input - the ideal implementation of this would involve the use of an external calendar plugin thing -->
+          <div class="mb-3"> 
+            <input class="form-control" type="text" name="date" placeholder="2025-05-21 10:15:30.5555555 +07:30" required>
+          </div>
+          
+          <!-- meeting location choice - online/face-to-face -->
           <div class="mb-3">
-            <label for="addressInput" class="form-label">Choose location</label>
-            <!-- [A-z0-9À-ž\s-]+ -->
-            <input type="text" class="form-control" id="addressInput" required pattern="[A-z0-9À-ž'.,\s+-º]+"
-              placeholder="Enter address..." aria-describedby="addressHelp">
-            <div id="addressHelp" class="form-text">View the map below to confirm that the correct address has been
-              found</div>
+            <label for="selection" class="form-label">Where will your meeting occur?</label>
+            <select id="selection" class="form-control">
+              <option>none-selected</option>
+              <option>online</option>
+              <option>face-to-face</option>
+          </select>
           </div>
-          <div class="mb-3 text-center">
-            <iframe id="map" class="rounded" width="100%" height="400" frameborder="0" style="border:0"
-              src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU&q=%20&zoom=13"
-              allowfullscreen alt>
-            </iframe>
+
+          <!-- place (location/platform) -->
+          <div class="mb-3"> 
+            <!-- placeholder which is populated when selecting the  -->
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+
+          <div class="mb-3" id="place">
+            
+          </div>
+
+          <button type="submit" class="btn btn-primary">Create Meeting</button>
           <br>
           <br>
         </form>
