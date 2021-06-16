@@ -37,7 +37,7 @@ function loadUsersList () {
     .then(populateUsersList)
 }
 
-function populateUsersList (users) {
+function populateUsersList (users) { // TO DO: Remove the username from the list
 // 'users' should have records from database
   users.forEach(element => {
     const inviteList = document.getElementById('inviteList')
@@ -110,7 +110,8 @@ function updateGroupList () {
     database.push(newGroup) // update the table array
 
     createGroupEntry(newGroup) // update the database
-    // createMembershipEntry({username newGroup.group_name newGroup.date_created})
+    const membershipInfo = { members: newMembers, group_name: newGroup.group_name, date_created: newGroup.date_created }
+    createMembershipEntry(membershipInfo)
     // .then(loadDatabaseGroups())
     // sendInvites(inviteList)
 
@@ -122,12 +123,23 @@ function updateGroupList () {
   }
 }
 
+function createMembershipEntry (info) {
+  console.log(info)
+  fetch('/createMembership', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(info)
+  })
+}
+
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_id) {
   const group = database.find(group => group.groupName.replace(/\s+/g, '') === clicked_id) // Can't have groups differing in whitespace only
   group.members.push(username)
-  loadHTMLTable(database, username)
+  // loadHTMLTable(database, username)
 }
 
 function createGroupEntry (newGroup) {
