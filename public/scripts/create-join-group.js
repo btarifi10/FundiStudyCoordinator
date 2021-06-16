@@ -1,7 +1,7 @@
 'use strict'
 
 let database = []
-const usersGroups = [] // update this after creating a group
+let usersGroups = [] // update this after creating a group
 
 const { username } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -9,7 +9,7 @@ const { username } = Qs.parse(location.search, {
 
 document.addEventListener('DOMContentLoaded', function () {
   // Load list of groups user is a member of
-  // loadUsersGroups()
+  loadUsersGroups()
   // Load group and member data from database to show in table
   loadDatabaseGroups()
   // Load list of usernames to invite
@@ -51,19 +51,16 @@ function populateUsersList (users) { // TO DO: Remove the username from the list
 
 // Bring list of groups that user is a member of ('memberships' table), and if groupname appears in list
 // don't give them a 'join' button
-// function loadUsersGroups () {
-//   fetch('/getUsersGroups?username=${username}')
-//     .then(response => response.json())
-//     .then(data => data.recordset)
-//     .then(populateUsersGroups)
-// }
+function loadUsersGroups () {
+  fetch('/getUsersGroups?username=${username}')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(populateUsersGroups)
+}
 
-// function populateUsersGroups (groups) {
-//   usersGroups = []
-//   groups.forEach(g => {
-//     usersGroups.push(g)
-//   })
-// }
+function populateUsersGroups (groups) {
+  usersGroups = groups
+}
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
 function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get a 'join' button
@@ -83,7 +80,7 @@ function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get
       tableHTML += `<td>${date_created.toLocaleString()}</td>`
       const groupName_id = group_name.replace(/\s+/g, '')
 
-      const usersGroups = ['Jobe']
+      // const usersGroups = ['Jobe']
       if (!(usersGroups.find(gn => gn === element.group_name))) { // Users cannot join groups they are members of
         tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
       } else {
@@ -124,15 +121,16 @@ function updateGroupList () {
     }
 
     database.push(newGroup) // update the table array
-
-    const allMembers = invitedMembers
+    const allMembers = [...invitedMembers]
     allMembers.push(username) // username and all invited members
-    const inviteObj = { invitedMembers: invitedMembers, group_name: newGroup.group_name, time_sent: newGroup.date_created }
-    const membershipInfo = { members: allMembers, group_name: newGroup.group_name, date_created: newGroup.date_created }
+    const membershipInfo = { members: allMembers, group_name: userinput, date_created: newGroup.date_created }
+    const inviteObj = { invited_members: invitedMembers, group_name: newGroup.group_name, time_sent: newGroup.date_created }
     createGroupEntry(newGroup) // TO DO: check if any members/username are a part of the max 10 groups already
-    createMembershipEntry(membershipInfo)
+      .then(createMembershipEntry(membershipInfo))
+
     // update usersGroups
-    // usersGroups.push(newGroup.group_name)
+    usersGroups.push(newGroup.group_name)
+    console.log(inviteObj)
     sendInvites(inviteObj)
 
     loadHTMLTable(database)
@@ -144,13 +142,13 @@ function updateGroupList () {
   }
 }
 
-function createMembershipEntry (info) {
+function createMembershipEntry (membershipInfo) {
   fetch('/createMembership', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(info)
+    body: JSON.stringify(membershipInfo)
   })
 }
 
@@ -165,7 +163,7 @@ function joinGroup (clicked_id) {
   // loadHTMLTable(database, username)
 }
 
-function createGroupEntry (newGroup) {
+async function createGroupEntry (newGroup) {
   fetch('/createGroup', {
     method: 'POST',
     headers: {
@@ -205,7 +203,7 @@ function selectedMembers (inviteList) {
   const invitedMembers = []
   for (let i = 0; i < inviteList.length; i++) {
     const opt = inviteList.options[i]
-    if (opt.selected === true) {
+    if ((opt.selected === true) && (opt.text.trim() !== username)) {
       invitedMembers.push(opt.text)
     }
   }

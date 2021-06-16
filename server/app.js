@@ -48,6 +48,7 @@ app.use(groupRouter)
 
 const db = require('./database-service')
 const bodyParser = require('body-parser')
+const { mainModule } = require('process')
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.get('/intermediate-group', function (req, res) {
@@ -112,38 +113,37 @@ app.get('/get-groups', function (req, res) {
     })
 })
 
-// app.get('/getUsersGroups', function (req, res) {
-//   db.pools
-//    //console.log(req.query.username)
-//     // Run query
-//     .then((pool) => {
-//       return pool.request()
-//         .input('username', db.sql.Char, req.query.username)
-//         .query(`
-//           SELECT group_name
-//           FROM groups AS g 
-//             INNER JOIN memberships AS m
-//                 ON g.group_id = m.group_id
-//             INNER JOIN users AS u
-//                 ON m.user_id = u.user_id
-//           WHERE u.user_id IN (
-//             SELECT user_id 
-//             FROM users
-//             WHERE username = (@username)
-//             )   
-//               `)
-//     })
-//     // Send back the result
-//     .then(result => {
-//       res.send(result)
-//     })
-//     // If there's an error, return that with some description
-//     .catch(err => {
-//       res.send({
-//         Error: err
-//       })
-//     })
-// })
+app.get('/getUsersGroups', function (req, res) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, req.query.username)
+        .query(`
+          SELECT group_name
+          FROM groups AS g 
+            INNER JOIN memberships AS m
+                ON g.group_id = m.group_id
+            INNER JOIN users AS u
+                ON m.user_id = u.user_id
+          WHERE u.user_id IN (
+            SELECT user_id 
+            FROM users
+            WHERE username = (@username)
+            )   
+              `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 app.post('/createGroup', function (req, res) {
   const newGroup = req.body
@@ -157,7 +157,7 @@ app.post('/createGroup', function (req, res) {
         .input('date_created', db.sql.DateTimeOffset, newGroup.date_created)
         .query(`
           INSERT INTO groups (group_name, course_code, date_created)
-          VALUES ((@group_name),(@course_code),(@date_created));
+          VALUES ((@group_name),(@course_code),(@date_created));        
         `)
     })
     // Send back the result
@@ -174,11 +174,16 @@ app.post('/createGroup', function (req, res) {
 
 app.post('/createMembership', function (req, res) {
   const membershipInfo = req.body
-
+  // console.log(membershipInfo)
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
+      console.log('START')
+      console.log(membershipInfo.members)
+      console.log(membershipInfo.group_name)
+      console.log(membershipInfo.date_created)
+      console.log('END')
       membershipInfo.members.forEach(member => {
         return pool.request()
           .input('username', db.sql.Char, member)
@@ -207,15 +212,12 @@ app.post('/createMembership', function (req, res) {
 
 app.post('/sendInvites', function (req, res) {
   const inviteList = req.body
-  //console.log(inviteList)
+  // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
-      inviteList.invitedMembers.forEach(member => {
-        console.log(member)
-        console.log(inviteList.group_name)
-        console.log(inviteList.time_sent)
+      inviteList.invited_members.forEach(member => {
         return pool.request()
           .input('username', db.sql.Char, member)
           .input('group_name', db.sql.Char, inviteList.group_name)
