@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="css/group-selector.css">
 <link rel="stylesheet" href="css/bootstrap.min.css">
 
-<script defer src="scripts/main.js" ></script>
+<script defer src="scripts/home-page.js" ></script>
 
 </head>
 <body>
@@ -15,12 +15,13 @@
 
 
 <div class="sidenav">
-    <a href="#home">Home</a>
-    <a href="#profile">My Profile</a>
-    <a href="#notifications">Notifications</a>
-    <a href="#chat">Chats</a>
+ 
+    <a href="/profile">My Profile</a>
+    <a href="#invites">View Invites</a>
+    <a href="#createGroup"> Create Group</a>
+    <a href="/covid-screening" > COVID Screening </a>
 
-     <button class="dropdown-btn2" id = 'dropdown-buttonAllGroups' > All Groups
+     <button class="dropdown-btn2" id = 'dropdown-buttonAllGroups' > Join Groups
       <i class="fa fa-caret-down"></i>
     </button> 
     <div class="dropdown-container" id= 'dropdown-containerAllGroups'> 
@@ -28,30 +29,15 @@
   </div>  
    
 
-    <!-- Using a basic option selection for filling in from a static list -->
-    <!-- <select id="studyGroup">
-        <option>Study Groups</option>
-    </select>  -->
+
 
     <!-- Using the dropdown functionality to go to different groups -->
-    < <button class="dropdown-btn" id = 'dropdown-buttonID' > My Study Groups
+    < <button class="dropdown-btn" id = 'dropdown-buttonID' > My Groups
       <i class="fa fa-caret-down"></i>
     </button> > 
     <div class="dropdown-container" id= 'dropdown-containerID'> 
         <input type="text" placeholder="Search My Groups" id="inputValue" onkeyup="groupSearch()">
     </div>  
-
-  <!--HardCoded group  Code -->
-    <!-- <button class="dropdown-btn" > Study Groups
-        <i class="fa fa-caret-down"></i>
-      </button> >
-   
-     <div class="dropdown-container"> 
-      <<a class="dropdown-item" href="/big-data">Big Data</a>
-      <a class="dropdown-item" href="#">Software 3</a>
-      <a  class="dropdown-item" href="#">Sociology</a>
-    </div>    -->
-
 
 
   </div>

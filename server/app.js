@@ -22,6 +22,7 @@ const handleChatMember = require('./group-chat/chat-server')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
@@ -52,7 +53,7 @@ app.delete('/delete/:membership_id', (request, response) => {
     .then((pool) => {
       return pool.request()
         .input('membership_id', db.sql.Int, membership_id)
-        .query(`DELETE FROM memberships WHERE memberships.membership_id = @membership_id`)
+        .query('DELETE FROM memberships WHERE memberships.membership_id = @membership_id')
     })
     .then(result => {
       response.json({ success: result })
@@ -80,6 +81,34 @@ app.get('/get-groups', function (req, res) {
     })
 })
 
+app.post('/create-screening', function (req, res) {
+  const newScreen = req.body
+  console.log(newScreen)
+  console.log(newScreen.user_id, newScreen.passed, newScreen.date)
+  // Make a query to the database
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userid', db.sql.Int, newScreen.user_id)
+        .input('passed', db.sql.Bit, newScreen.passed)
+        .input('date', db.sql.DateTimeOffset, newScreen.date)
+        .query(`
+        INSERT Into screening(user_id, passed,date_screened)
+        VALUES ((@userid), (@passed), (@date));
+        `)
+      // VALUES ((@userid), (@passed), (@date));
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 /* ----------------------------- Yasser's Code ----------------------------- */
 
@@ -207,7 +236,7 @@ app.post('/createGroup', function (req, res) {
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
-  const {id} = req.params
+  const { id } = req.params
   // Make a query to the database
   db.pools
     // Run query
@@ -216,12 +245,12 @@ app.get('/profileViews/:id', (req, res) => {
         // retrieve all recordsets with the following information to be displayed on the profile page
         // want to retrieve the specific users personal details
         .input('id', db.sql.Int, id)
-        .query(`SELECT * FROM users WHERE users.user_id = (@id)`)
+        .query('SELECT * FROM users WHERE users.user_id = (@id)')
     })
     // Send back the result
     .then(result => {
       res.send(result)
-      //console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -245,7 +274,7 @@ app.get('/membershipViews/:id', function (req, res) {
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
         .input('id', db.sql.Int, id)
-        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id`)
+        .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
     })
     // Send back the result
     .then(result => {
@@ -282,7 +311,6 @@ io.on('connection', socket => {
   handleChatMember(io, socket)
 })
 
-
 /* ----------------------------- Database Test ----------------------------- */
 
 /*
@@ -315,7 +343,6 @@ app.get('/database', function (req, res) {
 
 const profileRouter = require('./profile-router')
 app.use('/', profileRouter)
-
 
 /* ------------------------------------------------------------------------- */
 

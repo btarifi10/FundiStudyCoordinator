@@ -1,6 +1,6 @@
 import { UserService } from './UserService.js'
 const userService = UserService.getUserServiceInstance()
-let currentUser =  null
+let currentUser = null
 document.addEventListener('DOMContentLoaded', function () {
   userService.getCurrentUser().then(
     user => {
@@ -10,12 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
       welcomeHeading.textContent = `Welcome, ${currentUser.username} with ID ${currentUser.id}`
       welcomeDiv.appendChild(welcomeHeading)
 
-      fetch('http://localhost:3000/profileViews/'+ currentUser.id)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        loadProfile(data)
-      })
+      fetch('http://localhost:3000/profileViews/' + currentUser.id)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
     })
 })
 
@@ -91,16 +90,15 @@ function loadHTMLTable (data) {
   table.innerHTML = tableHtml
 }
 
-
-function loadProfile(data) {
-  const profile = document.querySelector('#user_details'); 
+function loadProfile (data) {
+  const profile = document.querySelector('#user_details') 
   if (data.recordset.length === 0) {
     profile.innerHTML = "<p class='no-data'>No Informations</p>"
     return
   }
   let tableHtml = ''
 
-  data.recordset.forEach(function ({ username, first_name, last_name, rating}) {//group_num, group_online, group_url }) {
+  data.recordset.forEach(function ({ username, first_name, last_name, rating }) { // group_num, group_online, group_url }) {
     tableHtml += `<p id='${username}-id'>Username: ${username}</p>`
     tableHtml += `<p id='${first_name}-id'>First name: ${first_name}</p>`
     tableHtml += `<p id='${last_name}-id'>Last name: ${last_name}</p>`
