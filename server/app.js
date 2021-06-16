@@ -122,10 +122,43 @@ app.post('/createGroup', function (req, res) {
       return pool.request()
         .input('group_name', db.sql.Char, newGroup.group_name)
         .input('course_code', db.sql.Char, newGroup.course_code)
-        .input('start_date', db.sql.DateTimeOffset, newGroup.start_date)
+        .input('date_created', db.sql.DateTimeOffset, newGroup.date_created)
         .query(`
           INSERT INTO groups (group_name, course_code, date_created)
-          VALUES ((@group_name),(@course_code),(@start_date));
+          VALUES ((@group_name),(@course_code),(@date_created));
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.post('/createMembership', function (req, res) {
+  const membershipInfo = req.body
+  // console.log(newGroup)
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      membershipInfo.members.forEach(member => {
+        member = 
+      })
+      
+      return pool.request()
+      
+        .input('username', db.sql.Char, membershipInfo.username)
+        .input('groupname', db.sql.Char, membershipInfo.group_name)
+        .input('date_created', db.sql.DateTimeOffset, membershipInfo.date_created)
+        .query(`
+          INSERT INTO groups (group_name, course_code, date_created)
+          VALUES ((@group_name),(@course_code),(@date_created));
         `)
     })
     // Send back the result

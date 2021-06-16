@@ -21,26 +21,26 @@
                 <br>
                 <!-- Consider allowing the selected user to invite to remain until unselected or 'create' is clicked -->
                 <select id="inviteList" multiple></select> 
-            </div>
-            <button type="submit" id="create-btn" class="btn btn-secondary" value="tingy">Create</button>
-            <br>
+            </div><br>
             <label for="courseCode">Course Code (max 8 characters)</label>
             <input type="text" name="courseCode" id="courseCode" placeholder="Enter Course Code..." onfocus=this.value='' required />
+            <br>
+            <button type="submit" id="create-btn" class="btn btn-secondary" value="tingy">Create</button>
+
+            
+
         </form>
 
-        <br><br><br>
-        <!-- <form action="/createGroup" method="POST">
-            <h1>Welcome to the test</h1>
-            <input type="submit" id="tingy" name="ting" value="Invite results" />
-
-        </form> -->
-        <br><br><br>
-
-        <div>
+            <div>
             <label for="inviteList" >Invite (Hold Ctrl to select more than one):</label> 
                 <br>
                 <input type="text" placeholder="Search for User" id="userSearch" onkeyup="userSearch(this.value)" onfocus="this.value=''">
-        </div>
+            </div>
+        <br><br><br>
+
+        <br><br><br>
+
+        
 
         <table id="table">
             <thead>
