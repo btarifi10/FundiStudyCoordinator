@@ -78,7 +78,6 @@ app.get('/get-users', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -118,7 +117,7 @@ app.get('/getUsersGroups', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-        .input('username', db.sql.Char, req.query.username)
+        .input('username', db.sql.Char, req.query.username.trim())
         .query(`
           SELECT group_name
           FROM groups AS g 
@@ -147,6 +146,7 @@ app.get('/getUsersGroups', function (req, res) {
 
 app.post('/createGroup', function (req, res) {
   const newGroup = req.body
+  console.log('server-createGroup')
   // Make a query to the database
   db.pools
     // Run query
@@ -163,6 +163,7 @@ app.post('/createGroup', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
+      console.log('done with createGroup ')
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -174,24 +175,20 @@ app.post('/createGroup', function (req, res) {
 
 app.post('/createMembership', function (req, res) {
   const membershipInfo = req.body
-  // console.log(membershipInfo)
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
-      console.log('START')
-      console.log(membershipInfo.members)
-      console.log(membershipInfo.group_name)
-      console.log(membershipInfo.date_created)
-      console.log('END')
+      console.log('INSIDE server-createMembership carrying: ')
+      console.log(membershipInfo)
       membershipInfo.members.forEach(member => {
         return pool.request()
           .input('username', db.sql.Char, member)
-          .input('group_name', db.sql.Char, membershipInfo.group_name)
-          .input('date_joined', db.sql.DateTimeOffset, membershipInfo.date_created)
+          .input('group_name', db.sql.Char, membershipInfo.group_name.trim())
+          .input('date_created', db.sql.DateTimeOffset, membershipInfo.date_created)
           .query(`
             INSERT INTO memberships (user_id, group_id, date_joined)
-            SELECT user_id, group_id, (@date_joined)
+            SELECT user_id, group_id, (@date_created)
             FROM users AS u, groups AS g
             WHERE u.username = (@username)
             AND g.group_name = (@group_name);
@@ -201,6 +198,7 @@ app.post('/createMembership', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
+      console.log('done with createMembership')
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -211,17 +209,17 @@ app.post('/createMembership', function (req, res) {
 })
 
 app.post('/sendInvites', function (req, res) {
-  const inviteList = req.body
+  const inviteObj = req.body
   // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
-      inviteList.invited_members.forEach(member => {
+      inviteObj.invited_members.forEach(member => {
         return pool.request()
           .input('username', db.sql.Char, member)
-          .input('group_name', db.sql.Char, inviteList.group_name)
-          .input('time_sent', db.sql.DateTimeOffset, inviteList.time_sent)
+          .input('group_name', db.sql.Char, inviteObj.group_name)
+          .input('time_sent', db.sql.DateTimeOffset, inviteObj.time_sent)
           .query(`
             INSERT INTO invites (receiver_id, group_id, time_sent)
             SELECT user_id, group_id, (@time_sent)
@@ -234,6 +232,7 @@ app.post('/sendInvites', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
+      console.log('Invites have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {

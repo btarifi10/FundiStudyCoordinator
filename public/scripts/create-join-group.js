@@ -59,7 +59,7 @@ function loadUsersGroups () {
 }
 
 function populateUsersGroups (groups) {
-  usersGroups = groups
+  usersGroups = [...groups]
 }
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
@@ -126,7 +126,7 @@ function updateGroupList () {
     const membershipInfo = { members: allMembers, group_name: userinput, date_created: newGroup.date_created }
     const inviteObj = { invited_members: invitedMembers, group_name: newGroup.group_name, time_sent: newGroup.date_created }
     createGroupEntry(newGroup) // TO DO: check if any members/username are a part of the max 10 groups already
-      .then(createMembershipEntry(membershipInfo))
+    createMembershipEntry(membershipInfo)
 
     // update usersGroups
     usersGroups.push(newGroup.group_name)
@@ -143,6 +143,7 @@ function updateGroupList () {
 }
 
 function createMembershipEntry (membershipInfo) {
+  console.log('createmembership function')
   fetch('/createMembership', {
     method: 'POST',
     headers: {
@@ -163,7 +164,8 @@ function joinGroup (clicked_id) {
   // loadHTMLTable(database, username)
 }
 
-async function createGroupEntry (newGroup) {
+function createGroupEntry (newGroup) {
+  console.log('createGroupEntry function')
   fetch('/createGroup', {
     method: 'POST',
     headers: {
@@ -173,14 +175,17 @@ async function createGroupEntry (newGroup) {
   })
 }
 
-function sendInvites (inviteList) {
-  fetch('/sendInvites', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(inviteList)
-  })
+function sendInvites (inviteObj) {
+  if (inviteObj.invited_members.length > 0) {
+    console.log('function sendInvites')
+    fetch('/sendInvites', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inviteObj)
+    })
+  }
 }
 
 // Search for users in the drop down, and filter drop down accordingly
