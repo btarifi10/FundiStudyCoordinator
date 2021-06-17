@@ -22,6 +22,7 @@ const handleChatMember = require('./group-chat/chat-server')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
@@ -52,7 +53,7 @@ app.delete('/delete/:membership_id', (request, response) => {
     .then((pool) => {
       return pool.request()
         .input('membership_id', db.sql.Int, membership_id)
-        .query(`DELETE FROM memberships WHERE memberships.membership_id = @membership_id`)
+        .query('DELETE FROM memberships WHERE memberships.membership_id = @membership_id')
     })
     .then(result => {
       response.json({ success: result })
@@ -60,13 +61,32 @@ app.delete('/delete/:membership_id', (request, response) => {
 })
 
 app.get('/get-groups', function (req, res) {
-  // Make a query to the database
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
-        // This is only a test query, change it to whatever you need
         .query('SELECT group_name FROM groups')
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.get('/get-members', function (req, res) {
+
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('group_id', db.sql.Int, 1)
+        .query(`select first_name,last_name
+        from users U
+        inner join memberships M
+        on U.user_id = M.user_id
+        where M.group_id = @group_id; `)
     })
     // Send back the result
     .then(result => {
@@ -79,6 +99,8 @@ app.get('/get-groups', function (req, res) {
       })
     })
 })
+
+
 
 
 /* ----------------------------- Yasser's Code ----------------------------- */
@@ -207,7 +229,7 @@ app.post('/createGroup', function (req, res) {
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
-  const {id} = req.params
+  const { id } = req.params
   // Make a query to the database
   db.pools
     // Run query
@@ -216,12 +238,12 @@ app.get('/profileViews/:id', (req, res) => {
         // retrieve all recordsets with the following information to be displayed on the profile page
         // want to retrieve the specific users personal details
         .input('id', db.sql.Int, id)
-        .query(`SELECT * FROM users WHERE users.user_id = (@id)`)
+        .query('SELECT * FROM users WHERE users.user_id = (@id)')
     })
     // Send back the result
     .then(result => {
       res.send(result)
-      //console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -245,12 +267,12 @@ app.get('/membershipViews/:id', function (req, res) {
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
         .input('id', db.sql.Int, id)
-        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id`)
+        .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
     })
     // Send back the result
     .then(result => {
       res.send(result)
-      console.log(result)
+      //console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -281,7 +303,6 @@ app.use(chatRouter)
 io.on('connection', socket => {
   handleChatMember(io, socket)
 })
-
 
 /* ----------------------------- Database Test ----------------------------- */
 
@@ -315,7 +336,6 @@ app.get('/database', function (req, res) {
 
 const profileRouter = require('./profile-router')
 app.use('/', profileRouter)
-
 
 /* ------------------------------------------------------------------------- */
 

@@ -17,6 +17,10 @@ chatRouter.get('/intermediate-chat', function (req, res) {
   res.sendFile(path.join(__dirname, '..', '..', 'views', 'intermediate-chat.html'))
 })
 
+chatRouter.get('/rating', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', '..', 'views', 'rating.html'))
+})
+
 /* ---------------------------- Database Routes ---------------------------- */
 
 chatRouter.get('/get-chat', function (req, res) {
