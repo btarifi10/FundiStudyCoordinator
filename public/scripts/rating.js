@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log(data)
       populateAllMembers(data)
     })
+
+//   fetch('http://localhost:3000/get-current-rating')//  , {
+//     .then(response => response.json())
+//     .then(data => {
+//       console.log(data)
+//       const ratingValue = document.getElementById('rating').value
+//         console.log(ratingValue)
+//       submitRating(data)
+//     })
 })
 
 // function getGroupNumber () {
@@ -42,6 +51,30 @@ function populateAllMembers (data) {
 }
 
 function submitRating () {
+  data.recordset.forEach(function ({ rating, number_ratings }) {
+    
+    if (rating == null) {
+      rating = getNewRanking()
+      number_ratings = 1
+      //   const groupId = {
+//     // replace with actual group_id
+//     group_id: 128
+//   }
+    }else{
+        rating= getNewRanking()*number_ratings/(number_ratings+1)
+        number_ratings = number_ratings + 1
+    }
 
+
+}
+//   )
+// }
+
+function getNewRanking(){
+    const ratingValue = document.getElementsByName('rating')
+    for (let i = 0; i < ratingValue.length; i++) {
+      if (ratingValue[i].checked) { alert(ratingValue[i].value) }
+    }
+    return ratingValue[i].value
 
 }
