@@ -8,11 +8,13 @@ group chat within the client's browser.
 const messageArea = document.querySelector('.message-area')
 const groupName = document.getElementById('group-name')
 const chatMembers = document.getElementById('chat-members')
+const spinner = document.getElementById('spinner')
 
 /* ----------------------------- Main Functions ----------------------------- */
 
 // Displays the existing chat history
 function displayChat (prevMessages) {
+  spinner.remove()
   prevMessages.forEach(message => {
     const username = message.username
     const text = message.text_sent
