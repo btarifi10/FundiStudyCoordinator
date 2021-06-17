@@ -30,7 +30,7 @@ function updateLocalArray (db) {
 }
 
 function loadUsersList () {
-  fetch('/get-users?username=${username}')
+  fetch(`/get-users?username=${username}`)
     .then(response => response.json())
     .then(data => data.recordset)
     .then(populateUsersList)
@@ -52,7 +52,7 @@ function populateUsersList (users) { // TO DO: Remove the username from the list
 // Bring list of groups that user is a member of ('memberships' table), and if groupname appears in list
 // don't give them a 'join' button
 function loadUsersGroups () {
-  fetch('/getUsersGroups?username=${username}')
+  fetch(`/getUsersGroups?username=${username}`)
     .then(response => response.json())
     .then(data => data.recordset)
     .then(populateUsersGroups)
@@ -60,6 +60,7 @@ function loadUsersGroups () {
 
 function populateUsersGroups (groups) {
   usersGroups = [...groups]
+  console.log(usersGroups)
 }
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
@@ -79,12 +80,18 @@ function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get
       tableHTML += `<td>${admin}</td>`
       tableHTML += `<td>${date_created.toLocaleString()}</td>`
       const groupName_id = group_name.replace(/\s+/g, '')
+      // const usersGroups = [21] if usersgroups.contains(group_name)
+      let bFound = false
+      usersGroups.forEach(group => {
+        if (group.group_name === group_name) {
+          bFound = true
+        }
+      })
 
-      // const usersGroups = ['Jobe']
-      if (!(usersGroups.find(gn => gn === element.group_name))) { // Users cannot join groups they are members of
-        tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
-      } else {
+      if (bFound) {
         tableHTML += '<td>-</td>'
+      } else {
+        tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
       }
 
       tableHTML += '</tr>'
@@ -125,11 +132,10 @@ function updateGroupList () {
     allMembers.push(username) // username and all invited members
     const membershipInfo = { members: allMembers, group_name: userinput, date_created: newGroup.date_created }
     const inviteObj = { invited_members: invitedMembers, group_name: newGroup.group_name, time_sent: newGroup.date_created }
-    createGroupEntry(newGroup) // TO DO: check if any members/username are a part of the max 10 groups already
-    createMembershipEntry(membershipInfo)
+    createGroup(newGroup, membershipInfo)
 
     // update usersGroups
-    usersGroups.push(newGroup.group_name)
+    usersGroups.push({ group_name: newGroup.group_name })
     console.log(inviteObj)
     sendInvites(inviteObj)
 
@@ -142,20 +148,33 @@ function updateGroupList () {
   }
 }
 
-function createMembershipEntry (membershipInfo) {
-  console.log('createmembership function')
-  fetch('/createMembership', {
+function createGroup (newGroup, membershipInfo) { // create 'groups' and 'members' record
+  fetch('/createGroup', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(membershipInfo)
+    body: JSON.stringify(newGroup)
   })
+    .then(result => {
+      fetch('/createMembership', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(membershipInfo)
+      })
+    })
 }
+
 
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_id) {
+  // 'request has been sent' alert
+  // Update the 'groupRequests' table
+  // replace 'join' button with '-'
+
   // add the user to 'memberships' table
   // reload the database
 
@@ -164,16 +183,6 @@ function joinGroup (clicked_id) {
   // loadHTMLTable(database, username)
 }
 
-function createGroupEntry (newGroup) {
-  console.log('createGroupEntry function')
-  fetch('/createGroup', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(newGroup)
-  })
-}
 
 function sendInvites (inviteObj) {
   if (inviteObj.invited_members.length > 0) {

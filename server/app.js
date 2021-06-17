@@ -113,11 +113,12 @@ app.get('/get-groups', function (req, res) {
 })
 
 app.get('/getUsersGroups', function (req, res) {
+  console.log(req.query)
   db.pools
     // Run query
     .then((pool) => {
       return pool.request()
-        .input('username', db.sql.Char, req.query.username.trim())
+        .input('username', db.sql.Char, req.query.username)
         .query(`
           SELECT group_name
           FROM groups AS g 
@@ -130,11 +131,12 @@ app.get('/getUsersGroups', function (req, res) {
             FROM users
             WHERE username = (@username)
             )   
-              `)
+        `)
     })
     // Send back the result
     .then(result => {
       res.send(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -182,6 +184,9 @@ app.post('/createMembership', function (req, res) {
       console.log('INSIDE server-createMembership carrying: ')
       console.log(membershipInfo)
       membershipInfo.members.forEach(member => {
+        console.log(member)
+        console.log(membershipInfo.group_name.trim())
+        console.log(membershipInfo.date_created)
         return pool.request()
           .input('username', db.sql.Char, member)
           .input('group_name', db.sql.Char, membershipInfo.group_name.trim())
