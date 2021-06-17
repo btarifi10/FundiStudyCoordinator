@@ -1,6 +1,6 @@
 
 'use strict'
-// import { UserService } from './UserService.js'
+
 const dropdown = document.getElementsByClassName('dropdown-btn')
 const dropdownAllGroups = document.getElementsByClassName('dropdown-btn2')
 const dropMenu = document.getElementById('dropdown-containerID')
@@ -10,7 +10,6 @@ const dropMenuAllGroups = document.getElementById('dropdown-containerAllGroups')
 const studyGroups = ['Big Data', 'Software 3', 'Sociology']
 const hrefValues = ['big-data', 'software', 'sociology']
 
-const currentUser = null
 
 function populateGroups () {
   for (let i = 0; i < studyGroups.length; i++) {

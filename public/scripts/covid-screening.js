@@ -1,7 +1,25 @@
 
 'use strict'
 
-import { UserDetails } from '../libraries/models/UserDetails.js'
+import { UserService } from './UserService.js'
+
+let currentUser = null
+
+const userService = UserService.getUserServiceInstance()
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Retrieves current user once document is loaded.
+  userService.getCurrentUser().then(
+    user => {
+      currentUser = user
+      console.log(currentUser.firstName.json())
+    //   const welcomeDiv = document.getElementById('welcome-div')
+    //   const welcomeHeading = document.createElement('h2')
+    //   welcomeHeading.textContent = `Welcome, ${currentUser.firstName} ${currentUser.lastName}`
+    //   welcomeDiv.appendChild(welcomeHeading)
+    }
+  )
+})
 
 
 
@@ -10,7 +28,7 @@ function processCovidScreening () {
   alert('Information Captured')
   //  addScreeningResult()
   //   updateScreening()
-
+//   getCurrentUser() 
   addScreeningResult(updateScreening())
 }
 
@@ -37,14 +55,8 @@ function getAllSelectedAnswers () {
 }
 
 function updateScreening () {
-//   const inviteList = document.getElementById('inviteList')
-//   const userinput = document.getElementById('groupName').value.trim()
-//   const courseCode = document.getElementById('courseCode').value.trim()
-//   const duplicate = database.find(group => group.groupName === userinput)
-//   const invitedMembers = selectedMembers(inviteList)
-
   const newScreening = {
-    user_id: currentUser.id,
+    user_id: 0,
     passed: getAllSelectedAnswers(),
     date: new Date()
   }
