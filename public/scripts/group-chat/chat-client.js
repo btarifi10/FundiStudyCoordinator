@@ -1,5 +1,16 @@
 'use strict'
 
+/* -------------------------------- Imports -------------------------------- */
+
+import { sendMessage } from './chat-messages.js'
+import {
+  displayChat,
+  displayGroupName,
+  displayChatMembers,
+  displayMessage
+} from './chat-display.js'
+
+const io = window.io
 /* ------------------------------- CONSTANTS ------------------------------- */
 
 const JOIN_CHAT_EVENT = 'joinChat'

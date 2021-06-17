@@ -3,6 +3,11 @@ This file contains the functions concerned with displaying the elements of the
 group chat within the client's browser.
 */
 
+/* -------------------------------- Imports -------------------------------- */
+
+import { formatChatMessage } from './chat-messages.js'
+const moment = window.moment
+
 /* ------------------------------ DOM Elements ------------------------------ */
 
 const messageArea = document.querySelector('.message-area')
@@ -144,4 +149,14 @@ function embedLinks (text) {
       }
     }
   })
+}
+
+export {
+  displayChat,
+  displayMessage,
+  displayGroupName,
+  displayChatMembers,
+  addDateDivider,
+  formatDate,
+  embedLinks
 }
