@@ -24,19 +24,17 @@
     <div class="row">
 
       <!-- Form Example (left)-->
-      <div class="col-md-8 bg-light">
+      <div class="col-md-12 bg-light">
         <div class="text-center">
           <br>
-          <p><b>The following is intended to be included within the form to create a face-to-face meeting event</b></p>
+          <p><b>Please enter the following details to create a meeting</b></p>
         </div>
 
+        <!-- meeting date input -->
         <form id="meeting-form" class="mx-3">
-          <!-- date input - the ideal implementation of this would involve the use of an external calendar plugin thing -->
           <div class="mb-3" id='meeting-date'> 
             <label for="date" class="form-label">When will your meeting occur?</label>
             <input class="form-control" type="datetime-local" name="meeting_time" id="date" required>
-            <!-- <label for="time" class="form-label">Select a time:</label>
-            <input class="form-control" type="time" id="time" placeholder="2025-05-21 10:15:30.5555555 +07:30" required> -->
           </div>
           
           <!-- meeting location choice - online/face-to-face -->
@@ -49,39 +47,14 @@
           </select>
           </div>
 
-          <div class="mb-3" id="place">
           <!-- placeholder which is populated when selecting the meeting type -->
-          </div>
+          <div class="mb-3" id="place"></div>
 
           <button type="submit" class="btn btn-primary">Create Meeting</button>
           <br>
           <br>
         </form>
-        <table id="meetings-table">
-
-          <tbody id="table-body">
-      
-          </tbody>
-        </table>
       </div>
-
-      <!-- Link Example (right) -->
-      <div class="col-md-4">
-        <div class="text-center">
-          <br>
-          <p><b>The following demonstrates how the chosen address can be formatted as a Google Map link</b></p>
-          <p><em>Click a link for directions</em></p>
-        </div>
-        <ul class="list-group" id="address-list"> </ul>
-        <br>
-        <p><em>Naive 'View Meetings' implementation to illustrate proof of concept</em></p>
-        <button type="submit" class="btn btn-secondary" id='View-btn'>View meetings</button>
-        <div class="text-center" id="View">
-          <br> 
-        </div>
-        
-      </div>
-
     </div>
   </div>
 
@@ -91,6 +64,7 @@
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Script containing code for map search functionality -->
   <script defer type="module" src="scripts/choose-location.js"></script>
+  <script defer type="module" src="scripts/load-meetings.js"></script>
 </body>
 
 </html>

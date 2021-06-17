@@ -1,3 +1,21 @@
+function loadButtons (meeting) {
+  const a = document.createElement('button')
+  const text = document.createTextNode('Online')
+  a.appendChild(text)
+  a.setAttribute('class', 'btn btn-primary')
+  a.setAttribute('data-id', 'onlineMeet')
+  a.setAttribute('type', 'submit')
+  meeting.appendChild(a)
+
+  const a2 = document.createElement('button')
+  const text2 = document.createTextNode('face-to-face')
+  a2.appendChild(text2)
+  a2.setAttribute('class', 'btn btn-primary')
+  a2.setAttribute('data-id', 'faceMeet')
+  a2.setAttribute('type', 'submit')
+  meeting.appendChild(a2)
+}
+
 function removePlace (placeDiv) {
   while (placeDiv.hasChildNodes()) {
     placeDiv.removeChild(placeDiv.lastChild)
@@ -8,6 +26,7 @@ function loadPlatform () {
   const placeDiv = document.getElementById('place')
   removePlace(placeDiv)
 
+  const createBreak = document.createElement('br')
   // create the platform division
   const platform_div = document.createElement('div')
 
@@ -38,6 +57,7 @@ function loadPlatform () {
   platform_div.appendChild(platform_exp)
   platform_div.appendChild(inputPlatform)
   placeDiv.appendChild(platform_div)
+  placeDiv.appendChild(createBreak)
 
   // Create Link division for input
   // create the link division
@@ -71,12 +91,14 @@ function loadPlatform () {
   linkDiv.appendChild(linkExp)
   linkDiv.appendChild(inputLink)
   placeDiv.appendChild(linkDiv)
+  placeDiv.appendChild(createBreak)
 }
 
 function loadLocation () {
   const placeDiv = document.getElementById('place')
   removePlace(placeDiv)
 
+  const createBreak = document.createElement('br')
   // create label
   const label = document.createElement('label')
   label.setAttribute('for', 'addressInput')
@@ -116,11 +138,11 @@ function loadLocation () {
   placeDiv.appendChild(input)
   placeDiv.appendChild(map_div)
   placeDiv.appendChild(map_frame)
+  placeDiv.appendChild(createBreak)
 }
 
-function loadHTMLTable (data) {
+function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
-  console.log(data.recordset.length)
   if (data.recordsets.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='7'>No meetings</td></tr>"
     return
@@ -129,26 +151,25 @@ function loadHTMLTable (data) {
   let headings = ''
   headings += '<thead>'
   headings += '<th>meeting id</th>'
-  headings += '<th>group name</th>'
+  headings += '<th>Group Name</th>'
   headings += '<th>creator id</th>'
-  headings += '<th>meeting_time</th>'
-  headings += '<th>place</th>'
-  headings += '<th>link</th>'
-  headings += '<th>is online?</th>'
+  headings += '<th>Meeting Time</th>'
+  headings += '<th>Place/Location</th>'
   headings += '</thead>'
 
   let tableHtml = ''
   tableHtml += headings
   data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link, is_online }) { // group_num, group_online, group_url }) {
-    tableHtml += '<tr>'
-    tableHtml += `<td id='${meeting_id}-id'>${meeting_id}</td>`
-    tableHtml += `<td id='${group_name}-id'>${group_name}</td>`
-    tableHtml += `<td id='${creator_id}-id'>${creator_id}</td>`
-    tableHtml += `<td id = '${meeting_time}-group-name'>${meeting_time}</td>`
-    tableHtml += `<td id = '${place}-date-joined'>${place}</td>`
-    tableHtml += `<td id = '${link}-num-memb'>${link}</td>`
-    tableHtml += `<td id = '${is_online}-num-online'>${is_online}</td>`
-    tableHtml += '</tr>'
+    if (is_online == option) {
+      tableHtml += '<tr>'
+      tableHtml += `<td id='${meeting_id}-id'>${meeting_id}</td>`
+      tableHtml += `<td id='${group_name}-id'>${group_name}</td>`
+      tableHtml += `<td id='${creator_id}-id'>${creator_id}</td>`
+      tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
+      tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
+      tableHtml += `<td id = '${meeting_id}-link'></td>`
+      tableHtml += '</tr>'
+    }
   })
 
   table.innerHTML = tableHtml
@@ -157,6 +178,6 @@ function loadHTMLTable (data) {
 export {
   loadLocation,
   loadPlatform,
-  loadHTMLTable
-
+  loadHTMLTable,
+  loadButtons
 }

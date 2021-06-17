@@ -35,7 +35,6 @@ const meetingForm = document.getElementById('meeting-form')
 const addressList = document.getElementById('address-list')
 const meetingChoice = document.getElementById('selection')
 const viewMeetings = document.getElementById('View-btn')
-// const creator_id = 9
 
 // Update which meeting options should be displayed for the user
 meetingChoice.addEventListener('change', (event) => {
@@ -58,18 +57,7 @@ document.querySelector('#place').addEventListener('input', function (event) {
   }
 })
 
-// send query to retrieve group id and user id from the given information
-
-// Naive implementation to illustrate the ability to view group meetings
-viewMeetings.onclick = function () {
-  fetch('/meetingViews/' + group)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      loadHTMLTable(data)
-    })
-}
-
+// Send the form input to be added to the Database
 meetingForm.addEventListener('submit', (event) => {
   event.preventDefault()
   let link = null
@@ -85,28 +73,20 @@ meetingForm.addEventListener('submit', (event) => {
     link = createDirectionLink()
     place = document.getElementById('addressInput').value
     is_online = 0
-    // console.log('do something - send information to database')
   }
   // retrieve the current user id
   userService.getCurrentUser().then(
     user => {
       currentUser = user
-      // retrieve the group id corresponding to the group name
-      // fetch('/meetingGroup/' + group)
-      // .then(response => response.json())
-      // .then(data => {
       const group_name = group
-      // const group_id = data.recordset[0].group_id
-      // console.log(group_id)
       const creator_id = currentUser.id
       const meeting_time = document.getElementById('date').value
       const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
       recordMeeting(meetingBody)
-      // }
-      // )
     })
 })
 
+// Set up the inputs to be placed into the database
 function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_online) {
   return {
     group_name: group_name,
@@ -118,6 +98,7 @@ function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_onl
   }
 }
 
+// record the meeting to the database
 function recordMeeting (meetingBody) {
   console.log(meetingBody)
   fetch('/record-meeting', {
@@ -169,16 +150,3 @@ function createDirectionLink () {
   addressList.appendChild(li)
   return encodedURL
 }
-// Extra listener to use to test input stuff - remove
-// document.querySelector('#meeting-date').addEventListener('input', function (event) {
-//   if (event.target.id == 'date') {
-//     const date = document.getElementById('date').value
-//     const dt = new Date(date)
-//     console.log(group)
-//     userService.getCurrentUser().then(
-//       user => {
-//         currentUser = user
-//         console.log(currentUser.id)
-//       })
-//   }
-// })
