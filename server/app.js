@@ -146,6 +146,39 @@ app.get('/getUsersGroups', function (req, res) {
     })
 })
 
+app.get('/getRequests', function (req, res) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, req.query.username)
+        .query(`
+          SELECT group_name
+          FROM groups AS g 
+            INNER JOIN group_requests AS r
+                ON g.group_id = r.group_id
+            INNER JOIN users AS u
+                ON r.user_id = u.user_id
+          WHERE u.user_id IN (
+            SELECT user_id 
+            FROM users
+            WHERE username = (@username)
+            )   
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      // console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 app.post('/createGroup', function (req, res) {
   const newGroup = req.body
   console.log('server-createGroup')
@@ -238,6 +271,38 @@ app.post('/sendInvites', function (req, res) {
     .then(result => {
       res.send(result)
       console.log('Invites have been sent')
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.post('/sendRequest', function (req, res) {
+  const reqObj = req.body
+  // console.log(inviteList)
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, reqObj.username)
+        .input('group_name', db.sql.Char, reqObj.group_name)
+        .input('time_sent', db.sql.DateTimeOffset, reqObj.time_sent)
+        .query(`
+          INSERT INTO group_requests (user_id, group_id, time_sent)
+          SELECT user_id, group_id, (@time_sent)
+          FROM users AS u, groups AS g
+          WHERE u.username = (@username)
+          AND g.group_name = (@group_name);
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      console.log('Requests have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {

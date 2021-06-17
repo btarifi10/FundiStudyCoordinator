@@ -2,12 +2,14 @@
 
 let database = []
 let usersGroups = [] // update this after creating a group
-
+let requestsList = []
 const { username } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 })
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Load list of groups that user has requested to be a part of
+  loadRequestsList()
   // Load list of groups user is a member of
   loadUsersGroups()
   // Load group and member data from database to show in table
@@ -63,6 +65,18 @@ function populateUsersGroups (groups) {
   console.log(usersGroups)
 }
 
+function loadRequestsList () {
+  fetch(`/getRequests?username=${username}`)
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(populateRequestsList)
+}
+
+function populateRequestsList (groups) {
+  requestsList = [...groups]
+  console.log(requestsList)
+}
+
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
 function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get a 'join' button
   const table = document.querySelector('table tbody')
@@ -79,10 +93,17 @@ function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get
       tableHTML += `<td>${members}</td>`
       tableHTML += `<td>${admin}</td>`
       tableHTML += `<td>${date_created.toLocaleString()}</td>`
-      const groupName_id = group_name.replace(/\s+/g, '')
-      // const usersGroups = [21] if usersgroups.contains(group_name)
+      const groupName_id = group_name.replace(/\s+/g, '#')
+
+      // TO DO: Add requestsList such that those groups do not allow him request to 'join' again
       let bFound = false
       usersGroups.forEach(group => {
+        if (group.group_name === group_name) {
+          bFound = true
+        }
+      })
+
+      requestsList.forEach(group => {
         if (group.group_name === group_name) {
           bFound = true
         }
@@ -91,7 +112,7 @@ function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get
       if (bFound) {
         tableHTML += '<td>-</td>'
       } else {
-        tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id)">Join</td>`
+        tableHTML += `<td><button class="join-row-btn" id=${groupName_id} onClick="joinGroup(this.id);">Join</td>`
       }
 
       tableHTML += '</tr>'
@@ -167,13 +188,27 @@ function createGroup (newGroup, membershipInfo) { // create 'groups' and 'member
     })
 }
 
-
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
-function joinGroup (clicked_id) {
+function joinGroup (clicked_group) {
   // 'request has been sent' alert
   // Update the 'groupRequests' table
   // replace 'join' button with '-'
+  const group_name = clicked_group.replaceAll('#', ' ')
+  const time_sent = new Date()
+  const reqObj = { username, group_name, time_sent }
+
+  fetch('/sendRequest', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(reqObj)
+  })
+
+  alert(`A Request to join ${group_name} has been sent`)
+  document.getElementById(`${clicked_group}`).disabled = true
+  requestsList.push({ group_name: group_name })
 
   // add the user to 'memberships' table
   // reload the database
@@ -182,7 +217,6 @@ function joinGroup (clicked_id) {
   // loadHTMLTable(database)
   // loadHTMLTable(database, username)
 }
-
 
 function sendInvites (inviteObj) {
   if (inviteObj.invited_members.length > 0) {
