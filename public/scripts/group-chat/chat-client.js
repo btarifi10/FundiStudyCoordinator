@@ -23,7 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => data.recordset)
     .then(displayChat)
+  const meeting = document.getElementById('meetings')
+  loadMeetingLink(meeting)
 })
+
+// this may be altered to include an option for
+
+function loadMeetingLink (meeting) {
+  const a = document.createElement('a')
+  const text = document.createTextNode('Meetings')
+  a.appendChild(text)
+  a.setAttribute('class', 'btn')
+  a.href = `/choose-location?group=${group}`
+  // a.target = '_blank' // changes whether or not a new window is created
+  meeting.insertBefore(a, meeting.childNodes[0])
+}
 
 // Create the client socket
 const socket = io()

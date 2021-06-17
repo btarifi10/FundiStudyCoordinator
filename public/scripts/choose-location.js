@@ -1,5 +1,18 @@
+/* ------------------------------ Functionality ------------------------------ */
+
+import { UserService } from './UserService.js'
+import {
+  loadLocation,
+  loadPlatform,
+  loadHTMLTable
+} from './load-meetings.js'
 'use strict'
 
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
+const userService = UserService.getUserServiceInstance()
+let currentUser = null
 /* ------------------------------- CONSTANTS ------------------------------- */
 
 // Embedded Map
@@ -18,14 +31,11 @@ const ADDR_REGEX = /[^A-z0-9À-ž'.,\s+-º]+/g
 
 /* ------------------------------ DOM Elements ------------------------------ */
 
-// const addressInput = document.getElementById('addressInput')
-// const mapFrame = document.getElementById('map')
 const meetingForm = document.getElementById('meeting-form')
 const addressList = document.getElementById('address-list')
 const meetingChoice = document.getElementById('selection')
-// const
-
-/* ------------------------------ Functionality ------------------------------ */
+const viewMeetings = document.getElementById('View-btn')
+// const creator_id = 9
 
 // Update which meeting options should be displayed for the user
 meetingChoice.addEventListener('change', (event) => {
@@ -48,18 +58,76 @@ document.querySelector('#place').addEventListener('input', function (event) {
   }
 })
 
+// send query to retrieve group id and user id from the given information
+
+// Naive implementation to illustrate the ability to view group meetings
+viewMeetings.onclick = function () {
+  fetch('/meetingViews/' + group)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      loadHTMLTable(data)
+    })
+}
+
 meetingForm.addEventListener('submit', (event) => {
   event.preventDefault()
+  let link = null
+  let is_online = true
+  let place = null
+  // retrieve inputs from the different areas
   if (meetingChoice.value == 'none-selected') {
     window.alert('Please select a viable meeting option')
   } else if (meetingChoice.value == 'online') {
-    console.log('do something - send information to database')
+    link = document.getElementById('linkInput').value
+    place = document.getElementById('platformInput').value
   } else if (meetingChoice.value == 'face-to-face') {
-    createDirectionLink()
-    console.log('do something - send information to database')
+    link = createDirectionLink()
+    place = document.getElementById('addressInput').value
+    is_online = 0
+    // console.log('do something - send information to database')
   }
+  // retrieve the current user id
+  userService.getCurrentUser().then(
+    user => {
+      currentUser = user
+      // retrieve the group id corresponding to the group name
+      // fetch('/meetingGroup/' + group)
+      // .then(response => response.json())
+      // .then(data => {
+      const group_name = group
+      // const group_id = data.recordset[0].group_id
+      // console.log(group_id)
+      const creator_id = currentUser.id
+      const meeting_time = document.getElementById('date').value
+      const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
+      recordMeeting(meetingBody)
+      // }
+      // )
+    })
 })
 
+function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_online) {
+  return {
+    group_name: group_name,
+    creator_id: creator_id,
+    meeting_time: new Date(meeting_time), // check how the conversions are being made to the database
+    place: place,
+    link: link,
+    is_online: is_online
+  }
+}
+
+function recordMeeting (meetingBody) {
+  console.log(meetingBody)
+  fetch('/record-meeting', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(meetingBody)
+  })
+}
 /* ---------------------------- Helper Functions ---------------------------- */
 
 function generateMapURL (address) {
@@ -99,125 +167,18 @@ function createDirectionLink () {
   li.classList.add('list-group-item')
   li.appendChild(a)
   addressList.appendChild(li)
+  return encodedURL
 }
-
-/* ---- Further helper functions used to update the contents of the HTML ---- */
-
-function removePlace (placeDiv) {
-  while (placeDiv.hasChildNodes()) {
-    placeDiv.removeChild(placeDiv.lastChild)
-  }
-}
-
-function loadPlatform () {
-  const placeDiv = document.getElementById('place')
-  removePlace(placeDiv)
-
-  // create the platform division
-  const platform_div = document.createElement('div')
-
-  // create label
-  const label = document.createElement('label')
-  label.setAttribute('for', 'platformInput')
-  label.setAttribute('class', 'form-label')
-  label.innerHTML = 'Choose Platform'
-
-  // create the platform explanation
-  const platform_exp = document.createElement('div')
-  platform_exp.setAttribute('class', 'form-text')
-  platform_exp.innerHTML = 'Please enter the name of the platform that will be used for the meeting'
-
-  // create the input for the platform
-  const inputPlatform = document.createElement('input')
-  inputPlatform.type = 'text'
-  inputPlatform.setAttribute('class', 'form-control')
-  inputPlatform.setAttribute('id', 'platformInput')
-  inputPlatform.setAttribute('required', 'required')
-  inputPlatform.setAttribute('pattern', "[A-z0-9À-ž'.,\\s+-]+")
-  inputPlatform.setAttribute('title', 'Platform name must consist of alphanumeric characters')
-  inputPlatform.setAttribute('placeholder', 'Enter platform name...')
-  inputPlatform.setAttribute('aria-describedby', 'platformHelp')
-
-  // append
-  platform_div.appendChild(label)
-  platform_div.appendChild(platform_exp)
-  platform_div.appendChild(inputPlatform)
-  placeDiv.appendChild(platform_div)
-
-  // Create Link division for input
-  // create the link division
-  const linkDiv = document.createElement('div')
-
-  // create the link explanation
-  const linkExp = document.createElement('div')
-  linkExp.setAttribute('class', 'form-text')
-  linkExp.setAttribute('id', 'linkHelp')
-  linkExp.innerHTML = 'Please enter the name of the platform that will be used for the meeting'
-
-  // create label
-  const linkLabel = document.createElement('label')
-  linkLabel.setAttribute('for', 'linkInput')
-  linkLabel.setAttribute('class', 'form-label')
-  linkLabel.innerHTML = 'Please enter the link for the meeting'
-
-  // create the input for the link
-  const inputLink = document.createElement('input')
-  inputLink.type = 'text'
-  inputLink.setAttribute('class', 'form-control')
-  inputLink.setAttribute('id', 'platformInput')
-  inputLink.setAttribute('required', 'required')
-  inputLink.setAttribute('pattern', "[A-z0-9À-ž'.,\\s+-@:%_~#=&?//\]+")
-  inputLink.setAttribute('title', 'link name must consist of alphanumeric characters')
-  inputLink.setAttribute('placeholder', 'Enter the link to the meeting...')
-  inputLink.setAttribute('aria-describedby', 'linkHelp')
-
-  linkDiv.appendChild(linkLabel)
-  linkDiv.appendChild(linkExp)
-  linkDiv.appendChild(inputLink)
-  linkDiv.appendChild(divTRY)
-  placeDiv.appendChild(linkDiv)
-}
-
-function loadLocation () {
-  const placeDiv = document.getElementById('place')
-  removePlace(placeDiv)
-
-  // create label
-  const label = document.createElement('label')
-  label.setAttribute('for', 'addressInput')
-  label.setAttribute('class', 'form-label')
-  label.innerHTML = 'Choose location'
-
-  // create the input
-  const input = document.createElement('input')
-  input.type = 'text'
-  input.setAttribute('class', 'form-control')
-  input.setAttribute('id', 'addressInput')
-  input.setAttribute('required', 'required')
-  input.setAttribute('pattern', "[A-z0-9À-ž'.,\\s+-º]+")
-  input.setAttribute('title', 'Location must consist of alphanumeric characters or use coordinate notation')
-  input.setAttribute('placeholder', 'Enter address...')
-  input.setAttribute('aria-describedby', 'addressHelp')
-
-  // create the map explanation
-  const map_div = document.createElement('div')
-  map_div.setAttribute('class', 'form-text')
-  map_div.setAttribute('id', 'addressHelp')
-  map_div.innerHTML = 'View the map below to confirm that the correct address has been found'
-
-  // create the map frame
-  const map_frame = document.createElement('iframe')
-  map_frame.setAttribute('id', 'map')
-  map_frame.setAttribute('class', 'rounded')
-  map_frame.setAttribute('width', '100%')
-  map_frame.setAttribute('height', '400')
-  map_frame.setAttribute('frameborder', '0')
-  map_frame.setAttribute('style', 'border:0')
-  map_frame.setAttribute('src', 'https://www.google.com/maps/embed/v1/place?key=AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU&q=%20&zoom=13')
-  map_frame.setAttribute('allowfullscreen', 'allowfullscreen')
-
-  placeDiv.appendChild(label)
-  placeDiv.appendChild(input)
-  placeDiv.appendChild(map_div)
-  placeDiv.appendChild(map_frame)
-}
+// Extra listener to use to test input stuff - remove
+// document.querySelector('#meeting-date').addEventListener('input', function (event) {
+//   if (event.target.id == 'date') {
+//     const date = document.getElementById('date').value
+//     const dt = new Date(date)
+//     console.log(group)
+//     userService.getCurrentUser().then(
+//       user => {
+//         currentUser = user
+//         console.log(currentUser.id)
+//       })
+//   }
+// })
