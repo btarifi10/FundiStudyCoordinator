@@ -81,6 +81,36 @@ app.get('/get-groups', function (req, res) {
     })
 })
 
+app.post('/create-screening', function (req, res) {
+  const newScreen = req.body
+  console.log(newScreen)
+  // console.log(newScreen.user_id, newScreen.passed, newScreen.date)
+  // Make a query to the database
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userid', db.sql.Int, newScreen.user_id)
+        .input('passed', db.sql.Bit, newScreen.passed)
+        .input('date', db.sql.DateTimeOffset, newScreen.date)
+        .query(`
+        INSERT Into screening(user_id, passed,date_screened)
+        VALUES (@userid, @passed, @date);
+        `)
+      // VALUES ((@userid), (@passed), (@date));
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 /* ----------------------------- Yasser's Code ----------------------------- */
 
 // const db = require('./database-service')

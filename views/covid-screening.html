@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/group-selector.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Covid Screening</title>
+    <script defer src="scripts/covid-screening.js" type= "module" ></script>
+   
+</head>
+<body>
+    <h1>COVID Screening Overview</h1>  
+    <p> Add some shpiell about Covid Screening</p> 
+    <div >
+          <a href="https://www.wits.ac.za/covid19/covid19-screening-tool/" target="_blank" id="WitsCovidProtocol" > University Screening Regulations </a>
+        <br>
+    </div>
+
+    <br>
+    <br>
+    <h2> COVID Screening </h2>
+    <form >
+        <label for="SymptomsQ1">Are you suffering from any of these symptoms: fever, dry cough, sore throat, red 
+            eyes, difficulty breathing, loss of smell or taste?</label>
+        <br>
+        <select id="SymptomsQ1">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+        <br>
+        <label for="SymptomsQ2">Are you suffering from any of these symptoms: unusual body aches, fatigue, 
+            weakness, tiredness, nauseous, vomiting and/or diarrhoea?</label>
+        <br>
+        <select id="SymptomsQ2">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+        <br>
+        <label for="ContactQ1">In the past 10 days have you tested positive for COVID-19? </label>
+        <br>
+        <select id="ContactQ1">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+        <br>
+        <label for="ContactQ2">
+                In the past 10 days were you exposed* to someone who is positively diagnosed 
+        with COVID-19, or to someone who is in quarantine / self-isolation for COVID-19? </label>
+        <br>
+        <select id="ContactQ2">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+        <br>
+        <label for="ContactQ3">
+            Do you suffer from any chronic illness that may 
+            have compromised your immune system, i.e. respiratory disease, diabetes, heart 
+            disease, or any other chronic illness that could compromise one’s immune system?  </label>
+        <br>
+        <select id="ContactQ3">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+        </select>
+        <br>
+        <label for="ContactQ4">
+            Are you under 60 years old?  </label>
+        <br>
+        <select id="ContactQ4">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+        </select>
+        <br>
+        <br>
+
+        <button   id= "submission" onclick="window.history.back()">Submit</button>
+     
+  
+
+</body>
+</html>
