@@ -21,10 +21,10 @@ function loadInvitesTable () {
       tableHTML += '<tr>'
       tableHTML += `<td>${group_name}</td>`
       tableHTML += `<td>${course_code}</td>`
-      tableHTML += `<td>${time_sent.toLocaleString()}</td>`
+      tableHTML += `<td>${moment(time_sent).format('ddd, DD MMM YYYY')}</td>`
 
-      tableHTML += `<td><button class="btn btn-success" id="${invite_id}A" onClick="acceptInvite(this.id)"><i class="fa fa-check"></i></td>`
-      tableHTML += `<td><button class="btn btn-danger" id="${invite_id}R" onClick="declineInvite(this.id)"><i class="fa fa-times"</i></td>`
+      tableHTML += `<td><button class="btn btn-success" style="border-radius:25px;width:60px" id="${invite_id}A" onClick="acceptInvite(this.id)"><i class="fa fa-check"></i></td>`
+      tableHTML += `<td><button class="btn btn-danger" style="border-radius:25px;width:60px" id="${invite_id}R" onClick="declineInvite(this.id)"><i class="fa fa-times"</i></td>`
 
       tableHTML += '</tr>'
     })

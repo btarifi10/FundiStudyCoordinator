@@ -10,37 +10,44 @@
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
-    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
 
 </head>
 
+
+
 <body>
+    <!-- HEADER -->
+    <header class="group-header text-center pt-4">
+        <h1 class="page-header"><i class="fas fa-user-plus"></i> Invites <span id="group-name"></span></h1>
+    </header>
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
-            <div class="col-md-8 m-5 p-5">
-                <div class="card text-center bg-light m-3 p-3">
+            <div class="col-md-12 m-3 p-2">
+                <div class="card text-center bg-light m-1 p-1">
                     <div id='invite-msg'></div>
 
-                    <table class="table" id="invite-table">
+                    <table class="table table-hover align-middle" id="invite-table">
                         <thead>
                             <th>Group</th>
                             <th>Course Code</th>
                             <th>Invitation Date</th>
                             <th>Accept</th>
-                            <th>Decline</th> 
+                            <th>Decline</th>
                         </thead>
                         <tbody></tbody>
                     </table>
-                </div>
-                <!-- Link to dashboard page -->
-                <div class="card text-center bg-light m-3 p-3">
-                    <a href="/dashboard"> Back to dashboard </a> <br>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="scripts/invites.js"></script>
+
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </body>
 
