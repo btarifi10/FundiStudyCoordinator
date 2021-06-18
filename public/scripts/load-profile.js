@@ -25,10 +25,10 @@ function loadProfile (data) {
   let tableHtml = ''
 
   data.recordset.forEach(function ({ username, first_name, last_name, rating }) { // group_num, group_online, group_url }) {
-    tableHtml += `<p id='${username}-id'>Username: ${username}</p>`
-    tableHtml += `<p id='${first_name}-id'>First name: ${first_name}</p>`
-    tableHtml += `<p id='${last_name}-id'>Last name: ${last_name}</p>`
-    tableHtml += `<p id='${rating}-id'>rating: ${rating}</p>`
+    tableHtml += `<p id='${username}-username'>Username: ${username}</p>`
+    tableHtml += `<p id='${first_name}-firstname'>First name: ${first_name}</p>`
+    tableHtml += `<p id='${last_name}-lastname'>Last name: ${last_name}</p>`
+    tableHtml += `<p id='${rating}-rating'>rating: ${rating}</p>`
   })
   profile.innerHTML = tableHtml
 }
@@ -71,8 +71,8 @@ function loadHTMLTable (data) {
   tableHtml += '<th>Group ID</th>'
   tableHtml += '<th>Membership name</th>'
   tableHtml += '<th>Date Joined</th>'
-  tableHtml += '<th>Number of members</th>'
-  tableHtml += '<th>Number of online members</th>'
+  //   tableHtml += '<th>Number of members</th>'
+  //   tableHtml += '<th>Number of online members</th>'
   tableHtml += '<th>Leave</th>'
   tableHtml += '</thead>'
 
@@ -82,10 +82,10 @@ function loadHTMLTable (data) {
       data.recordset.forEach(function ({ group_id, group_name, date_joined, membership_id }) { // group_num, group_online, group_url }) {
         tableHtml += '<tr>'
         tableHtml += `<td id='${group_id}-id'>${group_id}</td>`
-        tableHtml += `<td id = '${group_id}-group-name'><a href='/chat?username=${currentUser.username}&group=${group_name}'>${group_name}</a></td>`
+        tableHtml += `<td id = '${group_id}-group-name'><a href='/chat?group=${group_name}'>${group_name}</a></td>`
         tableHtml += `<td id = '${group_id}-date-joined'>${date_joined}</td>`
-        tableHtml += `<td id = '${group_id}-num-memb'>group_num</td>`// ${group_num}</td>`
-        tableHtml += `<td id = '${group_id}-num-online'>group_online</td>`// ${group_online}</td>`
+        // tableHtml += `<td id = '${group_id}-num-memb'>group_num</td>`// ${group_num}</td>`
+        // tableHtml += `<td id = '${group_id}-num-online'>group_online</td>`// ${group_online}</td>`
         tableHtml += `<td><button class="delete-row-btn" data-id=${membership_id}>Leave</td>`
         tableHtml += '</tr>'
       })

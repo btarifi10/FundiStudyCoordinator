@@ -40,6 +40,7 @@ ratingSubmission.addEventListener('click', (event) => {
 // rating given
 function submitRating () {
   const nameSelected = selectMembers.value.trim()
+  console.log(nameSelected)
   fetch(`/get-current?nameSelected=${nameSelected}`)//  , {
     .then(response => response.json())
     .then(data => {
@@ -71,8 +72,8 @@ function postNewRating (ratingUpdated) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(ratingUpdated)
-
   })
+  window.history.back()
 }
 
 // Retrieves the new entry for the rating form the checkbox

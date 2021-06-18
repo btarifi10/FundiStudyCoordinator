@@ -6,7 +6,6 @@ import { UserService } from './UserService.js'
 const userService = UserService.getUserServiceInstance()
 let currentUser = null
 
-
 // Submits the Covid Screening results captured by the form
 const submissionButton = document.getElementById('submission')
 submissionButton.addEventListener('click', (event) => {
@@ -51,7 +50,6 @@ function updateScreening () {
     })
 }
 
-
 // Posts results to the database
 
 function addScreeningResult (newScreening) {
@@ -62,4 +60,5 @@ function addScreeningResult (newScreening) {
     },
     body: JSON.stringify(newScreening)
   })
+  window.history.back()
 }
