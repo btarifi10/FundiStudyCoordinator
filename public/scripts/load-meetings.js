@@ -163,8 +163,8 @@ function loadHTMLTable (data, option) {
     if (is_online == option) {
       tableHtml += '<tr>'
       tableHtml += `<td id='${meeting_id}-id'>${meeting_id}</td>`
-      tableHtml += `<td id='${group_name}-id'>${group_name}</td>`
-      tableHtml += `<td id='${creator_id}-id'>${creator_id}</td>`
+      tableHtml += `<td id='${meeting_id}-meeting-id'>${group_name}</td>`
+      tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
       tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
       tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
       tableHtml += `<td id = '${meeting_id}-link'></td>`

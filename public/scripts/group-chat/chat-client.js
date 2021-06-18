@@ -36,12 +36,6 @@ const { group } = Qs.parse(location.search, {
 // Retrieve the current username
 let currentUser = null
 const userService = UserService.getUserServiceInstance()
-userService.getCurrentUser()
-  .then(user => {
-    currentUser = user
-    const username = user.username
-    socket.emit(JOIN_CHAT_EVENT, { username, group })
-  })
 
 // Once the DOM is loaded, display previous chat messages
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,28 +46,30 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => data.recordset)
     .then(displayChat)
 
-
-  const rating = document.getElementById('rate-members')
-  loadRatingLink(rating)
-
+  userService.getCurrentUser()
+    .then(user => {
+      currentUser = user
+      const username = user.username
+      console.log(currentUser)
+      socket.emit(JOIN_CHAT_EVENT, { username, group })
+      const rating = document.getElementById('rate-members')
+      loadRatingLink(rating)
+    })
   const linkGroupPolls = document.getElementById('link-group-polls')
-
   linkGroupPolls.href = `polls?group=${group}`
-
 })
-
 
 function loadRatingLink (rating) {
   const a = document.createElement('a')
   const text = document.createTextNode('Rate Members')
   a.appendChild(text)
   a.setAttribute('class', 'btn')
+
+  const username = currentUser.username
   a.href = `/rating?group=${group}&username=${username}`
   // a.target = '_blank' // changes whether or not a new window is created
   rating.insertBefore(a, rating.childNodes[0])
 }
-// Create the client socket
-const socket = io()
 
 // this may be altered to include an option for
 
@@ -85,7 +81,6 @@ function loadMeetingLink (meeting) {
   a.href = `/choose-location?group=${group}`
   // a.target = '_blank' // changes whether or not a new window is created
   meeting.insertBefore(a, meeting.childNodes[0])
-
 
   const a2 = document.createElement('a')
   const text2 = document.createTextNode('Meetings')
