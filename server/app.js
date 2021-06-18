@@ -18,7 +18,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const handleChatMember = require('./group-chat/chat-server')
-
+const { handleVoting } = require('./polls/polling-service')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')))
 const server = http.createServer(app)
 const io = socketio(server)
 
-/* ----------------------------- Basheq's Code ----------------------------- */
+/* ----------------------------- Login Functonality ----------------------------- */
 
 // Use the loginRouter for the login and register functionality.
 const loginRouter = require('./loginRouter.js')(app, passport)
@@ -283,13 +283,49 @@ app.use(chatRouter)
 
 // Run when a member enters the group
 io.on('connection', socket => {
+  // Chats
   handleChatMember(io, socket)
+
+  // Voting
+  handleVoting(io, socket)
 })
+
+/* ----------------------------- Database Test ----------------------------- */
+
+/*
+const db = require('./database-service')
+
+app.get('/database', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        // This is only a test query, change it to whatever you need
+        .query('SELECT * FROM users')
+    })
+    // Send back the result
+    .then(result => {
+      // console.log(result)
+      res.send(result.recordset)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+*/
 
 /* ------------------------------ Invites: Basheq ---------------------------------- */
 
 const profileRouter = require('./profile-router')
 app.use('/', profileRouter)
+
+/* ------------------------------- Polls -------------------------------------- */
+const { pollingRouter } = require('./polls/polling-routes')
+app.use(pollingRouter)
 
 /* ------------------------------------------------------------------------- */
 

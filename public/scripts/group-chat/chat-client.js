@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => data.recordset)
     .then(displayChat)
+
+  const linkGroupPolls = document.getElementById('link-group-polls')
+
+  linkGroupPolls.href = `polls?group=${group}`
 })
 
 // this may be altered to include an option for

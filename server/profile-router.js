@@ -6,6 +6,8 @@ const path = require('path')
 const db = require('./database-service')
 const moment = require('moment')
 
+const { checkAuthenticated } = require('./authentication')
+
 profileRouter.get('/invites', checkAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'views', 'invites.html'))
 })
@@ -82,20 +84,5 @@ profileRouter.post('/api/declineInvite', checkAuthenticated, (req, res) => {
       res.send({ Error: err })
     })
 })
-
-function checkNotAuthenticated (req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect('/dashboard')
-  }
-
-  return next()
-}
-function checkAuthenticated (req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  return res.redirect('/')
-}
 
 module.exports = profileRouter

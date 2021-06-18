@@ -1,0 +1,26 @@
+.poll-area {
+	padding: 30px;
+    min-height: 600px;
+	max-height: 600px;
+	overflow-y: scroll;
+    justify-content: space-around;
+}
+
+.poll-area .poll {
+	padding: 10px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+}
+
+.poll-area .poll-content {
+	display: flex;
+    align-items: center; /* Vertical center alignment */
+}
+
+.poll-area .poll-form {
+	width: 100%;
+}
+
+.poll-area .poll-title {
+    background-color: aliceblue;
+}
