@@ -8,7 +8,7 @@ const {
   getCurrentMember,
   removeChatMember,
   getChatMembers
-} = require('./members')
+} = require('./chat-members')
 
 /* ------------------------------- CONSTANTS ------------------------------- */
 

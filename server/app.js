@@ -18,7 +18,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const handleChatMember = require('./group-chat/chat-server')
-
+const { handleVoting } = require('./polls/polling-service')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')))
 const server = http.createServer(app)
 const io = socketio(server)
 
-/* ----------------------------- Basheq's Code ----------------------------- */
+/* ----------------------------- Login Functonality ----------------------------- */
 
 // Use the loginRouter for the login and register functionality.
 const loginRouter = require('./loginRouter.js')(app, passport)
@@ -269,11 +269,7 @@ app.get('/membershipViews/:id', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-      // retrieve all recordsets with the following information to be displayed on the profile page
-
-        // want to retrieve the specific users personal details
-        // then search the memberships table for the entries corresponding to the user_id
-        // retrieve the groups that correspond to the user_id in the memberships table
+      // retrieve all memberships recordsets for the specified user
         .input('id', db.sql.Int, id)
         .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
     })
@@ -290,6 +286,9 @@ app.get('/membershipViews/:id', function (req, res) {
     })
 })
 
+const meetingRouter = require('./meeting-routes')
+app.use(meetingRouter)
+
 app.get('/profile', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
 })
@@ -300,6 +299,11 @@ app.get('/home', function (req, res) {
 
 /* ----------------------------- Nathan's Code ----------------------------- */
 
+// Temp router for choose location demonstration
+app.get('/choose-location', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'choose-location.html'))
+})
+
 // Routing
 
 const chatRouter = require('./group-chat/chat-routes')
@@ -309,7 +313,11 @@ app.use(chatRouter)
 
 // Run when a member enters the group
 io.on('connection', socket => {
+  // Chats
   handleChatMember(io, socket)
+
+  // Voting
+  handleVoting(io, socket)
 })
 
 /* ----------------------------- Database Test ----------------------------- */
@@ -344,6 +352,10 @@ app.get('/database', function (req, res) {
 
 const profileRouter = require('./profile-router')
 app.use('/', profileRouter)
+
+/* ------------------------------- Polls -------------------------------------- */
+const { pollingRouter } = require('./polls/polling-routes')
+app.use(pollingRouter)
 
 /* ------------------------------------------------------------------------- */
 
