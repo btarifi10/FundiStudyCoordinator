@@ -22,6 +22,7 @@ const handleChatMember = require('./group-chat/chat-server')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
@@ -52,7 +53,7 @@ app.delete('/delete/:membership_id', (request, response) => {
     .then((pool) => {
       return pool.request()
         .input('membership_id', db.sql.Int, membership_id)
-        .query(`DELETE FROM memberships WHERE memberships.membership_id = @membership_id`)
+        .query('DELETE FROM memberships WHERE memberships.membership_id = @membership_id')
     })
     .then(result => {
       response.json({ success: result })
@@ -79,7 +80,6 @@ app.get('/get-groups', function (req, res) {
       })
     })
 })
-
 
 /* ----------------------------- Yasser's Code ----------------------------- */
 
@@ -207,7 +207,7 @@ app.post('/createGroup', function (req, res) {
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
-  const {id} = req.params
+  const { id } = req.params
   // Make a query to the database
   db.pools
     // Run query
@@ -216,12 +216,12 @@ app.get('/profileViews/:id', (req, res) => {
         // retrieve all recordsets with the following information to be displayed on the profile page
         // want to retrieve the specific users personal details
         .input('id', db.sql.Int, id)
-        .query(`SELECT * FROM users WHERE users.user_id = (@id)`)
+        .query('SELECT * FROM users WHERE users.user_id = (@id)')
     })
     // Send back the result
     .then(result => {
       res.send(result)
-      //console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -239,13 +239,9 @@ app.get('/membershipViews/:id', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-      // retrieve all recordsets with the following information to be displayed on the profile page
-
-        // want to retrieve the specific users personal details
-        // then search the memberships table for the entries corresponding to the user_id
-        // retrieve the groups that correspond to the user_id in the memberships table
+      // retrieve all memberships recordsets for the specified user
         .input('id', db.sql.Int, id)
-        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id`)
+        .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
     })
     // Send back the result
     .then(result => {
@@ -260,6 +256,9 @@ app.get('/membershipViews/:id', function (req, res) {
     })
 })
 
+const meetingRouter = require('./meeting-routes')
+app.use(meetingRouter)
+
 app.get('/profile', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
 })
@@ -269,6 +268,11 @@ app.get('/home', function (req, res) {
 })
 
 /* ----------------------------- Nathan's Code ----------------------------- */
+
+// Temp router for choose location demonstration
+app.get('/choose-location', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'choose-location.html'))
+})
 
 // Routing
 
@@ -282,40 +286,10 @@ io.on('connection', socket => {
   handleChatMember(io, socket)
 })
 
-
-/* ----------------------------- Database Test ----------------------------- */
-
-/*
-const db = require('./database-service')
-
-app.get('/database', function (req, res) {
-  // Make a query to the database
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        // This is only a test query, change it to whatever you need
-        .query('SELECT * FROM users')
-    })
-    // Send back the result
-    .then(result => {
-      // console.log(result)
-      res.send(result.recordset)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
-*/
-
 /* ------------------------------ Invites: Basheq ---------------------------------- */
 
 const profileRouter = require('./profile-router')
 app.use('/', profileRouter)
-
 
 /* ------------------------------------------------------------------------- */
 

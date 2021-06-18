@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Core Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+  <title>Select Location</title>
+</head>
+
+<body>
+  <!-- Page Title -->
+  <div class="container">
+    <h1 class="page-header"><i class="fas fa-globe"></i> Create Meeting <span id="group-name"></span></h1>
+    <hr>
+    <div class="row">
+
+      <!-- Form Example (left)-->
+      <div class="col-md-12 bg-light">
+        <div class="text-center">
+          <br>
+          <p><b>Please enter the following details to create a meeting</b></p>
+        </div>
+
+        <!-- meeting date input -->
+        <form id="meeting-form" class="mx-3">
+          <div class="mb-3" id='meeting-date'> 
+            <label for="date" class="form-label">When will your meeting occur?</label>
+            <input class="form-control" type="datetime-local" name="meeting_time" id="date" required>
+          </div>
+          
+          <!-- meeting location choice - online/face-to-face -->
+          <div class="mb-3">
+            <label for="selection" class="form-label">Where will your meeting occur?</label>
+            <select id="selection" class="form-control">
+              <option>none-selected</option>
+              <option>online</option>
+              <option>face-to-face</option>
+          </select>
+          </div>
+
+          <!-- placeholder which is populated when selecting the meeting type -->
+          <div class="mb-3" id="place"></div>
+
+          <button type="submit" class="btn btn-primary">Create Meeting</button>
+          <br>
+          <br>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"
+  integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Script containing code for map search functionality -->
+  <script defer type="module" src="scripts/choose-location.js"></script>
+  <script defer type="module" src="scripts/load-meetings.js"></script>
+</body>
+
+</html>
