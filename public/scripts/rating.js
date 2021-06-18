@@ -1,31 +1,24 @@
 'use strict'
 
+// Retrieves the username and group from
 const { username, group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 })
 
+// Gets the user selected member from the drop down list
 const selectMembers = document.getElementById('memberSelection')
 
+// Populates the dropdown list with the names of the members for this specific group
 document.addEventListener('DOMContentLoaded', function () {
   fetch(`/get-members?group=${group}`)//  , {
     .then(response => response.json())
     .then(data => {
-    //   console.log(data)
       populateAllMembers(data)
     })
 })
 
-// function getGroupNumber () {
-//   const groupId = {
-//     // replace with actual group_id
-//     group_id: 128
-//   }
-
-//   return groupId
-// }
-
+// Functionality to create more options to the dropdown list to accomodate the number of users
 function populateAllMembers (data) {
-//   console.log(data)
   data.recordset.forEach(function ({ username }) {
     const memberName = `${username.trim()}`
     const addedElement = document.createElement('option')
@@ -36,12 +29,15 @@ function populateAllMembers (data) {
   })
 }
 
+// Calls the function for submission when submit button is clicked
 const ratingSubmission = document.getElementById('submitButton')
 ratingSubmission.addEventListener('click', (event) => {
   event.preventDefault()
   submitRating()
 })
 
+// Handles the retrieval of the passed rating so as to update based on an average with the current
+// rating given
 function submitRating () {
   const nameSelected = selectMembers.value.trim()
   fetch(`/get-current?nameSelected=${nameSelected}`)//  , {
@@ -67,6 +63,7 @@ function submitRating () {
     })
 }
 
+// Sends back the updated rating to be posted to the database
 function postNewRating (ratingUpdated) {
   fetch('/update-ranking', {
     method: 'POST',
@@ -78,6 +75,7 @@ function postNewRating (ratingUpdated) {
   })
 }
 
+// Retrieves the new entry for the rating form the checkbox
 function getNewRanking () {
   const ratingValue = document.getElementsByName('rating')
   for (let i = 0; i < ratingValue.length; i++) {
