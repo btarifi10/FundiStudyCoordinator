@@ -10,11 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
       welcomeHeading.textContent = `Welcome, ${currentUser.username} with ID ${currentUser.id}`
       welcomeDiv.appendChild(welcomeHeading)
 
-      fetch('http://localhost:3000/profileViews/' + currentUser.id)
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-        })
     })
 })
 
