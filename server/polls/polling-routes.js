@@ -38,7 +38,7 @@ pollingRouter.get('/api/get-group-requests', checkAuthenticated, (req, res) => {
           group_requests ON group_requests.user_id=users.user_id WHERE 
           group_requests.group_id IN (
               SELECT group_id FROM groups
-              WHERE group_name='Software Development III'
+              WHERE group_name=@group
           );
             `)
       )
@@ -46,7 +46,6 @@ pollingRouter.get('/api/get-group-requests', checkAuthenticated, (req, res) => {
     // Send back the result
     .then((result) => {
       if (result.recordset) {
-        console.log(result.recordset)
         res.send(result.recordset)
       } else {
         res.send(null)
@@ -78,7 +77,6 @@ pollingRouter.get('/api/get-group-members', (req, res) => {
     // Send back the result
     .then((result) => {
       if (result.recordset) {
-        console.log(result.recordset)
         res.send(result.recordset)
       } else {
         res.send(null)
@@ -95,7 +93,6 @@ pollingRouter.post('/api/start-requests-poll', (req, res) => {
   /*
     details = { requestId, userId, userName, group, duration }
   */
-  console.log(details)
   deleteGroupRequest(details.requestId)
 
   createGroupRequestsPoll(details)

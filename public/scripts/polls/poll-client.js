@@ -1,6 +1,6 @@
 'use strict'
 
-import { UserService } from '../UserService.js'
+import { UserService } from '../user-service'
 
 /* ------------------------------ Variables ----------------------------------- */
 const userService = UserService.getUserServiceInstance()
@@ -203,7 +203,7 @@ function startRequestsPoll (id) {
 
   const request = requests.find(r => r.requests_id === reqId)
 
-  const hrs = 1 / 60 // 60 seconds, just for testing
+  const hrs = 2 / 60 // 120 seconds, just for testing
   const details = {
     requestId: request.requests_id,
     userId: request.user_id,

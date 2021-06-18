@@ -9,6 +9,9 @@ groupRouter.get('/covid-screening', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'covid-screening.html'))
 })
 
+groupRouter.get('/find-groups', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'find-groups.html'))
+})
 
 groupRouter.get('/big-data', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'big-data.html'))

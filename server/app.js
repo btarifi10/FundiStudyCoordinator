@@ -62,14 +62,19 @@ app.delete('/delete/:membership_id', (request, response) => {
 })
 
 // Retrieves all the groups from the database to load for the home-page
-app.get('/get-groups', function (req, res) {
+app.get('/get-other-groups', function (req, res) {
   db.pools
     .then((pool) => {
       return pool.request()
-        .query('SELECT group_name FROM groups')
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`SELECT group_id, group_name, course_code FROM groups WHERE
+        group_id NOT IN (
+            SELECT group_id FROM memberships
+            WHERE user_id=@userId) AND group_id NOT IN (
+              SELECT group_id FROM group_requests WHERE user_id=@userId);`)
     })
     .then(result => {
-      res.send(result)
+      res.send(result.recordset)
     })
     .catch(err => {
       res.send({
@@ -77,7 +82,6 @@ app.get('/get-groups', function (req, res) {
       })
     })
 })
-
 
 // Retrieves the members of a group to populate the ratings list
 app.get('/get-members', function (req, res) {
@@ -450,15 +454,12 @@ app.post('/sendRequest', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-        .input('username', db.sql.Char, reqObj.username)
-        .input('group_name', db.sql.Char, reqObj.group_name)
-        .input('time_sent', db.sql.DateTimeOffset, reqObj.time_sent)
+        .input('userId', db.sql.Int, req.user.userId)
+        .input('groupId', db.sql.Int, reqObj.groupId)
+        .input('time_sent', db.sql.DateTimeOffset, reqObj.timeSent)
         .query(`
           INSERT INTO group_requests (user_id, group_id, time_sent)
-          SELECT user_id, group_id, (@time_sent)
-          FROM users AS u, groups AS g
-          WHERE u.username = (@username)
-          AND g.group_name = (@group_name);
+          VALUES (@userId, @groupId, @time_sent);
         `)
     })
     // Send back the result
@@ -500,9 +501,9 @@ app.get('/profileViews/:id', (req, res) => {
     })
 })
 
-app.get('/membershipViews/:id', function (req, res) {
+app.get('/membership-views', function (req, res) {
   // save the currentUser ID as a variable to use in the select query
-  const { id } = req.params
+  const id = req.user.userId
   // Make a query to the database
   db.pools
     // Run query
@@ -510,12 +511,15 @@ app.get('/membershipViews/:id', function (req, res) {
       return pool.request()
       // retrieve all memberships recordsets for the specified user
         .input('id', db.sql.Int, id)
-        .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
+        .query(`SELECT memberships.membership_id, memberships.group_id, groups.group_name, groups.course_code, memberships.date_joined
+        FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id
+        WHERE @id = memberships.user_id;`
+        )
     })
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
+      console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -530,6 +534,10 @@ app.use(meetingRouter)
 
 app.get('/profile', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
+})
+
+app.get('/my-groups', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'my-groups.html'))
 })
 
 app.get('/home', function (req, res) {
@@ -587,7 +595,6 @@ app.get('/database', function (req, res) {
 })
 */
 
-
 /* ----------------------------- Database Test ----------------------------- */
 
 /*
@@ -615,7 +622,6 @@ app.get('/database', function (req, res) {
     })
 })
 */
-
 
 /* ------------------------------ Invites: Basheq ---------------------------------- */
 
