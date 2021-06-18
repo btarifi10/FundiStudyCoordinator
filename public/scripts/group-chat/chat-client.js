@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => data.recordset)
     .then(displayChat)
+
+  const linkGroupPolls = document.getElementById('link-group-polls')
+
+  linkGroupPolls.href = `polls?group=${group}`
 })
 
 // Create the client socket
