@@ -5,6 +5,55 @@ const db = require('../database-service')
 // Keep a list of the current polls which are active
 const currentPolls = []
 
+// Return the up to date currentPolls
+function getCurrentPolls () {
+  // Just for testing: creates a few custom polls
+  if (currentPolls.length === 0) {
+    createPoll({
+      title: 'This is a test poll',
+      type: 'Custom',
+      group: 'Software Development III',
+      date: new Date(),
+      duration: 1,
+      options: ['option1', 'option2', 'option3'],
+      voters: [],
+      outcome: null
+    })
+
+    currentPolls[0].options[0].votes = 5
+    currentPolls[0].options[1].votes = 4
+    currentPolls[0].options[2].votes = 6
+
+    createPoll({
+      title: 'This is another test poll',
+      type: 'Custom',
+      group: 'Software Development III',
+      date: new Date(),
+      duration: 1,
+      options: ['option1', 'option2', 'option3'],
+      voters: [14],
+      outcome: null
+    })
+
+    currentPolls[1].options[0].votes = 2
+    currentPolls[1].options[1].votes = 4
+    currentPolls[1].options[2].votes = 7
+
+    createPoll({
+      title: 'This is a sociology test poll',
+      type: 'Custom',
+      group: 'Sociology',
+      date: new Date(),
+      duration: 1,
+      options: ['option1', 'option2', 'option3'],
+      voters: [],
+      outcome: null
+    })
+  }
+
+  return currentPolls
+}
+
 /*
     Poll details:
     Title
@@ -22,9 +71,12 @@ const currentPolls = []
     voters
 */
 
+/* ------------------------------ Poll Creation --------------------------------- */
+
+/* ------------ Format the poll details to be used by one creation function ------------ */
 function createGroupRequestsPoll (details) {
   /*
-    details = {userId, userName, group, duration }
+    details = {userId, userName, group, date, duration }
   */
 
   const pollDetails = {
@@ -32,7 +84,8 @@ function createGroupRequestsPoll (details) {
     userId: details.userId,
     type: 'Request',
     group: details.group,
-    time: details.duration,
+    date: details.date,
+    duration: details.duration,
     options: ['Yes', 'No'],
     outcome: '',
     voters: []
@@ -50,7 +103,8 @@ function createBanningPoll (details) {
     userId: details.userId,
     type: 'Ban',
     group: details.group,
-    time: details.duration,
+    date: details.date,
+    duration: details.duration,
     options: ['Yes', 'No'],
     outcome: '',
     voters: []
@@ -69,7 +123,8 @@ function createInvitePoll (details) {
     userId: details.userId,
     type: 'Invite',
     group: details.group,
-    time: details.duration,
+    date: details.date,
+    duration: details.duration,
     options: ['Yes', 'No'],
     outcome: '',
     voters: []
@@ -78,6 +133,23 @@ function createInvitePoll (details) {
   createPoll(pollDetails)
 }
 
+function createCustomPoll (details) {
+  const pollDetails = {
+    title: details.title,
+    userId: null,
+    type: 'Custom',
+    group: details.group,
+    date: details.date,
+    duration: details.duration,
+    options: details.options,
+    outcome: '',
+    voters: []
+  }
+
+  createPoll(pollDetails)
+}
+
+/* ------------------------- Create Poll ----------------------------- */
 function createPoll (pollDetails) {
   const options = []
 
@@ -93,11 +165,12 @@ function createPoll (pollDetails) {
 
   currentPolls.push(pollDetails)
 
-  // socket.io message to update polls
+  const msDuration = pollDetails.duration * 60 * 60 * 1000
 
-  const msDuration = pollDetails.time * 60 * 60 * 1000
+  // Set the function which will be called after poll expiration
   setTimeout(() => {
     const poll = currentPolls[pollID]
+    // Get the outcome
     const outcome = poll.options.reduce((max, option) => max.votes > option.votes ? max : option)
     poll.outcome = outcome.option
 
@@ -123,9 +196,7 @@ function randomRGB () {
   return `rgb(${r()}, ${r()}, ${r()})`
 }
 
-function getCurrentPolls () {
-  return currentPolls
-}
+/* --------------------- Handling Poll outcomes ----------------------- */
 
 function handleGroupRequestOutcome (poll) {
   if (poll.outcome === 'Yes') {
@@ -145,6 +216,9 @@ function handleBanOutcome (poll) {
   }
 }
 
+/* ------------------------ Updating the database -------------------- */
+
+// Upon group request approval
 function addUserToGroup (userId, groupName) {
   db.pools
     // Run query
@@ -152,7 +226,6 @@ function addUserToGroup (userId, groupName) {
       return (
         pool
           .request()
-          // Retrieve ALL invites for current user
           .input('group', db.sql.Char, groupName)
           .input('userId', db.sql.Int, userId)
           .input('time', db.sql.DateTimeOffset, new Date()).query(`
@@ -163,6 +236,7 @@ function addUserToGroup (userId, groupName) {
     })
 }
 
+// Upon invite approval
 function inviteUserToGroup (userId, groupName) {
   db.pools
     // Run query
@@ -170,7 +244,6 @@ function inviteUserToGroup (userId, groupName) {
       return (
         pool
           .request()
-          // Retrieve ALL invites for current user
           .input('group', db.sql.Char, groupName)
           .input('userId', db.sql.Int, userId)
           .input('time', db.sql.DateTimeOffset, new Date()).query(`
@@ -181,14 +254,13 @@ function inviteUserToGroup (userId, groupName) {
     })
 }
 
+// Upon banning approval
 function removeUserFromGroup (userId, groupName) {
   db.pools
-    // Run query
     .then((pool) => {
       return (
         pool
           .request()
-          // Retrieve ALL invites for current user
           .input('group', db.sql.Char, groupName)
           .input('userId', db.sql.Int, userId).query(`
             DELETE FROM memberships WHERE user_id = @userId AND
@@ -201,7 +273,7 @@ function removeUserFromGroup (userId, groupName) {
 module.exports = {
   getCurrentPolls,
   currentPolls,
-  createPoll,
+  createCustomPoll,
   createGroupRequestsPoll,
   createBanningPoll,
   createInvitePoll

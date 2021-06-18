@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')))
 const server = http.createServer(app)
 const io = socketio(server)
 
-/* ----------------------------- Basheq's Code ----------------------------- */
+/* ----------------------------- Login Functonality ----------------------------- */
 
 // Use the loginRouter for the login and register functionality.
 const loginRouter = require('./loginRouter.js')(app, passport)
@@ -278,6 +278,7 @@ app.use(chatRouter)
 
 // Run when a member enters the group
 io.on('connection', socket => {
+  // Chats
   handleChatMember(io, socket)
 
   // Voting

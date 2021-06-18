@@ -1,142 +1,59 @@
 'use strict'
 
-const { createPoll } = require('./polls')
-
 const currentPolls = require('./polls').getCurrentPolls()
 
+// Handling the socket io events
 function handleVoting (io, socket) {
-  if (currentPolls.length === 0) {
-    createPoll({
-      title: 'This is a test poll',
-      type: 'Custom',
-      group: 'Software Development III',
-      start: new Date(),
-      time: 1,
-      options: ['option1', 'option2', 'option3'],
-      voters: [],
-      outcome: null
-    })
-
-    currentPolls[0].options[0].votes = 5
-    currentPolls[0].options[1].votes = 4
-    currentPolls[0].options[2].votes = 6
-
-    createPoll({
-      title: 'This is another test poll',
-      type: 'Custom',
-      group: 'Software Development III',
-      start: new Date(),
-      time: 1,
-      options: ['option1', 'option2', 'option3'],
-      voters: [14],
-      outcome: null
-    })
-
-    currentPolls[1].options[0].votes = 2
-    currentPolls[1].options[1].votes = 4
-    currentPolls[1].options[2].votes = 7
-
-    createPoll({
-      title: 'This is a sociology test poll',
-      type: 'Custom',
-      group: 'Sociology',
-      start: new Date(),
-      time: 1,
-      options: ['option1', 'option2', 'option3'],
-      voters: [],
-      outcome: null
-    })
-  }
-
+  // When a voter accesses the vote page
   socket.on('voterConnection', (group) => {
     socket.join(group)
 
-    console.log('connection in group ', group)
-    const g = getGroupActivePolls(group)
-    console.log('Group polls for ', group)
-    console.log(g)
-    io.to(group).emit('updateCurrentPolls', g)
+    io.to(group).emit('updateCurrentPolls', getGroupActivePolls(group))
   })
 
-  // On new vote
+  // On a new vote
   socket.on('vote', ({ userId, pollId, option }) => {
-    // Increase the vote at index
+    // Increase the vote count at the index and record the user
     if (currentPolls[pollId].options[option]) {
       currentPolls[pollId].options[option].votes += 1
       currentPolls[pollId].voters.push(userId)
     }
 
-    // Show the candidate in the console for testing
-    console.log('Poll:')
+    // Show the poll in the console for testing
+    console.log('Poll modified:')
     console.log(currentPolls[pollId])
 
     // Tell everybody else about the new vote
-    const g = getGroupActivePolls(currentPolls[pollId].group)
-    console.log('Group polls')
-    console.log(g)
-    io.to(currentPolls[pollId].group).emit('updateCurrentPolls', g)
+    const groupPolls = getGroupActivePolls(currentPolls[pollId].group)
+    io.to(currentPolls[pollId].group).emit('updateCurrentPolls', groupPolls)
   })
 
+  // On poll creation, update everyone
   socket.on('pollCreated', (group) => {
-    const g = getGroupActivePolls(group)
+    const groupPolls = getGroupActivePolls(group)
 
-    io.to(group).emit('updateCurrentPolls', g)
+    io.to(group).emit('updateCurrentPolls', groupPolls)
   })
 }
-/*
-function getGroupActivePollsForUser (groupPolls, userId) {
-  const pollList = []
 
-  groupPolls.forEach(poll => {
-    if (poll.voters.includes(userId)) {
-      const p = {
-        title: poll.title,
-        type: poll.type,
-        group: poll.group,
-        start: poll.start,
-        length: poll.length,
-        options: poll.options,
-        userVoted: true
-      }
-
-      pollList.push(p)
-    }
-  })
-
-  return pollList
-}
-*/
-
+// Filter polls by each group
 function getGroupActivePolls (group) {
-  const gPolls = []
-  console.log(group)
+  const groupPolls = []
   currentPolls.forEach(poll => {
-    console.log(poll.group)
     if (poll.group === group) {
-      gPolls.push(poll)
+      groupPolls.push(poll)
     }
   })
-  return gPolls
+  return groupPolls
 }
 
+// TODO: Update this to retrieve completed polls from the database
 function getGroupPollHistory (groupId) {
   // Make Database call
   return null
 }
 
-// socket io: voting
-/*
-    function(pollID, option)
-    {
-        increase vote count for option
-    }
-
-*/
-
-function createNewPoll () {
-  createPoll()
-}
-
+// Exports
 module.exports = {
   handleVoting
 }

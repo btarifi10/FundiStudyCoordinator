@@ -6,7 +6,8 @@ const db = require('../database-service')
 const {
   createBanningPoll,
   createGroupRequestsPoll,
-  createInvitePoll
+  createInvitePoll,
+  createCustomPoll
 } = require('./polls.js')
 
 const { checkAuthenticated } = require('../authentication')
@@ -85,7 +86,7 @@ pollingRouter.get('/api/get-group-members', (req, res) => {
     })
 })
 
-/* --------------------- API Calls ----------------------- */
+/* --------------------- API calls to start Polls ----------------------- */
 
 // API call to start group request poll
 pollingRouter.post('/api/start-requests-poll', (req, res) => {
@@ -110,6 +111,24 @@ pollingRouter.post('/api/start-invites-poll', (req, res) => {
   */
 
   createInvitePoll(details)
+
+  res.send(200)
+})
+
+pollingRouter.post('/api/start-custom-poll', (req, res) => {
+  const details = req.body
+  /*
+    details = {
+    title,
+    group: details.group,
+    time: details.duration,
+    options: ['Yes', 'No'],
+    outcome: '',
+    voters: []
+  }
+  */
+
+  createCustomPoll(details)
 
   res.send(200)
 })
