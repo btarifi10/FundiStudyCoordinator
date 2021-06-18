@@ -87,6 +87,39 @@ app.get('/get-users', function (req, res) {
     })
 })
 
+app.get('/getUsersInGroup', function (req, res) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('groupname', db.sql.Char, req.query.groupname)
+        .query(`
+        SELECT *
+        FROM users AS u 
+        INNER JOIN memberships AS m
+            ON u.user_id = m.user_id
+        INNER JOIN groups AS g
+            ON g.group_id = m.group_id
+        WHERE g.group_id IN (
+        SELECT group_id 
+        FROM groups
+        WHERE group_name = (@groupname)
+        )
+
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 app.get('/get-groups', function (req, res) {
   db.pools
     // Run query
@@ -248,6 +281,7 @@ app.post('/createMembership', function (req, res) {
 
 app.post('/sendInvites', function (req, res) {
   const inviteObj = req.body
+  console.log(inviteObj)
   // console.log(inviteList)
   // Make a query to the database
   db.pools

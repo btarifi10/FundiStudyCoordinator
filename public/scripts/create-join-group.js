@@ -16,10 +16,13 @@ document.addEventListener('DOMContentLoaded', function () {
   loadDatabaseGroups()
   // Load list of usernames to invite
   loadUsersList()
+
+  // For integration into a group chat page
+  loadGroupInviteList()
 })
 
 function loadDatabaseGroups () {
-  fetch('get-groups?username=${username}')
+  fetch(`get-groups?username=${username}`)
     .then(response => response.json())
     .then(data => data.recordset)
     .then(updateLocalArray)
@@ -75,6 +78,33 @@ function loadRequestsList () {
 function populateRequestsList (groups) {
   requestsList = [...groups]
   console.log(requestsList)
+}
+
+function loadGroupInviteList () { // shows everyone in the group atm
+  fetch('/getUsersInGroup?groupname=nuwegroep')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(populateGroupList)
+}
+
+function populateGroupList (usersInGroup) {
+  const uig = []
+  usersInGroup.forEach(element => { uig.push(element.username) })
+  const allUsers = []
+  fetch(`/get-users?username=${username}`)
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(allUsers => {
+      allUsers.forEach(element => {
+        if (!(uig.includes(element.username))) {
+          const inviteList = document.getElementById('usersInGroupList')
+          const option = document.createElement('option')
+          option.text = element.username
+          option.value = element.username
+          inviteList.add(option)
+        }
+      })
+    })
 }
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
@@ -153,12 +183,10 @@ function updateGroupList () {
     allMembers.push(username) // username and all invited members
     const membershipInfo = { members: allMembers, group_name: userinput, date_created: newGroup.date_created }
     const inviteObj = { invited_members: invitedMembers, group_name: newGroup.group_name, time_sent: newGroup.date_created }
-    createGroup(newGroup, membershipInfo)
-
+    createGroup(newGroup, membershipInfo, inviteObj)
     // update usersGroups
     usersGroups.push({ group_name: newGroup.group_name })
-    console.log(inviteObj)
-    sendInvites(inviteObj)
+    // sendInvites(inviteObj)
 
     loadHTMLTable(database)
     clearForm()
@@ -169,7 +197,7 @@ function updateGroupList () {
   }
 }
 
-function createGroup (newGroup, membershipInfo) { // create 'groups' and 'members' record
+function createGroup (newGroup, membershipInfo, inviteObj) { // create 'groups' and 'members' record
   fetch('/createGroup', {
     method: 'POST',
     headers: {
@@ -186,14 +214,23 @@ function createGroup (newGroup, membershipInfo) { // create 'groups' and 'member
         body: JSON.stringify(membershipInfo)
       })
     })
+    .then(result => {
+      if (inviteObj.invited_members.length > 0) {
+        console.log('function sendInvites')
+        fetch('/sendInvites', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(inviteObj)
+        })
+      }
+    })
 }
 
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_group) {
-  // 'request has been sent' alert
-  // Update the 'groupRequests' table
-  // replace 'join' button with '-'
   const group_name = clicked_group.replaceAll('#', ' ')
   const time_sent = new Date()
   const reqObj = { username, group_name, time_sent }
@@ -209,26 +246,6 @@ function joinGroup (clicked_group) {
   alert(`A Request to join ${group_name} has been sent`)
   document.getElementById(`${clicked_group}`).disabled = true
   requestsList.push({ group_name: group_name })
-
-  // add the user to 'memberships' table
-  // reload the database
-
-  // const group = database.find(group => group.groupName.replace(/\s+/g, '') === clicked_id) // Can't have groups differing in whitespace only
-  // loadHTMLTable(database)
-  // loadHTMLTable(database, username)
-}
-
-function sendInvites (inviteObj) {
-  if (inviteObj.invited_members.length > 0) {
-    console.log('function sendInvites')
-    fetch('/sendInvites', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(inviteObj)
-    })
-  }
 }
 
 // Search for users in the drop down, and filter drop down accordingly
