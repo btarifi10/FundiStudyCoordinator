@@ -1,6 +1,6 @@
 'use strict'
 
-import { UserService } from './UserService.js'
+import { UserService } from './user-service.js'
 
 let currentUser = null
 

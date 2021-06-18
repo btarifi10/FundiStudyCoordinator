@@ -1,6 +1,6 @@
 /* ------------------------------ Functionality ------------------------------ */
 
-import { UserService } from './UserService.js'
+import { UserService } from './user-service'
 import {
   loadLocation,
   loadPlatform,

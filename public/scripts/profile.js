@@ -1,4 +1,4 @@
-import { UserService } from './UserService.js'
+import { UserService } from './user-service.js'
 const userService = UserService.getUserServiceInstance()
 let currentUser = null
 

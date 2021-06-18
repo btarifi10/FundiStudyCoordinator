@@ -1,6 +1,6 @@
 'use strict'
 
-import { UserService } from '../UserService.js'
+import { UserService } from '../user-service'
 
 /* ------------------------------ Variables ----------------------------------- */
 const userService = UserService.getUserServiceInstance()
