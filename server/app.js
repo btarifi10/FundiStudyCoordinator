@@ -18,7 +18,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const handleChatMember = require('./group-chat/chat-server')
-
+const { handleVoting } = require('./polls/polling-service')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
@@ -52,7 +52,7 @@ app.delete('/delete/:membership_id', (request, response) => {
     .then((pool) => {
       return pool.request()
         .input('membership_id', db.sql.Int, membership_id)
-        .query(`DELETE FROM memberships WHERE memberships.membership_id = @membership_id`)
+        .query('DELETE FROM memberships WHERE memberships.membership_id = @membership_id')
     })
     .then(result => {
       response.json({ success: result })
@@ -79,7 +79,6 @@ app.get('/get-groups', function (req, res) {
       })
     })
 })
-
 
 /* ----------------------------- Yasser's Code ----------------------------- */
 
@@ -207,7 +206,7 @@ app.post('/createGroup', function (req, res) {
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
-  const {id} = req.params
+  const { id } = req.params
   // Make a query to the database
   db.pools
     // Run query
@@ -216,12 +215,12 @@ app.get('/profileViews/:id', (req, res) => {
         // retrieve all recordsets with the following information to be displayed on the profile page
         // want to retrieve the specific users personal details
         .input('id', db.sql.Int, id)
-        .query(`SELECT * FROM users WHERE users.user_id = (@id)`)
+        .query('SELECT * FROM users WHERE users.user_id = (@id)')
     })
     // Send back the result
     .then(result => {
       res.send(result)
-      //console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -245,7 +244,7 @@ app.get('/membershipViews/:id', function (req, res) {
         // then search the memberships table for the entries corresponding to the user_id
         // retrieve the groups that correspond to the user_id in the memberships table
         .input('id', db.sql.Int, id)
-        .query(`SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id`)
+        .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
     })
     // Send back the result
     .then(result => {
@@ -280,8 +279,10 @@ app.use(chatRouter)
 // Run when a member enters the group
 io.on('connection', socket => {
   handleChatMember(io, socket)
-})
 
+  // Voting
+  handleVoting(io, socket)
+})
 
 /* ----------------------------- Database Test ----------------------------- */
 
@@ -316,6 +317,9 @@ app.get('/database', function (req, res) {
 const profileRouter = require('./profile-router')
 app.use('/', profileRouter)
 
+/* ------------------------------- Polls -------------------------------------- */
+const { pollingRouter } = require('./polls/polling-routes')
+app.use(pollingRouter)
 
 /* ------------------------------------------------------------------------- */
 
