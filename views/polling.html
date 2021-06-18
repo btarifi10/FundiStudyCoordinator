@@ -148,7 +148,36 @@
                         <!-- New Custom poll window -->
                         <div class="tab-pane fade show" id="new-poll" role="tabpanel"
                             aria-labelledby="new-poll-tab">
-                            New Poll
+                            
+                            <div class="p-2 text-start flex">
+                                <div class="form"> 
+                                    <div class="mb-3">
+                                        <label for="new-poll-title" class="form-label">Poll title</label>
+                                        <input type="text" class="form-control" id="new-poll-title" placeholder="A descriptive title">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="new-poll-num-options" class="form-label">Number of options</label>
+                                        <input type="number" class="form-control" id="new-poll-num-options" min=2 placeholder="2">
+                                        <button class="btn btn-success" onclick="addOptionFields()"> Start adding options </button>
+                                    </div>
+    
+                                    <div class="mb-3" id="new-poll-options">
+    
+                                    </div>
+    
+                                    <div class="mb-3">
+                                        <label for="new-poll-duration" class="form-label">Poll duration (hours)</label>
+                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1">
+                                    </div>
+    
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary mb-3" onclick="createCustomPoll()"> Create Poll </button>
+                                    </div>
+                                                            
+                                </div>
+                            </div>
+
                         </div>
 
 

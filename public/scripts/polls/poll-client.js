@@ -2,8 +2,11 @@
 
 import { UserService } from '../UserService.js'
 
+/* ------------------------------ Variables ----------------------------------- */
 const userService = UserService.getUserServiceInstance()
 let user = null
+let requests = null
+let groupMembers = null
 
 /* ------------------------------ DOM Elements ------------------------------ */
 
@@ -11,7 +14,7 @@ const currentPollArea = document.getElementById('current-poll-area')
 
 /* ------------------------------ Poll Service ------------------------------ */
 
-// Retrieve the username and group name from the URL
+// Retrieve the group name from the URL
 
 const group = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -19,31 +22,60 @@ const group = Qs.parse(location.search, {
 
 // Once the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  // Get the current user
   userService.getCurrentUser().then(u => {
     user = u
     socket.emit('voterConnection', group)
   })
+
+  // Get all group requests and then display the data
   getGroupRequests(group)
     .then(data => {
       requests = data
       updateRequestsTable(requests)
     })
 
+  // Get all group members and display the data
   getGroupMembers(group)
     .then(data => {
       groupMembers = data.filter(mem => mem.user_id !== user.id)
       updateMembersTable(groupMembers)
     })
 })
+
 // Create the client socket
+const io = window.io
 const socket = io()
 
+/* -------------------------- Socket IO Handling --------------------------------------- */
+// Allows for real time handling of polls (If people update the vote, for example)
+
+// Update all the polls while filtering polls specific to banning the user
 socket.on('updateCurrentPolls', (polls) => {
-  displayCurrentPolls(polls)
+  const myPolls = polls.filter(poll => (poll.type !== 'Ban' || poll.userId !== user.id))
+  displayCurrentPolls(myPolls)
 })
 
-/* ---------------------------------------------- */
+// Given a poll Id, vote for the selected option
+function vote (selectedPollId) {
+  const pid = parseInt(selectedPollId)
+  const radioName = `poll-${pid}-option`
+  const optionSelected = document.querySelector(`input[name="${radioName}"]:checked`).value
 
+  if (optionSelected === null) {
+    window.alert('Please select an option before voting')
+    return
+  }
+
+  const voteBody = { userId: user.id, pollId: pid, option: optionSelected }
+  socket.emit('vote', voteBody)
+}
+window.vote = vote
+
+/* ------------------------ Functions to do with the Active Polls Area ------------------------ */
+
+// Format and add each poll to the area (each time)
+// TODO: Make this more efficient
 function displayCurrentPolls (polls) {
   currentPollArea.innerHTML = ''
   polls.forEach(poll => {
@@ -57,17 +89,17 @@ function displayCurrentPolls (polls) {
   })
 }
 
+// Format the poll with HTML
 function formatPollHTML (poll, pollId) {
   let pollFormHtml = ''
   let numOptions = 0
 
   const userVoted = poll.voters.includes(user.id)
-
+  // Div for the poll info
   pollFormHtml += `
   <div class="poll-content col-md-6">  
   <div class="poll-form">
   `
-
   if (userVoted) { pollFormHtml += '<p> You have already voted in this poll </p>' } else {
     poll.options.forEach(opt => {
       pollFormHtml += `
@@ -108,36 +140,9 @@ function formatPollHTML (poll, pollId) {
   return div
 }
 
-function vote (selectedPollId) {
-  const pid = parseInt(selectedPollId)
-  const radioName = `poll-${pid}-option`
-  const optionSelected = document.querySelector(`input[name="${radioName}"]:checked`).value
-
-  const voteBody = { userId: user.id, pollId: pid, option: optionSelected }
-  socket.emit('vote', voteBody)
-}
-window.vote = vote
-
+// Update the charts
 function updatePollChart (poll, pollId) {
   const ctx = document.getElementById(`vote-chart-${pollId}`).getContext('2d')
-  /*
- const data = {
-  labels: [
-    'Red',
-    'Blue',
-    'Yellow'
-  ],
-  datasets: [{
-    label: 'My First Dataset',
-    data: [300, 50, 100],
-    backgroundColor: [
-      'rgb(255, 99, 132)',
-      'rgb(54, 162, 235)',
-      'rgb(255, 205, 86)'
-    ],
-    hoverOffset: 4
-  }]
- */
 
   const chartData = {
     labels: [],
@@ -156,25 +161,19 @@ function updatePollChart (poll, pollId) {
   const chart = new Chart(ctx, {
     type: 'doughnut',
     data: chartData,
-    options: {
-
-    }
+    options: { }
   })
   chart.update()
 }
 
-/* ---------------------- Group Request Things --------------------------- */
+/* ---------------------- Functions to do with the group requests ------------------- */
 
-let requests = null
-let groupMembers = null
+const fetch = window.fetch
 
-function getGroupRequests (g) {
-  return fetch(`/api/get-group-requests?group=${g}`)
-    .then(response => response.json())
-}
-
-function getGroupMembers (group) {
-  return fetch(`/api/get-group-members?group=${group}`)
+// Call the backend to retrieve the requests
+// Note this returns a promise
+function getGroupRequests (groupName) {
+  return fetch(`/api/get-group-requests?group=${groupName}`)
     .then(response => response.json())
 }
 
@@ -199,6 +198,46 @@ function updateRequestsTable (requestList) {
   }
 }
 
+function startRequestsPoll (id) {
+  const reqId = parseInt(id)
+
+  const request = requests.find(r => r.requests_id === reqId)
+
+  const hrs = 1 / 60 // 60 seconds, just for testing
+  const details = {
+    requestId: request.requests_id,
+    userId: request.user_id,
+    username: request.username,
+    group: group,
+    duration: hrs
+  }
+
+  fetch('/api/start-requests-poll', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(details)
+  }).then(response => {
+    if (response.ok) {
+      requests.splice(requests.indexOf(request))
+      updateRequestsTable(requests)
+      window.alert('The poll has been successfully created.')
+      socket.emit('pollCreated', group)
+    }
+  })
+}
+window.startRequestsPoll = startRequestsPoll
+
+/* ------------------------------ Functions to do with the banning ------------------- */
+
+// Call the backend to retrieve the group members
+function getGroupMembers (group) {
+  return fetch(`/api/get-group-members?group=${group}`)
+    .then(response => response.json())
+}
+
+// Update the view
 function updateMembersTable (members) {
   const table = document.querySelector('#group-members-table tbody')
 
@@ -218,36 +257,7 @@ function updateMembersTable (members) {
   }
 }
 
-function startRequestsPoll (id) {
-  const reqId = parseInt(id)
-
-  const request = requests.find(r => r.requests_id === reqId)
-
-  const hrs = 1 / 120
-  const details = {
-    requestId: request.requests_id,
-    userId: request.user_id,
-    username: request.username,
-    group: group,
-    duration: hrs
-  }
-
-  fetch('/api/start-requests-poll', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(details)
-  }).then(response => {
-    if (response.ok) {
-      requests.splice(requests.indexOf(request))
-      updateRequestsTable(requests)
-      socket.emit('pollCreated', group)
-    }
-  })
-}
-window.startRequestsPoll = startRequestsPoll
-
+// Start the banning poll
 function startBanPoll (id) {
   const userId = parseInt(id)
 
@@ -270,7 +280,57 @@ function startBanPoll (id) {
   }).then(response => {
     if (response.ok) {
       socket.emit('pollCreated', group)
+      window.alert('The poll has been successfully created.')
     }
   })
 }
 window.startBanPoll = startBanPoll
+
+/* --------------------------- Functions to do with custom polls ------------------- */
+
+let numOptions = null
+
+window.addOptionFields = addOptionFields
+function addOptionFields () {
+  numOptions = document.getElementById('new-poll-num-options').value
+  const optionsDiv = document.getElementById('new-poll-options')
+
+  for (let i = 0; i < numOptions; i = i + 1) {
+    const div = document.createElement('div')
+    div.classList.add('mb-3')
+    div.classList.add('poll-option')
+    div.innerHTML = `
+    <input type="text" class="form-control" id="poll-option-${i}" placeholder="Option ${i}...">
+    `
+    optionsDiv.appendChild(div)
+  }
+}
+
+window.createCustomPoll = createCustomPoll
+function createCustomPoll () {
+  const pollOptions = []
+  for (let i = 0; i < numOptions; i = i + 1) {
+    pollOptions.push(document.getElementById(`poll-option-${i}`).value)
+  }
+
+  const pollDetails = {
+    title: document.getElementById('new-poll-title').value,
+    group: group,
+    date: new Date(),
+    duration: document.getElementById('new-poll-duration').value,
+    options: pollOptions
+  }
+
+  fetch('/api/start-custom-poll', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(pollDetails)
+  }).then(response => {
+    if (response.ok) {
+      socket.emit('pollCreated', group)
+      window.alert('The poll has been successfully created.')
+    }
+  })
+}
