@@ -63,7 +63,9 @@ module.exports = function (app, passport) {
         last_name: req.body.lastName
       }
 
-      const success = new Promise((resolve, reject) => {
+      console.log(user)
+
+      const success = await new Promise((resolve, reject) => {
         userService.addNewUser(user)
           .then(result => resolve(result))
       })
