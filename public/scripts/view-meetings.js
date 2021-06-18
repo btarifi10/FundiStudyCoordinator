@@ -47,10 +47,15 @@ function loadMeetingLink (meeting) {
 }
 
 function retrieveOnlineMeetings (option) {
-  fetch('/onlineMeetings/' + group)
-    .then(response => response.json())
-    .then(data => {
-      loadHTMLTable(data, option)
+  // include a statement if the user is not logged in - an alert prompts them to log in.
+  userService.getCurrentUser().then(
+    user => {
+      // currentUser = user
+      fetch('/onlineMeetings/' + group)
+        .then(response => response.json())
+        .then(data => {
+          loadHTMLTable(data, option)
+        })
     })
 }
 
@@ -59,6 +64,7 @@ function retrieveOnlineMeetings (option) {
 // NOTE: this needs to be updated to include a time frame for the screening date
 // and the meeting time
 function retrieveFaceMeetings () {
+  // include a statement if the user is not logged in - an alert prompts them to log in.
   userService.getCurrentUser().then(
     user => {
       currentUser = user
@@ -72,6 +78,11 @@ function retrieveFaceMeetings () {
     })
 }
 function viewFaceMeetings (data) {
+  if (data.recordset.length === 0) {
+    const table = document.querySelector('table tbody')
+    table.innerHTML = "<tr><td class='no-data' colspan='5'>Please complete the covid screening to view the face to face meetings</td></tr>"
+    return
+  }
   if (data.recordset[0].passed == true) {
     console.log("You're clear")
     // option for is_online = false

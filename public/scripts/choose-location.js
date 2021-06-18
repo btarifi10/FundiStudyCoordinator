@@ -84,6 +84,7 @@ meetingForm.addEventListener('submit', (event) => {
       const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
       recordMeeting(meetingBody)
     })
+  // include a statement if the user is not logged in - an alert prompts them to log in.
 })
 
 // Set up the inputs to be placed into the database
@@ -100,7 +101,7 @@ function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_onl
 
 // record the meeting to the database
 function recordMeeting (meetingBody) {
-  console.log(meetingBody)
+  // console.log(meetingBody)
   fetch('/record-meeting', {
     method: 'POST',
     headers: {
@@ -108,6 +109,7 @@ function recordMeeting (meetingBody) {
     },
     body: JSON.stringify(meetingBody)
   })
+  window.alert('You have successfully created a Meeting')
 }
 /* ---------------------------- Helper Functions ---------------------------- */
 
@@ -136,17 +138,17 @@ function createDirectionLink () {
   const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${address}`
   const encodedURL = encodeURI(URL)
 
-  // Create an anchor element with the URL
-  const a = document.createElement('a')
-  const text = document.createTextNode(`${address}`)
-  a.appendChild(text)
-  a.href = encodedURL
-  a.target = '_blank'
+  // // Create an anchor element with the URL
+  // const a = document.createElement('a')
+  // const text = document.createTextNode(`${address}`)
+  // a.appendChild(text)
+  // a.href = encodedURL
+  // a.target = '_blank'
 
-  // Add it to the list
-  const li = document.createElement('li')
-  li.classList.add('list-group-item')
-  li.appendChild(a)
-  addressList.appendChild(li)
+  // // Add it to the list
+  // const li = document.createElement('li')
+  // li.classList.add('list-group-item')
+  // li.appendChild(a)
+  // addressList.appendChild(li)
   return encodedURL
 }
