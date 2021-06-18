@@ -48,9 +48,11 @@ class UserService {
                 `)
           })
           .then(result => {
-            resolve(result.rowsAffected === [1])
+            resolve(result.rowsAffected[0] === 1)
           })
       })
+
+      console.log(status)
       return status
     } catch (error) {
       console.log(error)

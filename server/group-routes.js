@@ -5,6 +5,11 @@ const express = require('express')
 const groupRouter = express.Router()
 const path = require('path')
 
+groupRouter.get('/covid-screening', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'covid-screening.html'))
+})
+
+
 groupRouter.get('/big-data', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'big-data.html'))
 })

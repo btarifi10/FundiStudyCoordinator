@@ -110,6 +110,9 @@ Thumbs.db
 *.key
 *.pem
 
+# ignore planning txt files
+*.plan.txt
+
 # --------------------------------------------------------
 # BEGIN Explictly Allowed Files (i.e. do NOT ignore these)
 # --------------------------------------------------------

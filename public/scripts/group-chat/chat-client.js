@@ -52,8 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => data.recordset)
     .then(displayChat)
 
+
   const rating = document.getElementById('rate-members')
   loadRatingLink(rating)
+
+  const linkGroupPolls = document.getElementById('link-group-polls')
+
+  linkGroupPolls.href = `polls?group=${group}`
+
 })
 
 

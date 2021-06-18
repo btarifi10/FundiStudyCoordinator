@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/group-selector.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
 
+<script defer src="scripts/home-page.js" ></script>
     <!-- Core Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
@@ -22,31 +23,31 @@
 
 
 <div class="sidenav">
-    <a href="#home">Home</a>
-    <a id="profile">My Profile</a>
-    <a href="#notifications">Notifications</a>
-    <a href="\chat">Chats</a>
 
-     <button class="dropdown-btn2" id = 'dropdown-buttonAllGroups' > All Groups
+    
+    <a href="/profile">My Profile</a>
+    <a href="#invites">View Invites</a>
+    <a href="#createGroup"> Create Group</a>
+    <a href="/covid-screening" > COVID Screening </a>
+    <a href="\chat">Chats</a> 
+
+     <button class="dropdown-btn2" id = 'dropdown-buttonAllGroups' > Join Groups
       <i class="fa fa-caret-down"></i>
     </button> 
     <div class="dropdown-container" id= 'dropdown-containerAllGroups'> 
       <input type="text" placeholder="Search All Groups" id="inputGroupSearch" onkeyup="entireGroupSearch()">
   </div>  
+   
+
+
 
     <!-- Using the dropdown functionality to go to different groups -->
-    <button class="dropdown-btn" id = 'dropdown-buttonID' > My Study Groups
+    < <button class="dropdown-btn" id = 'dropdown-buttonID' > My Groups
       <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-container" id= 'dropdown-containerID'> 
         <input type="text" placeholder="Search My Groups" id="inputValue" onkeyup="groupSearch()">
     </div>  
-
-</div>
-  
-<div class="container">
- <div class="row justify-content-center">
-
 
 
   <div class="main">

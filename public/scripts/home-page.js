@@ -1,6 +1,6 @@
 
 'use strict'
-// import { UserService } from './UserService.js'
+
 const dropdown = document.getElementsByClassName('dropdown-btn')
 const dropdownAllGroups = document.getElementsByClassName('dropdown-btn2')
 const dropMenu = document.getElementById('dropdown-containerID')
@@ -9,8 +9,7 @@ const dropMenuAllGroups = document.getElementById('dropdown-containerAllGroups')
 // To be replaced with database functionality therefore a more complex container was not implemented
 const studyGroups = ['Big Data', 'Software 3', 'Sociology']
 const hrefValues = ['big-data', 'software', 'sociology']
-// const userService = UserService.getUserServiceInstance()
-const currentUser = null
+
 
 function populateGroups () {
   for (let i = 0; i < studyGroups.length; i++) {
@@ -19,6 +18,8 @@ function populateGroups () {
     addedElement.textContent = groupName
     addedElement.value = groupName
     addedElement.href = hrefValues[i]
+
+    addedElement.id = hrefValues[i]
     addedElement.id = hrefValues[i]
     addedElement.class = 'dropdown-item'
     dropMenu.appendChild(addedElement)
