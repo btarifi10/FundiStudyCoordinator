@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   loadRequestsList()
   // Load list of groups user is a member of
   loadUsersGroups()
-  // Load group and member data from database to show in table
+  // Load group data from database to show in table
   loadDatabaseGroups()
   // Load list of usernames to invite
   loadUsersList()
@@ -41,8 +41,7 @@ function loadUsersList () {
     .then(populateUsersList)
 }
 
-function populateUsersList (users) { // TO DO: Remove the username from the list
-// 'users' should have records from database
+function populateUsersList (users) {
   users.forEach(element => {
     if (element.username.trim() !== username) {
       const inviteList = document.getElementById('inviteList')
@@ -80,13 +79,13 @@ function populateRequestsList (groups) {
   console.log(requestsList)
 }
 
-function loadGroupInviteList () { // shows everyone in the group atm
+function loadGroupInviteList () {
   fetch('/getUsersInGroup?groupname=nuwegroep')
     .then(response => response.json())
     .then(data => data.recordset)
     .then(populateGroupList)
 }
-
+// drop down usersOuGroupList will have list of users not in groupname passed via URL
 function populateGroupList (usersInGroup) {
   const uig = []
   usersInGroup.forEach(element => { uig.push(element.username) })
@@ -97,7 +96,7 @@ function populateGroupList (usersInGroup) {
     .then(allUsers => {
       allUsers.forEach(element => {
         if (!(uig.includes(element.username))) {
-          const inviteList = document.getElementById('usersInGroupList')
+          const inviteList = document.getElementById('usersOutGroupList')
           const option = document.createElement('option')
           option.text = element.username
           option.value = element.username
@@ -108,7 +107,7 @@ function populateGroupList (usersInGroup) {
 }
 
 // This function refreshes the Table shown. The user can 'Join' groups they are not already in.
-function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get a 'join' button
+function loadHTMLTable (groupsData) {
   const table = document.querySelector('table tbody')
   if (groupsData.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='6'>No Data</td></tr>"
@@ -125,7 +124,7 @@ function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get
       tableHTML += `<td>${date_created.toLocaleString()}</td>`
       const groupName_id = group_name.replace(/\s+/g, '#')
 
-      // TO DO: Add requestsList such that those groups do not allow him request to 'join' again
+      // No 'join' button for users that are members, or have sent request already
       let bFound = false
       usersGroups.forEach(group => {
         if (group.group_name === group_name) {
@@ -151,9 +150,9 @@ function loadHTMLTable (groupsData) { // TO DO: if username is member, can't get
   }
 }
 
-// This function creates a new group with the required fields. onClick event for 'Create' button
-// Update database
-// Update array shown in table
+// onClick event for 'Create' button: This function creates a new group with the required fields,
+// Update database: 'groups', 'memberships', and 'invites' tables updated
+// Update groups array used to show in table
 function updateGroupList () {
   // Validate the user input first
 
@@ -197,7 +196,8 @@ function updateGroupList () {
   }
 }
 
-function createGroup (newGroup, membershipInfo, inviteObj) { // create 'groups' and 'members' record
+// create 'groups' and 'members' record
+function createGroup (newGroup, membershipInfo, inviteObj) {
   fetch('/createGroup', {
     method: 'POST',
     headers: {
@@ -231,6 +231,7 @@ function createGroup (newGroup, membershipInfo, inviteObj) { // create 'groups' 
 // This function adds the username to the 'members' list of a particular group
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_group) {
+  // Extract group name from id (#'s in place of spaces)
   const group_name = clicked_group.replaceAll('#', ' ')
   const time_sent = new Date()
   const reqObj = { username, group_name, time_sent }
@@ -250,7 +251,6 @@ function joinGroup (clicked_group) {
 
 // Search for users in the drop down, and filter drop down accordingly
 function userSearch (searchTerm) {
-  // Allows both cases to be correctly identified
   const filter = searchTerm.toLowerCase()
   const inviteList = document.getElementById('inviteList')
   for (let i = 0; i < inviteList.length; i++) {
@@ -286,7 +286,7 @@ function clearForm () {
   userSearch.onkeyup()
 }
 
-// Checks for alphanumerical group name from user
+// Checks for alphanumerical group namem that meets length requirement from user
 function invalidForm () {
   const groupName = document.getElementById('groupName').value
   return ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40))
