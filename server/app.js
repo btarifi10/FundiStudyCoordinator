@@ -77,16 +77,17 @@ app.get('/get-groups', function (req, res) {
 })
 
 app.get('/get-members', function (req, res) {
-
   db.pools
     .then((pool) => {
       return pool.request()
-        .input('group_id', db.sql.Int, 1)
-        .query(`select first_name,last_name
-        from users U
+        .input('group_name', db.sql.Char, req.query.group)
+        // .input('group_name', db.sql.Char, 'Big Data')
+        .query(`select username
+        from users U 
         inner join memberships M
         on U.user_id = M.user_id
-        where M.group_id = @group_id; `)
+        where M.group_id = (select group_id from groups
+        where group_name =@group_name); `)
     })
     // Send back the result
     .then(result => {
@@ -100,19 +101,36 @@ app.get('/get-members', function (req, res) {
     })
 })
 
-
-app.get('/get-current-rating', function (req, res) {
-  // Make a query to the database
-
+app.get('/get-current', function (req, res) {
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
-      // need to replace with user_id
-        .input('user_id', db.sql.Int, 2)
-        // This is only a test query, change it to whatever you need
-        .query(`select rating, number_ratings from dbo.users
-        where user_id =@user_id; `)
+        .input('user_name', db.sql.Char, req.query.nameSelected)
+        .query(`select rating, number_ratings from users
+        where username = (@user_name); `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.post('/update-ranking', function (req, res) {
+
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('ranking', db.sql.Float, req.body.newRating)
+        .input('number_ranking', db.sql.Int, req.body.newNumberRanking)
+        .input('username', db.sql.Char, req.body.userName)
+        .query(`UPDATE users set rating = @ranking, number_ratings = @number_ranking
+          where username= @username;`)
     })
     // Send back the result
     .then(result => {
@@ -295,7 +313,7 @@ app.get('/membershipViews/:id', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      //console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
