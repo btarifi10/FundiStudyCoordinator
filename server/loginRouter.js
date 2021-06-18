@@ -96,11 +96,13 @@ module.exports = function (app, passport) {
 
   // Retrieve current user details.
   router.get('/api/currentUser', checkAuthenticated, (req, res) => {
+    console.log(req.user)
     res.json({
       userId: req.user.userId,
       username: req.user.username,
       firstName: req.user.firstName,
-      lastName: req.user.lastName
+      lastName: req.user.lastName,
+      rating: req.user.rating
     })
   })
 

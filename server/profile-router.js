@@ -12,6 +12,10 @@ profileRouter.get('/invites', checkAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'views', 'invites.html'))
 })
 
+profileRouter.get('/profile', checkAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
+})
+
 profileRouter.get('/api/getInvites', checkAuthenticated, (req, res) => {
   db.pools
     // Run query

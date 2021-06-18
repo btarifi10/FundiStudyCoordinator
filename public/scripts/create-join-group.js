@@ -228,7 +228,7 @@ function createGroup (newGroup, membershipInfo, inviteObj) {
     })
 }
 
-// This function adds the username to the 'members' list of a particular group
+// This function adds the username to the 'members' list of a particular roup
 // The button that calls this function only appears to members not in a group, hence no validation
 function joinGroup (clicked_group) {
   // Extract group name from id (#'s in place of spaces)

@@ -19,11 +19,11 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
       <div class="sidebar-heading border-bottom bg-light">Study Group Coordinator</div>
       <div class="list-group list-group-flush">
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">My Groups</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Invites</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Find Groups</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Create Group</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Profile</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-my-groups" href="#my-groups">My Groups</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-invites" href="#invites">Invites</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-find-groups" href="#find-groups">Find Groups</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-create-group" href="#create-groups">Create Group</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-profile" href="#profile">Profile</a>
       </div>
     </div>
     <!-- Page content wrapper-->
@@ -37,6 +37,7 @@
             aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+              <li class="nav-item" id='li-username'> <a class="nav-link" id="a-profile-user" href="#profile"> </a></li>
               <li class="nav-item"><a class="nav-link" href="#!">Sign out</a></li>
             </ul>
           </div>
@@ -44,7 +45,7 @@
       </nav>
       <!-- Page content-->
       <div class="container-fluid" style="margin:0px;padding:0px;overflow:hidden;height:100%">
-        <iframe src="/invites" frameborder="0" style="overflow:hidden;height:100%;width:100%"></iframe>
+        <iframe id="iframe" src="/my-groups" frameborder="0" style="overflow:hidden;height:100%;width:100%"></iframe>
       </div>
     </div>
   </div>
@@ -52,6 +53,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Core theme JS-->
   <script src="scripts/sidebar.js"></script>
+  <!-- JS Script -->
+  <script type="module" src="scripts/dashboard.js"></script>
 </body>
 
 </html>
