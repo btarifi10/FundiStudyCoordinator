@@ -1,5 +1,18 @@
+/* ------------------------------ Functionality ------------------------------ */
+
+import { UserService } from './UserService.js'
+import {
+  loadLocation,
+  loadPlatform,
+  loadHTMLTable
+} from './load-meetings.js'
 'use strict'
 
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
+const userService = UserService.getUserServiceInstance()
+let currentUser = null
 /* ------------------------------- CONSTANTS ------------------------------- */
 
 // Embedded Map
@@ -18,53 +31,86 @@ const ADDR_REGEX = /[^A-z0-9À-ž'.,\s+-º]+/g
 
 /* ------------------------------ DOM Elements ------------------------------ */
 
-const addressInput = document.getElementById('addressInput')
-const mapFrame = document.getElementById('map')
 const meetingForm = document.getElementById('meeting-form')
 const addressList = document.getElementById('address-list')
+const meetingChoice = document.getElementById('selection')
+const viewMeetings = document.getElementById('View-btn')
 
-/* ------------------------------ Functionality ------------------------------ */
+// Update which meeting options should be displayed for the user
+meetingChoice.addEventListener('change', (event) => {
+  if (event.target.value == 'online') {
+    loadPlatform()
+  }
+  if (event.target.value == 'face-to-face') {
+    loadLocation()
+  }
+  if (event.target.value == 'none-selected') {
+    window.alert('Please select a viable option')
+  }
+})
 
 // Dynamically update the map based on the text input
-addressInput.addEventListener('input', (event) => {
-  mapFrame.src = generateMapURL(event.target.value)
+document.querySelector('#place').addEventListener('input', function (event) {
+  if (event.target.id == 'addressInput') {
+    const mapFrame = document.getElementById('map')
+    mapFrame.src = generateMapURL(event.target.value)
+  }
 })
 
-/*
-Convert submitted address to Google Map link
-
-NOTE: I have not bothered to extract this behaviour into a separate function
-since this merely serves as an example/guide on how to convert a text address
-into a clickable Google Maps Link. I assume it will be used when displaying the
-meeting info. Note that I have already imposed limits on the characters that
-can be submitted in the form by using in the text input html tag for the
-address (see below), and so this need not be checked here.
-
-required pattern="[A-z0-9À-ž'.,\s+-º]+"
-
-*/
+// Send the form input to be added to the Database
 meetingForm.addEventListener('submit', (event) => {
   event.preventDefault()
-
-  // Build a valid URL
-  const address = event.target.elements.addressInput.value
-  const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${address}`
-  const encodedURL = encodeURI(URL)
-
-  // Create an anchor element with the URL
-  const a = document.createElement('a')
-  const text = document.createTextNode(`${address}`)
-  a.appendChild(text)
-  a.href = encodedURL
-  a.target = '_blank'
-
-  // Add it to the list
-  const li = document.createElement('li')
-  li.classList.add('list-group-item')
-  li.appendChild(a)
-  addressList.appendChild(li)
+  let link = null
+  let is_online = true
+  let place = null
+  // retrieve inputs from the different areas
+  if (meetingChoice.value == 'none-selected') {
+    window.alert('Please select a viable meeting option')
+  } else if (meetingChoice.value == 'online') {
+    link = document.getElementById('linkInput').value
+    place = document.getElementById('platformInput').value
+  } else if (meetingChoice.value == 'face-to-face') {
+    link = createDirectionLink()
+    place = document.getElementById('addressInput').value
+    is_online = 0
+  }
+  // retrieve the current user id
+  userService.getCurrentUser().then(
+    user => {
+      currentUser = user
+      const group_name = group
+      const creator_id = currentUser.id
+      const meeting_time = document.getElementById('date').value
+      const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
+      recordMeeting(meetingBody)
+    })
+  // include a statement if the user is not logged in - an alert prompts them to log in.
 })
 
+// Set up the inputs to be placed into the database
+function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_online) {
+  return {
+    group_name: group_name,
+    creator_id: creator_id,
+    meeting_time: new Date(meeting_time), // check how the conversions are being made to the database
+    place: place,
+    link: link,
+    is_online: is_online
+  }
+}
+
+// record the meeting to the database
+function recordMeeting (meetingBody) {
+  // console.log(meetingBody)
+  fetch('/record-meeting', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(meetingBody)
+  })
+  window.alert('You have successfully created a Meeting')
+}
 /* ---------------------------- Helper Functions ---------------------------- */
 
 function generateMapURL (address) {
@@ -82,4 +128,27 @@ function generateMapURL (address) {
 
   // Encode the URL before returning it
   return encodeURI(URL)
+}
+
+/* -- Convert submitted address to Google Map link -- */
+function createDirectionLink () {
+// Build a valid URL
+  const address = document.getElementById('addressInput').value
+  // const address = event.target.elements.addressInput.value
+  const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${address}`
+  const encodedURL = encodeURI(URL)
+
+  // // Create an anchor element with the URL
+  // const a = document.createElement('a')
+  // const text = document.createTextNode(`${address}`)
+  // a.appendChild(text)
+  // a.href = encodedURL
+  // a.target = '_blank'
+
+  // // Add it to the list
+  // const li = document.createElement('li')
+  // li.classList.add('list-group-item')
+  // li.appendChild(a)
+  // addressList.appendChild(li)
+  return encodedURL
 }
