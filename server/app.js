@@ -47,6 +47,7 @@ app.use(groupRouter)
 
 const db = require('./database-service')
 
+// Accesses the membership table to delete a member when they leave voluntarily
 app.delete('/delete/:membership_id', (request, response) => {
   const { membership_id } = request.params
   db.pools
@@ -60,20 +61,80 @@ app.delete('/delete/:membership_id', (request, response) => {
     })
 })
 
+// Retrieves all the groups from the database to load for the home-page
 app.get('/get-groups', function (req, res) {
-  // Make a query to the database
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
-        // This is only a test query, change it to whatever you need
         .query('SELECT group_name FROM groups')
     })
-    // Send back the result
     .then(result => {
       res.send(result)
     })
-    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+
+// Retrieves the members of a group to populate the ratings list
+app.get('/get-members', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('group_name', db.sql.Char, req.query.group)
+        .query(`select username
+        from users U 
+        inner join memberships M
+        on U.user_id = M.user_id
+        where M.group_id = (select group_id from groups
+        where group_name =@group_name); `)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Retrieves the current rating and the number of ratings received for a specific selected user
+app.get('/get-current', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('user_name', db.sql.Char, req.query.nameSelected)
+        .query(`select rating, number_ratings from users
+        where username = (@user_name); `)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Updates the ratings of the newly rated individual
+app.post('/update-ranking', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('ranking', db.sql.Float, req.body.newRating)
+        .input('number_ranking', db.sql.Int, req.body.newNumberRanking)
+        .input('username', db.sql.Char, req.body.userName)
+        .query(`UPDATE users set rating = @ranking, number_ratings = @number_ranking
+          where username= @username;`)
+    })
+    .then(result => {
+      res.send(result)
+    })
     .catch(err => {
       res.send({
         Error: err
@@ -454,7 +515,7 @@ app.get('/membershipViews/:id', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      console.log(result)
+      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -525,6 +586,36 @@ app.get('/database', function (req, res) {
     })
 })
 */
+
+
+/* ----------------------------- Database Test ----------------------------- */
+
+/*
+const db = require('./database-service')
+
+app.get('/database', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        // This is only a test query, change it to whatever you need
+        .query('SELECT * FROM users')
+    })
+    // Send back the result
+    .then(result => {
+      // console.log(result)
+      res.send(result.recordset)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+*/
+
 
 /* ------------------------------ Invites: Basheq ---------------------------------- */
 

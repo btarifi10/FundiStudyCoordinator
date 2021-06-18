@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ratings</title>
+    <script defer src="scripts/rating.js" type="module" ></script>
+     <!-- Query String Parser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"
+  integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <h1> Rate Members In the Group </h1>   
+
+    <div >
+        <br>
+        <br>
+            <form >
+                <div>
+                    <label for="Members">Select member to rate</label>
+                    <br>
+                    <select name="Members" id="memberSelection" >
+                    </select>
+                    <br>
+                </div>
+    
+                <div>
+                    <input type="radio" name="rating" value="0"  /> 0
+                    <input type="radio" name="rating" value="1"  /> 1
+                    <input type="radio" name="rating" value="2" /> 2
+                    <input type="radio" name="rating" value="3"  /> 3
+                    <input type="radio" name="rating" value="4" /> 4
+                    <input type="radio" name="rating" value="5"  /> 5
+                </div>  
+
+                <div>
+                    <button   id= 'submitButton' onclick="window.history.back()">Submit Rating</button>
+                </div>
+        </form>
+    </div>
+
+
+</body>
+</html>
