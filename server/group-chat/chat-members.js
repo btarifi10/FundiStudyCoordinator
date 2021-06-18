@@ -40,6 +40,7 @@ function getChatMembers (group) {
 }
 
 module.exports = {
+  membersInChat,
   addChatMember,
   getCurrentMember,
   removeChatMember,

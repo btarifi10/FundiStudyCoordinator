@@ -22,6 +22,7 @@ const { handleVoting } = require('./polls/polling-service')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
@@ -238,11 +239,7 @@ app.get('/membershipViews/:id', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-      // retrieve all recordsets with the following information to be displayed on the profile page
-
-        // want to retrieve the specific users personal details
-        // then search the memberships table for the entries corresponding to the user_id
-        // retrieve the groups that correspond to the user_id in the memberships table
+      // retrieve all memberships recordsets for the specified user
         .input('id', db.sql.Int, id)
         .query('SELECT membership_id, date_joined, memberships.group_id, group_name FROM memberships INNER JOIN groups ON memberships.group_id=groups.group_id WHERE (@id) = memberships.user_id')
     })
@@ -259,6 +256,9 @@ app.get('/membershipViews/:id', function (req, res) {
     })
 })
 
+const meetingRouter = require('./meeting-routes')
+app.use(meetingRouter)
+
 app.get('/profile', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
 })
@@ -268,6 +268,11 @@ app.get('/home', function (req, res) {
 })
 
 /* ----------------------------- Nathan's Code ----------------------------- */
+
+// Temp router for choose location demonstration
+app.get('/choose-location', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'choose-location.html'))
+})
 
 // Routing
 

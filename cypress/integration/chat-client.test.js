@@ -22,21 +22,21 @@ const JOIN_CHAT_EVENT = 'joinChat'
 const CHAT_MESSAGE_EVENT = 'chatMessage'
 
 describe('A single client can join and send messages in the group chat', () => {
-  before('Fill form to enter group chat', () => {
-    cy.visit('/intermediate-chat')
+  // before('Fill form to enter group chat', () => {
+  //   cy.visit('/intermediate-chat')
 
-    cy.get('form')
+  //   cy.get('form')
 
-    cy.get('input[name="username"]')
-      .type('Archibald')
-      .should('have.value', 'Archibald')
+  //   cy.get('input[name="username"]')
+  //     .type('Archibald')
+  //     .should('have.value', 'Archibald')
 
-    cy.get('select[name="group"]')
-      .select('Sociology')
-      .should('have.value', 'Sociology')
+  //   cy.get('select[name="group"]')
+  //     .select('Sociology')
+  //     .should('have.value', 'Sociology')
 
-    cy.contains('Join Group').click()
-  })
+  //   cy.contains('Join Group').click()
+  // })
 
   it.skip('Displays the page correctly', () => {
     cy.url()
@@ -96,19 +96,19 @@ describe('A single client can join and send messages in the group chat', () => {
 })
 
 describe('Interact with other users in chat', () => {
-  before('Mock user enters the group and writes a message', () => {
-    cy.window()
-      .then(function (win) {
-        const mockUser = { username: 'James VI', group: 'Sociology' }
-        const text = 'Archy! Tell me a joke. I\'m feeling rather upset today. The sheep farmers are staging a coup'
-        const time = moment()
-        const chatMessage = formatChatMessage(mockUser.username, text, time)
+  // before('Mock user enters the group and writes a message', () => {
+  //   cy.window()
+  //     .then(function (win) {
+  //       const mockUser = { username: 'James VI', group: 'Sociology' }
+  //       const text = 'Archy! Tell me a joke. I\'m feeling rather upset today. The sheep farmers are staging a coup'
+  //       const time = moment()
+  //       const chatMessage = formatChatMessage(mockUser.username, text, time)
 
-        const socket = win.io()
-        socket.emit(JOIN_CHAT_EVENT, mockUser)
-        socket.emit(CHAT_MESSAGE_EVENT, chatMessage)
-      })
-  })
+  //       const socket = win.io()
+  //       socket.emit(JOIN_CHAT_EVENT, mockUser)
+  //       socket.emit(CHAT_MESSAGE_EVENT, chatMessage)
+  //     })
+  // })
   it.skip('Updates list of chat members when a new member joins', () => {
     cy.get('ul[id="chat-members"]')
       .find('li')

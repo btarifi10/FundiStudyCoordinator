@@ -33,3 +33,8 @@
 .message-area .message .meta span {
 	color: #777;
 }
+
+.date {
+	font-size: 15px;
+	color: #777;
+}
