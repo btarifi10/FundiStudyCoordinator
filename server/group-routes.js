@@ -13,6 +13,10 @@ groupRouter.get('/find-groups', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'find-groups.html'))
 })
 
+groupRouter.get('/create-group', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'create-group.html'))
+})
+
 groupRouter.get('/big-data', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'big-data.html'))
 })

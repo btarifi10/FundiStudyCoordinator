@@ -2,8 +2,8 @@
 
 /* -------------------------------- Imports -------------------------------- */
 
-import { UserService } from '../user-service'
-import { sendMessage } from './chat-messages'
+import { UserService } from '../user-service.js'
+import { sendMessage } from './chat-messages.js'
 import {
   displayChat,
   displayGroupName,
