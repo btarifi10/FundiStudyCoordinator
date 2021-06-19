@@ -3,10 +3,13 @@
 module.exports = function (app, passport) {
   // Import dependencies.
   const router = require('express').Router()
+  const express = require('express')
+  router.use(express.json())
   const path = require('path')
   const bcrypt = require('bcrypt')
   const { UserService } = require('./user-service')
   const userService = UserService.getUserServiceInstance()
+  const db = require('./database-service')
 
   let users = []
 
@@ -79,6 +82,29 @@ module.exports = function (app, passport) {
     } catch {
       res.redirect('/register')
     }
+  })
+
+  // Updates the ratings of the newly rated individual
+  router.post('/update-ranking', function (req, res) {
+    db.pools
+      .then((pool) => {
+        return pool.request()
+          .input('ranking', db.sql.Float, req.body.newRating)
+          .input('number_ranking', db.sql.Int, req.body.newNumberRanking)
+          .input('username', db.sql.Char, req.body.userName)
+          .query(`UPDATE users set rating = @ranking, number_ratings = @number_ranking
+          where username= @username;`)
+      })
+      .then(result => {
+        res.send(result)
+      })
+      .catch(err => {
+        res.send({
+          Error: err
+        })
+      })
+
+    updateUsers()
   })
 
   // Post request to login - uses Passport.js for authentication
