@@ -30,7 +30,6 @@ pollingRouter.get('/api/get-group-requests', checkAuthenticated, (req, res) => {
       return (
         pool
           .request()
-          // Retrieve ALL invites for current user
           .input('group', db.sql.Char, group).query(`
           SELECT group_requests.requests_id, users.user_id, users.username, 
           group_requests.time_sent
@@ -62,7 +61,6 @@ pollingRouter.get('/api/get-group-members', (req, res) => {
       return (
         pool
           .request()
-          // Retrieve ALL invites for current user
           .input('group', db.sql.Char, group).query(`
           SELECT users.user_id, users.username
           FROM users INNER JOIN
@@ -71,6 +69,39 @@ pollingRouter.get('/api/get-group-members', (req, res) => {
           SELECT group_id
           FROM groups
           WHERE group_name=@group);
+            `)
+      )
+    })
+    // Send back the result
+    .then((result) => {
+      if (result.recordset) {
+        res.send(result.recordset)
+      } else {
+        res.send(null)
+      }
+    })
+})
+
+pollingRouter.get('/api/get-users-to-invite', (req, res) => {
+  const group = req.query.group
+
+  db.pools
+    // Run query
+    .then((pool) => {
+      return (
+        pool
+          .request()
+          .input('group', db.sql.Char, group).query(`
+          SELECT users.user_id, users.username
+          FROM users WHERE user_id NOT IN 
+          (SELECT user_id FROM memberships WHERE
+            group_id = (SELECT group_id
+              FROM groups
+              WHERE group_name=@group)) AND user_id NOT IN
+          (SELECT user_id FROM invites WHERE
+            group_id= (SELECT group_id
+              FROM groups
+              WHERE group_name=@group) );
             `)
       )
     })
@@ -104,12 +135,11 @@ pollingRouter.post('/api/start-requests-poll', (req, res) => {
 pollingRouter.post('/api/start-invites-poll', (req, res) => {
   const details = req.body
   /*
-    details = { userId, userName, group, duration }
+    details = { userId, username, group, duration }
   */
 
   createInvitePoll(details)
-
-  res.send(200)
+  res.sendStatus(200)
 })
 
 pollingRouter.post('/api/start-custom-poll', (req, res) => {

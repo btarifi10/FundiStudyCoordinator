@@ -1,12 +1,14 @@
 'use strict'
 
-import { UserService } from '../user-service'
+import { UserService } from '../user-service.js'
 
 /* ------------------------------ Variables ----------------------------------- */
 const userService = UserService.getUserServiceInstance()
 let user = null
 let requests = null
 let groupMembers = null
+
+let usersToInvite = null
 
 /* ------------------------------ DOM Elements ------------------------------ */
 
@@ -33,6 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       requests = data
       updateRequestsTable(requests)
+    })
+
+  getUsersToInvite(group)
+    .then(data => {
+      usersToInvite = data
+      updateUserInvitesTable([], '')
     })
 
   // Get all group members and display the data
@@ -266,7 +274,7 @@ function startBanPoll (id) {
   const hrs = 48
   const details = {
     userId: userId,
-    userName: member.userId,
+    username: member.username,
     group: group,
     duration: hrs
   }
@@ -280,11 +288,81 @@ function startBanPoll (id) {
   }).then(response => {
     if (response.ok) {
       socket.emit('pollCreated', group)
-      window.alert('The poll has been successfully created.')
+      window.alert(`The poll to ban ${member.username} been successfully created.`)
     }
   })
 }
 window.startBanPoll = startBanPoll
+
+/* ------------------- Functions to do with inviting ----------------------- */
+
+function getUsersToInvite (group) {
+  return fetch(`/api/get-users-to-invite?group=${group}`)
+    .then(response => response.json())
+}
+
+window.userSearch = userSearch
+function userSearch () {
+  const searchTerm = document.getElementById('user-search').value.toLowerCase()
+
+  if (searchTerm) {
+    const matchingUsers = usersToInvite.filter(u => u.username.toLowerCase().includes(searchTerm))
+    updateUserInvitesTable(matchingUsers)
+  } else { updateUserInvitesTable([], searchTerm) }
+}
+
+function updateUserInvitesTable (users, searchTerm) {
+  const table = document.querySelector('#users-table tbody')
+
+  if (users.length === 0) {
+    let message = ''
+    if (searchTerm === '' || searchTerm === null) { message = 'Start typing to see users...' } else { message = 'No matching users' }
+    table.innerHTML = `<tr><td class='no-data' colspan='2'>${message}</td></tr>`
+  } else {
+    let tableHTML = ''
+
+    // Display details for each users
+    users.forEach(function ({ user_id, username }) {
+      tableHTML += '<tr>'
+      tableHTML += `<td>${username}</td>`
+      tableHTML += `<td><button class="btn btn-success" id="${user_id}-member" onClick="startInvitesPoll(this.id)"> Invite </td>`
+      tableHTML += '</tr>'
+    })
+    table.innerHTML = tableHTML
+  }
+}
+
+// Start the invite poll
+function startInvitesPoll (id) {
+  const userId = parseInt(id)
+
+  const user = usersToInvite.find(u => u.user_id === userId)
+
+  const hrs = 1 / 60
+  const details = {
+    userId: userId,
+    username: user.username,
+    group: group,
+    duration: hrs
+  }
+
+  fetch('/api/start-invites-poll', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(details)
+  }).then(response => {
+    if (response.ok) {
+      usersToInvite.splice(usersToInvite.indexOf(user))
+      updateUserInvitesTable([], '')
+      document.getElementById('user-search').value = ''
+      socket.emit('pollCreated', group)
+      window.alert(`The poll to invite ${user.username} has been successfully created.`)
+    }
+  })
+}
+window.startInvitesPoll = startInvitesPoll
 
 /* --------------------------- Functions to do with custom polls ------------------- */
 
@@ -294,13 +372,14 @@ window.addOptionFields = addOptionFields
 function addOptionFields () {
   numOptions = document.getElementById('new-poll-num-options').value
   const optionsDiv = document.getElementById('new-poll-options')
+  optionsDiv.innerHTML = ''
 
   for (let i = 0; i < numOptions; i = i + 1) {
     const div = document.createElement('div')
     div.classList.add('mb-3')
     div.classList.add('poll-option')
     div.innerHTML = `
-    <input type="text" class="form-control" id="poll-option-${i}" placeholder="Option ${i}...">
+    <input type="text" class="form-control" id="poll-option-${i}" placeholder="Option ${i + 1}...">
     `
     optionsDiv.appendChild(div)
   }

@@ -178,11 +178,11 @@ function createPoll (pollDetails) {
       handleInviteOutcome(poll)
     } else if (poll.type === 'Request') {
       handleGroupRequestOutcome(poll)
-      console.log(poll.title, 'completed')
+      // console.log(poll.title, 'completed')
     } else if (poll.type === 'Ban') {
       handleBanOutcome(poll)
     } else {
-      console.log(poll.title, 'completed')
+      // console.log(poll.title, 'completed')
     }
 
     // Add poll to DB
