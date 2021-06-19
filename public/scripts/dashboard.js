@@ -6,7 +6,7 @@ let currentUser = null
 
 const userService = UserService.getUserServiceInstance()
 
-const iFrame = document.getElementById('iframe')
+let iFrame = null
 
 document.getElementById('a-my-groups').addEventListener('click', () => {
   iFrame.src = '/my-groups'
@@ -33,9 +33,9 @@ document.getElementById('a-profile-user').addEventListener('click', () => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
+  iFrame = document.getElementById('iframe')
   // Retrieves current user once document is loaded.
   const url = window.location.toString()
-  console.log(url)
   if (url.includes('#')) {
     const path = url.split('#')[1]
     iFrame.src = `/${path}`
@@ -47,3 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   )
 })
+
+window.iframeLoaded = iframeLoaded
+function iframeLoaded (iframeObj) {
+  const iUrl = iframeObj.contentWindow.location
+  let href = iUrl.toString()
+  href = href.replace(`${iUrl.origin.toString()}/`, '')
+  const url = window.location.toString().split('#')[0]
+  window.location = url + `#${href}`
+}
