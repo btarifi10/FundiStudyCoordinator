@@ -34,30 +34,26 @@ meetingRouter.get('/meetingViews/:group', function (req, res) {
     })
 })
 
-meetingRouter.get('/onlineMeetings/:group', function (req, res) {
-  const { group } = req.params
-  // the "AND (@online) = meetings.is_online" part of the query currently does not
-  // work as expected, therefore a 'work-around' has been implemented
-  const online = 1
+meetingRouter.get('/getMeetings', function (req, res) {
+  const group = req.query.group
+  const option = req.query.option
   // Make a query to the database
   db.pools
   // Run query
     .then((pool) => {
       return pool.request()
         .input('group', db.sql.VarChar, group)
-        .input('online', db.sql.Bit, online)
-        .query(`SELECT group_name, meeting_id, creator_id, meeting_time, place, link, is_online
+        .input('online', db.sql.Bit, option)
+        .query(`SELECT groups.group_name, meetings.meeting_id, meetings.creator_id, meetings.meeting_time, meetings.place, meetings.link, meetings.is_online
         FROM meetings INNER JOIN groups
         ON meetings.group_id=groups.group_id
-        WHERE EXISTS (
-          SELECT *
-          FROM meetings
-          WHERE (@group) = groups.group_name 
-          AND (@online) = meetings.is_online 
-        )`)
+        WHERE (${option}) = meetings.is_online 
+        AND (@group) = groups.group_name 
+               `)
     })
   // Send back the result
     .then(result => {
+      console.log(result)
       res.send(result)
     })
   // If there's an error, return that with some description
