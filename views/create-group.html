@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Core Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+  <!-- Bootstrap icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+  <title>Create Group</title>
+</head>
+
+<body>
+  <header class="group-header text-center pt-4">
+    <h1 class="page-header"><i class="bi bi-journal-plus"></i> Create Group <span></span></h1>
+  </header>
+
+  <div class="row">
+
+    <div class="col-md-2"></div>
+
+    <div class="col-md-6">
+      <br>
+      <!-- <form> -->
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Group name</label>
+        <input type="text" class="form-control" id="group-name" aria-describedby="emailHelp" maxlength="40" required>
+        <div id="emailHelp" class="form-text">Unique and not more than 40 characters</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Course code</label>
+        <input type="text" class="form-control" id="course-code" maxlength="10">
+        <div id="course-code" class="form-text">Not more than 10 characters</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Search for users</label>
+        <div class="row">
+          <div class="col-md-10">
+            <input type="text" class="form-control d-inline-block" id="search" onkeyup="userSearch()">
+            <div id="search" class="form-text">Select one or more users from the list below and <i
+                class="bi bi-plus-square-fill"></i> them</div>
+          </div>
+          <div class="col-md-2 text-end">
+            <button class="btn btn-secondary" onclick="addUsers()"><i class="bi bi-plus-lg"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <select class="form-select" style="height:200px" multiple aria-label="multiple select example"
+          id="user-list"></select>
+      </div>
+      <button class="btn btn-primary" onclick="createGroup()">Create</button>
+      <!-- </form> -->
+    </div>
+
+    <div class="col-md-3">
+      <ul class="list-group small" id="added-users">
+
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="scripts/create-group.js"></script>
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+    integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</body>
+
+</html>

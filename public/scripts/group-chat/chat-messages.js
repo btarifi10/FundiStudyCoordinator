@@ -3,10 +3,6 @@ This file contains the functions concerned with formatting, sending and storing
 the chat messages sent within a group
 */
 
-/* -------------------------------- Imports -------------------------------- */
-
-const moment = window.moment
-
 /* ------------------------------- CONSTANTS ------------------------------- */
 
 const CHAT_MESSAGE_EVENT = 'chatMessage'
