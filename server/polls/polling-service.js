@@ -20,8 +20,6 @@ function handleVoting (io, socket) {
     }
 
     // Show the poll in the console for testing
-    console.log('Poll modified:')
-    console.log(currentPolls[pollId])
 
     // Tell everybody else about the new vote
     const groupPolls = getGroupActivePolls(currentPolls[pollId].group)

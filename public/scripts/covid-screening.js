@@ -1,7 +1,7 @@
 
 'use strict'
 
-import { UserService } from './user-service'
+import { UserService } from './user-service.js'
 
 const userService = UserService.getUserServiceInstance()
 let currentUser = null

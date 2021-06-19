@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(user => {
       currentUser = user
       const username = user.username
-      console.log(currentUser)
       socket.emit(JOIN_CHAT_EVENT, { username, group })
       const rating = document.getElementById('rate-members')
       loadRatingLink(rating)
