@@ -10,7 +10,7 @@ const selectMembers = document.getElementById('memberSelection')
 
 // Populates the dropdown list with the names of the members for this specific group
 document.addEventListener('DOMContentLoaded', function () {
-  fetch(`/get-members?group=${group}`)//  , {
+  fetch(`/get-members?group=${group}&username=${username}`)//  , {
     .then(response => response.json())
     .then(data => {
       populateAllMembers(data)
