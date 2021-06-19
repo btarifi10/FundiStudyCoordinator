@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/witseie-elen4010/2021-008-project.svg?token=V5cp52PcqVwRJucANpvU&branch=main)](https://travis-ci.com/witseie-elen4010/2021-008-project) [![Coverage Status](https://coveralls.io/repos/github/witseie-elen4010/2021-008-project/badge.svg?t=Oi7CiE)](https://coveralls.io/github/witseie-elen4010/2021-008-project)
 
-## Current release: v2.0
+## Current release: v3.0
 
 ELEN4010 - Group 8 
 
