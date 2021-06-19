@@ -86,7 +86,6 @@ module.exports = function (app, passport) {
 
   // Updates the ratings of the newly rated individual
   router.post('/update-ranking', function (req, res) {
-    // updateUserRating(req.body.userName, req.body.newRating)
     db.pools
       .then((pool) => {
         return pool.request()
@@ -104,19 +103,9 @@ module.exports = function (app, passport) {
           Error: err
         })
       })
-  })
 
-  // function updateUserRating (userAffected, newRating) {
-  //   users = []
-  //   userService.getAllUsers().then(
-  //     data => {
-  //       users = data
-  //       if (users.userName == userAffected) {
-  //         users.rating = newRating
-  //       }
-  //     }
-  //   )
-  // }
+    updateUsers()
+  })
 
   // Post request to login - uses Passport.js for authentication
   router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
