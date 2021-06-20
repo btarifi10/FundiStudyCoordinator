@@ -193,24 +193,28 @@ app.get('/get-recommendation', function (req, res) {
       return pool.request()
         .input('userId', db.sql.Int, req.user.userId)
         .query(`WITH tag1 AS 
-          (SELECT tag 
-          FROM groups AS g 
-          INNER JOIN memberships AS m
-          ON g.group_id = m.group_id
-          INNER JOIN users AS u
-          ON m.user_id = u.user_id
-          WHERE u.user_id IN (
-          SELECT user_id 
-          FROM users
-          WHERE user_id = @userId ))
-          SELECT group_id, group_name, course_code 
-          FROM groups AS Gr
-          INNER join tag1  AS t
-          ON Gr.tag = t.tag;`
+        (SELECT tag 
+        FROM groups AS g 
+        INNER JOIN memberships AS m
+        ON g.group_id = m.group_id
+        INNER JOIN users AS u
+        ON m.user_id = u.user_id
+        WHERE u.user_id IN (
+        SELECT user_id 
+        FROM users
+        WHERE user_id = @userId ))
+        SELECT DISTINCT group_id, group_name, course_code 
+        from groups as Gr
+        Inner join tag1  as t
+        on Gr.tag = t.tag
+        AND group_id NOT IN (
+        SELECT group_id FROM group_requests WHERE user_id=@userId)
+        AND group_id NOT IN (
+        SELECT group_id FROM memberships WHERE user_id=@userId);`
         )
     })
     .then(result => {
-      res.send(result)
+      res.send(result.recordset)
     })
     .catch(err => {
       res.send({
