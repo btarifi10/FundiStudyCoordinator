@@ -165,9 +165,6 @@ app.post('/update-ranking', function (req, res) {
 
 app.post('/create-screening', function (req, res) {
   const newScreen = req.body
-  // console.log(newScreen)
-  // console.log(newScreen.user_id, newScreen.passed, newScreen.date)
-  // Make a query to the database
   db.pools
     .then((pool) => {
       return pool.request()
@@ -178,14 +175,43 @@ app.post('/create-screening', function (req, res) {
         INSERT Into screening(user_id, passed,date_screened)
         VALUES (@userid, @passed, @date);
         `)
-      // VALUES ((@userid), (@passed), (@date));
     })
-    // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
-    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Retrieves the recommended groups with the same tag that the user is already a part of
+app.get('/get-recommendation', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`WITH tag1 AS 
+          (SELECT tag 
+          FROM groups AS g 
+          INNER JOIN memberships AS m
+          ON g.group_id = m.group_id
+          INNER JOIN users AS u
+          ON m.user_id = u.user_id
+          WHERE u.user_id IN (
+          SELECT user_id 
+          FROM users
+          WHERE user_id = @userId ))
+          SELECT group_id, group_name, course_code 
+          FROM groups AS Gr
+          INNER join tag1  AS t
+          ON Gr.tag = t.tag;`
+        )
+    })
+    .then(result => {
+      res.send(result)
+    })
     .catch(err => {
       res.send({
         Error: err
