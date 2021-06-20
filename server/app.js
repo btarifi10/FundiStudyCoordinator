@@ -524,6 +524,7 @@ app.post('/logAction', function (req, res) {
   db.pools
     // Run query
     .then((pool) => {
+      // 'creation action' regardless of invited members
       return pool.request()
         .input('user_id', db.sql.Int, req.user.userId)
         .input('action', db.sql.Char, reqObj.action)
@@ -536,7 +537,7 @@ app.post('/logAction', function (req, res) {
           FROM groups AS g, actions AS a
           WHERE a.action = (@action)
           AND g.group_name = (@group_name)
-        `)
+          `)
     })
     // Send back the result
     .then(result => {
@@ -550,7 +551,6 @@ app.post('/logAction', function (req, res) {
       })
     })
 })
-
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {

@@ -1,6 +1,6 @@
 'use strict'
 
-import { addAction } from './action-log.js'
+import { addAction} from './action-log.js'
 
 const userList = document.getElementById('user-list')
 const addedUsers = document.getElementById('added-users')
@@ -113,6 +113,10 @@ function createGroup () {
   const dateCreated = moment()
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
   addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: 'None' })
+  let memberInviteNames = []
+  invitedMembers.forEach(member => { memberInviteNames.push(member.username) })
+  addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: memberInviteNames })
+
   existingGroups.push(groupName)
   membershipNum += 1
   alert(`Group ${groupName} is now created`)
