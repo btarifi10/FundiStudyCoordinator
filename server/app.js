@@ -163,6 +163,7 @@ app.post('/update-ranking', function (req, res) {
     })
 })
 
+// Posts the results of the screening to the database
 app.post('/create-screening', function (req, res) {
   const newScreen = req.body
   db.pools

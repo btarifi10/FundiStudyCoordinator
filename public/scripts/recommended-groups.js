@@ -60,51 +60,13 @@ function populateRecommendedGroups (data) {
     id="${group_id}-btn" data-id=${group_id} onclick='joinGroup(this.dataset.id)' >
           <i class="bi bi-plus-square"></i></td>`
     tableHtml += '</tr>'
-
-    // eventListeners(interactiveElement, group_id)
   })
 
-  //   eventListeners(data)
   table.innerHTML = tableHtml
 }
 
-// const interactiveElement = document.getElementById('325-btn')
-// console.log(interactiveElement)
-
-// onclick='joinGroup(this.dataset.id)'
-
-// function eventListeners (data) {
-//   data.forEach(function ({ group_id }) {
-//     console.log(group_id)
-//     const interactiveElement = document.getElementById('325-btn')
-//     console.log(interactiveElement)
-//     // value.addEventListener('click', (event) => {
-//     //   event.preventDefault()
-//     //   joinGroup(data)
-//     // })
-//   })
-// }
-
-// function eventListeners (data) {
-//   data.forEach(function ({ group_id, group_name, course_code }) {
-//     const value = document.getElementById(`${group_id}-btn`)
-//     value.addEventListener('click', (event) => {
-//       event.preventDefault()
-//       joinGroup(this.dataset.id)
-//     })
-//   })
-// }
-// const `elementClicked-${group_id} = document.getElementById(`${group_id}-btn`)
-// `elementClicked-${group_id}`.clicked.addEventListener('click', (event) => {
-//   event.preventDefault()
-//   joinGroup(this.dataset.id)
-// })
-
-// onclick='joinGroup(this.dataset.id)
-
 // Enables the user to join a group and in doing so removes the selected group from the display
 function joinGroup (_groupId) {
-  console.log(_groupId)
   const groupId = parseInt(_groupId)
   const timeSent = moment()
   const reqObj = { groupId, timeSent }
@@ -118,11 +80,9 @@ function joinGroup (_groupId) {
   })
 
   const gId = groups.findIndex(g => g.group_id === groupId)
-  console.log(gId)
   alert(`A Request to join ${groups[gId].group_name.trim()} has been sent`)
 
   groups.splice(gId, 1)
-  console.log(groups)
   populateRecommendedGroups(groups)
 
   document.getElementById('find-groups-table').value = ''
