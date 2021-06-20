@@ -223,6 +223,37 @@ app.get('/get-recommendation', function (req, res) {
     })
 })
 
+// Retrieves the tags from the groups the user is currently a part of
+app.get('/get-tag-values', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`select Distinct tag 
+        from tags as t
+        inner join (SELECT tag  as tag_id
+        FROM groups AS g 
+        INNER JOIN memberships AS m
+        ON g.group_id = m.group_id
+        INNER JOIN users AS u
+        ON m.user_id = u.user_id
+        WHERE u.user_id IN (
+        SELECT user_id 
+        FROM users
+        WHERE user_id = @userId )) as w
+        on t.tag_id= w.tag_id;`
+        )
+    })
+    .then(result => {
+      res.send(result.recordset)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 /* ----------------------------- Yasser's Code ----------------------------- */
 
 // const db = require('./database-service')
