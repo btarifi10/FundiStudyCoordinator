@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Group Log</title>
+
+  <!-- Bootstrap Styles -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
@@ -14,6 +15,8 @@
 
   <!-- Bootstrap icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+  <title>Group Log</title>
 </head>
 
 <body>
@@ -25,46 +28,48 @@
   <!-- FILTER OPTIONS -->
   <div class="container my-4">
     <div class="row align-items-center">
+
+      <!-- ACTION FILTER -->
       <div class="col-md-2">
         <div class="form-floating">
-          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-            <option selected>ALL</option>
-            <option value="1">POLL</option>
-            <option value="2">MEETING</option>
-            <option value="3">SCREENING</option>
+          <select class="form-select" id="action-filter" aria-label="Action Filter">
+            <option value="All Actions" selected>All Actions</option>
           </select>
-          <label for="floatingSelect">Action</label>
+          <label for="action-filter">Action</label>
         </div>
       </div>
+
+      <!-- TIMESTAMP FILTER -->
       <div class="col-md-2">
         <div class="form-floating">
-          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-            <option selected>Newest</option>
-            <option value="1">Oldest</option>
+          <select class="form-select" id="timestamp-filter" aria-label="Timestamp Filter">
+            <option value="Newest" selected>Newest</option>
+            <option value="Oldest">Oldest</option>
           </select>
-          <label for="floatingSelect">Timestamp</label>
+          <label for="timestamp-filter">Timestamp</label>
         </div>
       </div>
-      <div class="col-md-2">
+
+      <!-- MEMBER FILTER -->
+      <div class="col-md-3">
         <div class="form-floating">
-          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-            <option selected>All Members</option>
-            <option value="1">natmaxjon</option>
-            <option value="2">Taliya Weinstein</option>
-            <option value="3">Yasser Karam</option>
+          <select class="form-select" id="member-filter" aria-label="Member Filter">
+            <option value="All Members" selected>All Members</option>
           </select>
-          <label for="floatingSelect">Members</label>
+          <label for="member-filter">Member</label>
         </div>
       </div>
-      <div class="col-md-6">
+
+      <!-- DESCRIPTION SEARCH BAR -->
+      <div class="col-md-5">
         <input class="form-control mt-2" type="text" id="description-search" aria-describedby="description-help"
-          placeholder="Search by description..." onkeyup="entireGroupSearch()">
+          placeholder="Search by description...">
         <div id="description-help" class="form-text">Expand the log entry to view its description</div>
       </div>
     </div>
   </div>
 
-  <!-- LOG ENTRIES -->
+  <!-- ENTRY TITLES -->
   <div class="container">
     <table class="table table-hover align-middle" id="find-groups-table">
       <thead class="text-center">
@@ -73,103 +78,30 @@
         <th>Date</th>
         <th>Member</th>
       </thead>
-      <tbody>
+      <tbody id="log-table">
+        <!-- Note that the log entries are not populated here, this table is used for the column titles and displaying a message
+        when the filtering options produce no valid results -->
       </tbody>
     </table>
   </div>
 
+  <!-- LOG ENTRIES -->
   <div class="container h-100">
-    <div class="accordion accordion-flush" id="accordionFlushExample">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingOne">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-3 text-center">
-                  <span class="badge bg-secondary">POLL</span>
-                </div>
-                <div class="col-md-3 text-center">
-                  14:36:12
-                </div>
-                <div class="col-md-3 text-center">
-                  <p class="me-5 mb-0">Wed, 16 Jun 2021</p>
-                </div>
-                <div class="col-md-3 text-center">
-                  natmaxjon
-                </div>
-              </div>
-            </div>
-          </button>
-        </h2>
-        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-          data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">Description...</div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-3 text-center">
-                  <span class="badge bg-secondary">MEETING</span>
-                </div>
-                <div class="col-md-3 text-center">
-                  14:36:12
-                </div>
-                <div class="col-md-3 text-center">
-                  <p class="me-5 mb-0">Wed, 16 Jun 2021</p>
-                </div>
-                <div class="col-md-3 text-center">
-                  Taliya Weinstein
-                </div>
-              </div>
-            </div>
-          </button>
-        </h2>
-        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
-          data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">Description...</div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingThree">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-3 text-center">
-                  <span class="badge bg-secondary">SCREENING</span>
-                </div>
-                <div class="col-md-3 text-center">
-                  14:36:12
-                </div>
-                <div class="col-md-3 text-center">
-                  <p class="me-5 mb-0">Wed, 16 Jun 2021</p>
-                </div>
-                <div class="col-md-3 text-center">
-                  Yasser Karam
-                </div>
-              </div>
-            </div>
-          </button>
-        </h2>
-        <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree"
-          data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">Description...</div>
-        </div>
-      </div>
-    </div>
+    <div class="accordion accordion-flush" id="log-entries"></div>
   </div>
-
-  <!-- <script src="scripts/invites.js"></script> -->
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
     crossorigin="anonymous"></script>
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+    integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Main Script -->
+  <script src="scripts/view-log.js"></script>
 
 </body>
 
