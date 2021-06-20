@@ -89,11 +89,12 @@ app.get('/get-members', function (req, res) {
     .then((pool) => {
       return pool.request()
         .input('group_name', db.sql.Char, req.query.group)
-        .query(`select username
+        .input('user_name', db.sql.Char, req.query.username)
+        .query(`select rating, username
         from users U 
         inner join memberships M
         on U.user_id = M.user_id
-        where M.group_id = (select group_id from groups
+        where NOT U.username= @user_name AND M.group_id = (select group_id from groups
         where group_name =@group_name); `)
     })
     .then(result => {
