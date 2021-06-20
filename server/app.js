@@ -83,6 +83,23 @@ app.get('/get-other-groups', function (req, res) {
     })
 })
 
+// Retrieves all the tags for selection when creating a new group
+app.get('/get-tags', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query('SELECT * from tags;')
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 // Retrieves the members of a group to populate the ratings list
 app.get('/get-members', function (req, res) {
   db.pools
@@ -345,25 +362,24 @@ app.get('/getRequests', function (req, res) {
 })
 
 app.post('/createGroup', function (req, res) {
-  const { groupName, courseCode, invitedMembers, dateCreated } = req.body
-
-  // Make a query to the database
+  const { groupName, courseCode, dateCreated, tagValue } = req.body
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
         .input('group_name', db.sql.Char, groupName)
         .input('course_code', db.sql.Char, courseCode)
         .input('date_created', db.sql.DateTimeOffset, dateCreated)
+        .input('tag_value', db.sql.Char, tagValue)
         .query(`
-          INSERT INTO groups (group_name, course_code, date_created)
-          VALUES ((@group_name),(@course_code),(@date_created));
+          INSERT INTO groups (group_name, course_code, date_created, tag)
+          VALUES (@group_name,@course_code,@date_created,(select tag_id from
+            tags where tag = @tag_value));
         `)
     })
     .then(result => {
       res.send(result)
+      console.log(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -372,13 +388,9 @@ app.post('/createGroup', function (req, res) {
 })
 
 app.post('/complete-group-creation', function (req, res) {
-  const { groupId, groupName, courseCode, invitedMembers, dateCreated } = req.body
-  // Make a query to the database
+  const { groupName, courseCode, invitedMembers, dateCreated } = req.body
   db.pools
-    // Run query
     .then((pool) => {
-      // console.log('INSIDE server-createMembership carrying: ')
-      // console.log(membershipInfo)
       invitedMembers.forEach(member => {
         console.log(member)
         pool.request()
@@ -399,15 +411,9 @@ app.post('/complete-group-creation', function (req, res) {
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name = @groupName), @dateCreated);
           `)
     })
-    // Send back the result
     .then(result => {
       res.redirect('/dashboard')
-      // if (result.rowsAffected[0] === 1) {
-      //   res.sendStatus(200)
-      // }
-      // console.log('done with createMembership')
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -417,12 +423,9 @@ app.post('/complete-group-creation', function (req, res) {
 
 app.post('/createMembership', function (req, res) {
   const membershipInfo = req.body
-  // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
-      // console.log('INSIDE server-createMembership carrying: ')
-      // console.log(membershipInfo)
       membershipInfo.members.forEach(member => {
         console.log(member)
         console.log(membershipInfo.group_name.trim())
@@ -440,12 +443,9 @@ app.post('/createMembership', function (req, res) {
           `)
       })
     })
-    // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('done with createMembership')
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -608,62 +608,6 @@ io.on('connection', socket => {
   // Voting
   handleVoting(io, socket)
 })
-
-/* ----------------------------- Database Test ----------------------------- */
-
-/*
-const db = require('./database-service')
-
-app.get('/database', function (req, res) {
-  // Make a query to the database
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        // This is only a test query, change it to whatever you need
-        .query('SELECT * FROM users')
-    })
-    // Send back the result
-    .then(result => {
-      // console.log(result)
-      res.send(result.recordset)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
-*/
-
-/* ----------------------------- Database Test ----------------------------- */
-
-/*
-const db = require('./database-service')
-
-app.get('/database', function (req, res) {
-  // Make a query to the database
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        // This is only a test query, change it to whatever you need
-        .query('SELECT * FROM users')
-    })
-    // Send back the result
-    .then(result => {
-      // console.log(result)
-      res.send(result.recordset)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
-*/
 
 /* ------------------------------ Invites: Basheq ---------------------------------- */
 

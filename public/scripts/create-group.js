@@ -8,9 +8,31 @@ let users = null
 
 document.addEventListener('DOMContentLoaded', function () {
   loadUsersList()
+  // For tag selection
+  loadTagOptions()
 })
 
-function loadUsersList() {
+function loadTagOptions () {
+  fetch('/get-tags')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(populateTagsList)
+}
+
+const tagList = document.getElementById('tag-1')
+
+function populateTagsList (tags) {
+  tagList.innerHTML = ''
+  console.log(tags)
+  tags.forEach(element => {
+    const option = document.createElement('option')
+    option.text = element.tag
+    option.value = element.tag
+    tagList.add(option)
+  })
+}
+
+function loadUsersList () {
   fetch('/get-users')
     .then(response => response.json())
     .then(data => data.recordset)
@@ -20,7 +42,7 @@ function loadUsersList() {
     })
 }
 
-function populateUsersList(users) {
+function populateUsersList (users) {
   userList.innerHTML = ''
   users.forEach(element => {
     const option = document.createElement('option')
@@ -30,7 +52,7 @@ function populateUsersList(users) {
   })
 }
 
-function userSearch() {
+function userSearch () {
   const searchTerm = document.getElementById('search').value.toLowerCase()
 
   if (searchTerm) {
@@ -39,14 +61,14 @@ function userSearch() {
   } else { populateUsersList(users) }
 }
 
-function addUsers() {
+function addUsers () {
   selectedMembers()
 
   addedUsers.innerHTML = `
   ${invitedMembers.map(member => `<li class="list-group-item">${member.username}</li>`).join('')}`
 }
 
-function selectedMembers() {
+function selectedMembers () {
   for (let i = 0; i < userList.length; i++) {
     const opt = userList.options[i]
     const user = { username: opt.text, user_id: opt.value }
@@ -56,9 +78,10 @@ function selectedMembers() {
   }
 }
 
-function createGroup() {
+function createGroup () {
   const groupName = document.getElementById('group-name').value
   const courseCode = document.getElementById('course-code').value
+  const tagValue = document.getElementById('tag-1').value
 
   if (groupName === '') {
     alert('Please enter a group name')
@@ -72,10 +95,10 @@ function createGroup() {
 
   // TODO - Yasser please check that they don't create duplicate group names...
   const dateCreated = moment()
-  saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
+  saveGroup({ groupName, courseCode, invitedMembers, dateCreated, tagValue })
 }
 
-function saveGroup(groupInfo) {
+function saveGroup (groupInfo) {
   fetch('/createGroup', {
     method: 'POST',
     headers: {
@@ -92,22 +115,4 @@ function saveGroup(groupInfo) {
         body: JSON.stringify(groupInfo)
       })
     })
-    // TODO - Provide alert for success/failure
-    // .then(resp => {
-    //   if (resp.ok) {
-    //     alert('Group created successfully!')
-    //   }
-    // })
-  // .then(result => {
-  //   if (inviteObj.invited_members.length > 0) {
-  //     console.log('function sendInvites')
-  //     fetch('/sendInvites', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(inviteObj)
-  //     })
-  //   }
-  // })
 }
