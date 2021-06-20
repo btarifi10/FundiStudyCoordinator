@@ -27,7 +27,7 @@ function handleVoting (io, socket) {
 
     // Tell everybody else about the new vote
     const groupPolls = getGroupActivePolls(currentPolls[pollId].group)
-    io.to(currentPolls[pollId].group).emit('updateCurrentPolls', groupPolls)
+    io.to(currentPolls[pIndex].group).emit('updateCurrentPolls', groupPolls)
   }
   )
 

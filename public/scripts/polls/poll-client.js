@@ -112,7 +112,12 @@ function formatPollHTML (poll, pollId) {
   <div class="poll-content col-md-6">  
   <div class="poll-form">
   `
-  if (userVoted) { pollFormHtml += '<p> You have already voted in this poll </p>' } else {
+  if (userVoted) {
+    pollFormHtml += `
+    <p> You have already voted in this poll </p>
+    <hr>
+    <span class="text-end small"> Ends ${moment(poll.date).add(poll.duration * 3600, 's').format('ddd DD MMM YYYY, H:mm')}</span>`
+  } else {
     poll.options.forEach(opt => {
       pollFormHtml += `
     <div class="form-check poll-option">
@@ -127,7 +132,8 @@ function formatPollHTML (poll, pollId) {
     pollFormHtml += `
         <hr>
         <div>
-        <button class="btn btn-primary" id="${pollId}-btn" onclick="vote(this.id)"> Vote </button>
+        <button class="btn btn-primary" style="border-radius:20px" id="${pollId}-btn" onclick="vote(this.id)"> Vote </button>
+        <span class="text-end small"> Ends ${moment(poll.date).add(poll.duration * 3600, 's').format('ddd DD MMM YYYY, H:mm')}</span>
         </div>
         `
   }
@@ -205,16 +211,20 @@ function formatOldPollHTML (poll, oldId) {
   div.classList.add('poll')
   div.classList.add('card')
   div.classList.add('text-start')
+  console.log(poll.date)
   div.innerHTML =
       `<div class="card-header poll-title"> ${poll.title} <span class="badge bg-secondary"> ${poll.type.toUpperCase()} </span> </div>
        <div class="card-body">
        <div class="row">
        <div class="col-md-6">
-       <div class="poll-content">
-        <p>
+       <div>
+        <div class="w100">
         <strong>Outcome:</strong> ${poll.outcome}
-        </p>
         <hr>
+        </div>
+        <div class="w100">
+        <span class="small"> Ended ${moment(poll.date).add(poll.duration * 3600, 's').format('ddd, DD MMM YYYY, H:mm')}</span>
+        </div>
         </div>
        </div>
        <div class="col-md-6">
@@ -295,6 +305,7 @@ function startRequestsPoll (id) {
     requestId: request.requests_id,
     userId: request.user_id,
     username: request.username,
+    date: new Date(),
     group: group,
     duration: hrs
   }
@@ -354,6 +365,7 @@ function startBanPoll (id) {
   const details = {
     userId: userId,
     username: member.username,
+    date: new Date(),
     group: group,
     duration: hrs
   }
@@ -421,6 +433,7 @@ function startInvitesPoll (id) {
   const details = {
     userId: userId,
     username: user.username,
+    date: new Date(),
     group: group,
     duration: hrs
   }
@@ -437,7 +450,7 @@ function startInvitesPoll (id) {
       updateUserInvitesTable([], '')
       document.getElementById('user-search').value = ''
       socket.emit('pollCreated', group)
-      window.alert(`The poll to invite ${user.username} has been successfully created.`)
+      window.alert(`The poll to invite ${user.username.trim()} has been successfully created.`)
     }
   })
 }

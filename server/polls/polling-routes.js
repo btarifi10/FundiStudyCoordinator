@@ -136,7 +136,7 @@ pollingRouter.post('/api/start-requests-poll', (req, res) => {
 
   createGroupRequestsPoll(details)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 // API call to start group request poll

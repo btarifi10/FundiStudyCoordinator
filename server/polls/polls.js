@@ -81,7 +81,7 @@ function createGroupRequestsPoll (details) {
   */
 
   const pollDetails = {
-    title: `Accept group request from ${details.username}`,
+    title: `Accept group request from ${details.username.trim()}`,
     userId: details.userId,
     type: 'Request',
     group: details.group,
@@ -100,7 +100,7 @@ function createBanningPoll (details) {
     details = {userId, userName, group, duration }
   */
   const pollDetails = {
-    title: `Ban ${details.username} from ${details.group}`,
+    title: `Ban ${details.username.trim()} from ${details.group.trim()}`,
     userId: details.userId,
     type: 'Ban',
     group: details.group,
@@ -120,7 +120,7 @@ function createInvitePoll (details) {
   */
 
   const pollDetails = {
-    title: `Invite ${details.username} to group`,
+    title: `Invite ${details.username.trim()} to group`,
     userId: details.userId,
     type: 'Invite',
     group: details.group,
