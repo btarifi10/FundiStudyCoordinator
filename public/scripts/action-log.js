@@ -1,8 +1,8 @@
 'use strict'
 
-function addAction (groupObj) { //{ groupName, description }
+function addAction (groupObj) { //takes in { groupName, action, description }
   const timestamp = moment()
-  const actionObj = { group_name: groupObj.groupName, timestamp: timestamp, description: groupObj.description }
+  const actionObj = { action: groupObj.action, group_name: groupObj.groupName, timestamp: timestamp, description: groupObj.description }
   fetch('/logAction', {
     method: 'POST',
     headers: {
@@ -12,4 +12,4 @@ function addAction (groupObj) { //{ groupName, description }
   })
 }
 
-export { addAction }
+module.exports = { addAction }

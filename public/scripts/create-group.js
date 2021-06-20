@@ -1,12 +1,15 @@
 'use strict'
 
+//import { addAction } from './action-log.js'
+// const action = require('./action-log.js')
+
 const userList = document.getElementById('user-list')
 const addedUsers = document.getElementById('added-users')
 
 const invitedMembers = []
 let users = null
 const existingGroups = [] // stores list of { groupname: TheGroupName }, to check for duplicates
-let membershipNum = null
+let membershipNum = null // to limit user to membership of 10 groups
 
 document.addEventListener('DOMContentLoaded', function () {
   loadUsersList()
@@ -107,6 +110,7 @@ function createGroup () {
 
   const dateCreated = moment()
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
+  //addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: 'None' })
   existingGroups.push(groupName)
   membershipNum += 1
   alert(`Group ${groupName} is now created`)
@@ -128,6 +132,10 @@ function saveGroup (groupInfo) {
         },
         body: JSON.stringify(groupInfo)
       })
+    })
+    .then(() => {
+      const actionObj = { group_name: groupInfo.groupName, description: 'CREATED' }
+      addAction(actionObj)
     })
     // TODO - Provide alert for success/failure
     // .then(resp => {
