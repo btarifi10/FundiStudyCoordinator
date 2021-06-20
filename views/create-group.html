@@ -45,12 +45,12 @@
         <label for="exampleInputPassword1" class="form-label">Search for users</label>
         <div class="row">
           <div class="col-md-10">
-            <input type="text" class="form-control d-inline-block" id="search" onkeyup="userSearch()">
+            <input type="text" class="form-control d-inline-block" id="search" >
             <div id="search" class="form-text">Select one or more users from the list below and <i
                 class="bi bi-plus-square-fill"></i> them</div>
           </div>
           <div class="col-md-2 text-end">
-            <button class="btn btn-secondary" onclick="addUsers()"><i class="bi bi-plus-lg"></i></button>
+            <button class="btn btn-secondary" id="addUsers" ><i class="bi bi-plus-lg"></i></button>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
         <select class="form-select" style="height:200px" multiple aria-label="multiple select example"
           id="user-list"></select>
       </div>
-      <button class="btn btn-primary" onclick="createGroup()">Create</button>
+      <button class="btn btn-primary" id="createGroup">Create</button>
       <!-- </form> -->
     </div>
 

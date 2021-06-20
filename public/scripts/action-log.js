@@ -12,4 +12,4 @@ function addAction (groupObj) { //takes in { groupName, action, description }
   })
 }
 
-module.exports = { addAction }
+export { addAction }

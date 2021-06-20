@@ -1,7 +1,6 @@
 'use strict'
 
-//import { addAction } from './action-log.js'
-// const action = require('./action-log.js')
+import { addAction } from './action-log.js'
 
 const userList = document.getElementById('user-list')
 const addedUsers = document.getElementById('added-users')
@@ -58,6 +57,7 @@ function loadMembershipNum () {
     })
 }
 
+document.getElementById('search').addEventListener('keyup', userSearch)
 function userSearch () {
   const searchTerm = document.getElementById('search').value.toLowerCase()
 
@@ -67,6 +67,7 @@ function userSearch () {
   } else { populateUsersList(users) }
 }
 
+document.getElementById('addUsers').addEventListener('click', addUsers)
 function addUsers () {
   selectedMembers()
 
@@ -84,6 +85,7 @@ function selectedMembers () {
   }
 }
 
+document.getElementById('createGroup').addEventListener('click', createGroup)
 function createGroup () {
   const groupName = document.getElementById('group-name').value.trim()
   const courseCode = document.getElementById('course-code').value
@@ -110,7 +112,7 @@ function createGroup () {
 
   const dateCreated = moment()
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
-  //addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: 'None' })
+  addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: 'None' })
   existingGroups.push(groupName)
   membershipNum += 1
   alert(`Group ${groupName} is now created`)
