@@ -29,7 +29,6 @@ function handleVoting (io, socket) {
   // On poll creation, update everyone
   socket.on('pollCreated', (group) => {
     const groupPolls = getGroupActivePolls(group)
-
     io.to(group).emit('updateCurrentPolls', groupPolls)
   })
 }

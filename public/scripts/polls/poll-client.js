@@ -13,6 +13,7 @@ let usersToInvite = null
 /* ------------------------------ DOM Elements ------------------------------ */
 
 const currentPollArea = document.getElementById('current-poll-area')
+const historyPollArea = document.getElementById('old-poll-area')
 
 /* ------------------------------ Poll Service ------------------------------ */
 
@@ -29,6 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     user = u
     socket.emit('voterConnection', group)
   })
+
+  getPollHistory(group)
+    .then(pollHistory => displayPollHistory(pollHistory))
 
   // Get all group requests and then display the data
   getGroupRequests(group)
@@ -52,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 // Create the client socket
-const io = window.io
 const socket = io()
 
 /* -------------------------- Socket IO Handling --------------------------------------- */
@@ -60,6 +63,7 @@ const socket = io()
 
 // Update all the polls while filtering polls specific to banning the user
 socket.on('updateCurrentPolls', (polls) => {
+  console.log('updatemsg')
   const myPolls = polls.filter(poll => (poll.type !== 'Ban' || poll.userId !== user.id))
   displayCurrentPolls(myPolls)
 })
@@ -151,6 +155,81 @@ function formatPollHTML (poll, pollId) {
 // Update the charts
 function updatePollChart (poll, pollId) {
   const ctx = document.getElementById(`vote-chart-${pollId}`).getContext('2d')
+
+  const chartData = {
+    labels: [],
+    datasets: [{
+      data: [],
+      backgroundColor: []
+    }]
+  }
+
+  poll.options.forEach(opt => {
+    chartData.labels.push(opt.option)
+    chartData.datasets[0].data.push(opt.votes)
+    chartData.datasets[0].backgroundColor.push(opt.color)
+  })
+
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: chartData,
+    options: { }
+  })
+  chart.update()
+}
+
+/* ---------------------- Functions to do with Poll History -------------------------- */
+
+function getPollHistory (group) {
+  return fetch(`/api/get-poll-history?group=${group}`)
+    .then(res => res.json())
+}
+
+function displayPollHistory (polls) {
+  historyPollArea.innerHTML = ''
+  let numOldPolls = 0
+  polls.forEach(poll => {
+    const outerDiv = document.createElement('div')
+    outerDiv.classList.add('text-center')
+    outerDiv.classList.add('poll-container')
+    outerDiv.appendChild(formatOldPollHTML(poll, numOldPolls))
+    historyPollArea.appendChild(outerDiv)
+
+    updateOldPollChart(poll, numOldPolls)
+    numOldPolls = numOldPolls + 1
+  })
+}
+
+function formatOldPollHTML (poll, oldId) {
+  const div = document.createElement('div')
+  div.classList.add('poll')
+  div.classList.add('card')
+  div.classList.add('text-start')
+  div.innerHTML =
+      `<div class="card-header poll-title"> ${poll.title} <span class="badge bg-secondary"> ${poll.type.toUpperCase()} </span> </div>
+       <div class="card-body">
+       <div class="row">
+       <div class="col-md-6">
+       <div class="poll-content">
+        <p>
+        <strong>Outcome:</strong> ${poll.outcome}
+        </p>
+        <hr>
+        </div>
+       </div>
+       <div class="col-md-6">
+        <canvas id="vote-chart-old-${oldId}"></canvas>
+      </div>
+      </div>
+      </div>
+      `
+
+  return div
+}
+
+// Update the charts
+function updateOldPollChart (poll, oldId) {
+  const ctx = document.getElementById(`vote-chart-old-${oldId}`).getContext('2d')
 
   const chartData = {
     labels: [],
