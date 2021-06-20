@@ -3,8 +3,7 @@
 import { UserService } from './user-service.js'
 import {
   loadLocation,
-  loadPlatform,
-  loadHTMLTable
+  loadPlatform
 } from './load-meetings.js'
 'use strict'
 
@@ -60,12 +59,14 @@ document.querySelector('#place').addEventListener('input', function (event) {
 // Send the form input to be added to the Database
 meetingForm.addEventListener('submit', (event) => {
   event.preventDefault()
+  // initialise the variables
   let link = null
   let is_online = true
   let place = null
   // retrieve inputs from the different areas
   if (meetingChoice.value == 'none-selected') {
     window.alert('Please select a viable meeting option')
+    return
   } else if (meetingChoice.value == 'online') {
     link = document.getElementById('linkInput').value
     place = document.getElementById('platformInput').value

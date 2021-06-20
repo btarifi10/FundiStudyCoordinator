@@ -1,27 +1,12 @@
-function loadButtons (meeting) {
-  const a = document.createElement('button')
-  const text = document.createTextNode('Online')
-  a.appendChild(text)
-  a.setAttribute('class', 'btn btn-primary')
-  a.setAttribute('data-id', 'onlineMeet')
-  a.setAttribute('type', 'submit')
-  meeting.appendChild(a)
 
-  const a2 = document.createElement('button')
-  const text2 = document.createTextNode('face-to-face')
-  a2.appendChild(text2)
-  a2.setAttribute('class', 'btn btn-primary')
-  a2.setAttribute('data-id', 'faceMeet')
-  a2.setAttribute('type', 'submit')
-  meeting.appendChild(a2)
-}
-
+/* --------- Remove previous contents added to the element----------- */
 function removePlace (placeDiv) {
   while (placeDiv.hasChildNodes()) {
     placeDiv.removeChild(placeDiv.lastChild)
   }
 }
 
+/* ----------------- Load the online meeting form ------------------- */
 function loadPlatform () {
   const placeDiv = document.getElementById('place')
   removePlace(placeDiv)
@@ -60,7 +45,6 @@ function loadPlatform () {
   placeDiv.appendChild(createBreak)
 
   // Create Link division for input
-  // create the link division
   const linkDiv = document.createElement('div')
 
   // create the link explanation
@@ -94,6 +78,7 @@ function loadPlatform () {
   placeDiv.appendChild(createBreak)
 }
 
+/* -------------- Load the face-to-face meeting form ---------------- */
 function loadLocation () {
   const placeDiv = document.getElementById('place')
   removePlace(placeDiv)
@@ -141,6 +126,34 @@ function loadLocation () {
   placeDiv.appendChild(createBreak)
 }
 
+/** ------------------- VIEW MEETINGS HELPERS ---------------------- **/
+/* ------------- Load the View Meetings Options buttons ------------- */
+function loadButtons (meeting) {
+  const a = document.createElement('button')
+  const text = document.createTextNode('Online')
+  a.appendChild(text)
+  a.setAttribute('class', 'btn btn-primary')
+  a.setAttribute('data-id', 'onlineMeet')
+  a.setAttribute('type', 'submit')
+
+  const i = document.createElement('i')
+  i.setAttribute('class', 'fas fa-globe')
+  a.appendChild(i)
+  meeting.appendChild(a)
+
+  const a2 = document.createElement('button')
+  const text2 = document.createTextNode('face-to-face')
+  a2.appendChild(text2)
+  a2.setAttribute('class', 'btn btn-primary')
+  a2.setAttribute('data-id', 'faceMeet')
+  a2.setAttribute('type', 'submit')
+  const i2 = document.createElement('i')
+  i2.setAttribute('class', 'fa fa-map-marker')
+  a2.appendChild(i2)
+  meeting.appendChild(a2)
+}
+
+/* ------------------- Load the meetings table ---------------------- */
 function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
   if (data.recordsets.length === 0) {
@@ -150,7 +163,7 @@ function loadHTMLTable (data, option) {
 
   let headings = ''
   headings += '<thead>'
-  headings += '<th>meeting id</th>'
+  headings += '<th>Meeting ID</th>'
   headings += '<th>Group Name</th>'
   headings += '<th>creator id</th>'
   headings += '<th>Meeting Time</th>'
@@ -159,17 +172,15 @@ function loadHTMLTable (data, option) {
 
   let tableHtml = ''
   tableHtml += headings
-  data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link, is_online }) { // group_num, group_online, group_url }) {
-    if (is_online == option) {
-      tableHtml += '<tr>'
-      tableHtml += `<td id='${meeting_id}-id'>${meeting_id}</td>`
-      tableHtml += `<td id='${meeting_id}-meeting-id'>${group_name}</td>`
-      tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
-      tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
-      tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
-      tableHtml += `<td id = '${meeting_id}-link'></td>`
-      tableHtml += '</tr>'
-    }
+
+  data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link }) {
+    tableHtml += '<tr>'
+    tableHtml += `<td id='${meeting_id}-meeting-id'>${meeting_id}</td>`
+    tableHtml += `<td id='${meeting_id}-meeting-group-name'>${group_name}</td>`
+    tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
+    tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
+    tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
+    tableHtml += '</tr>'
   })
 
   table.innerHTML = tableHtml
