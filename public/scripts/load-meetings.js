@@ -156,8 +156,8 @@ function loadButtons (meeting) {
 /* ------------------- Load the meetings table ---------------------- */
 function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
-  if (data.recordsets.length === 0) {
-    table.innerHTML = "<tr><td class='no-data' colspan='7'>No meetings</td></tr>"
+  if (data.recordset.length === 0) {
+    table.innerHTML = "<tr><td class='no-data' colspan='5'>No meetings</td></tr>"
     return
   }
 
@@ -168,22 +168,59 @@ function loadHTMLTable (data, option) {
   headings += '<th>creator id</th>'
   headings += '<th>Meeting Time</th>'
   headings += '<th>Place/Location</th>'
+  headings += '<th>Time Remaining</th>'
   headings += '</thead>'
 
   let tableHtml = ''
   tableHtml += headings
 
   data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link }) {
+    meeting_time = new Date(meeting_time)
+    // retrieve time remaining until the meeting in days
+    const current_time = new Date()
+    let sign = ' '
+    const remaining = getTimeRemaining(meeting_time)
+    if (meeting_time.getTime() - current_time.getTime() < 0) {
+      sign = '-'
+    }
+
     tableHtml += '<tr>'
     tableHtml += `<td id='${meeting_id}-meeting-id'>${meeting_id}</td>`
     tableHtml += `<td id='${meeting_id}-meeting-group-name'>${group_name}</td>`
     tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
     tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
     tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
+    tableHtml += `<td id = '${meeting_id}-time-diff'>${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds</td>`
     tableHtml += '</tr>'
   })
 
   table.innerHTML = tableHtml
+}
+
+function getTimeRemaining (chosenTime) {
+  const current_time = new Date()
+  // to seconds
+  let sec_remaining = Math.abs(chosenTime.getTime() - current_time.getTime()) / (1000)
+
+  // first calculate thenumber of whole days
+  const days_remaining = Math.floor(sec_remaining / 86400)
+  sec_remaining -= days_remaining * 86400 // subtract the number of days
+
+  const hours_remaining = Math.floor(sec_remaining / 3600) % 24
+  sec_remaining -= hours_remaining * 3600
+
+  const min_remaining = Math.floor(sec_remaining / 60) % 60
+  sec_remaining -= min_remaining * 60
+
+  sec_remaining = Math.floor(sec_remaining % 60)
+  // }
+
+  return {
+    days: days_remaining,
+    hours: hours_remaining,
+    minutes: min_remaining,
+    seconds: sec_remaining
+  }
 }
 
 export {
