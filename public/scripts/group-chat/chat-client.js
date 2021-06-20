@@ -10,6 +10,7 @@ import {
   displayChatMembers,
   displayMessage
 } from './chat-display.js'
+import { addAction } from '../action-log.js'
 
 const io = window.io
 

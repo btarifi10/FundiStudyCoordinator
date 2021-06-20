@@ -4,6 +4,7 @@ the chat messages sent within a group
 */
 
 /* ------------------------------- CONSTANTS ------------------------------- */
+import { addAction } from '../action-log.js'
 
 const CHAT_MESSAGE_EVENT = 'chatMessage'
 
@@ -21,6 +22,9 @@ function sendMessage (event, group, username, socket) {
 
   // Send the message to the server
   socket.emit(CHAT_MESSAGE_EVENT, chatMessage)
+
+  // Record the 'MESSAGE' action
+  addAction({ action: 'MESSAGE', groupName: group, timestamp: time, description: text }) // maybe put 'none' instead of text
 
   // Clear and re-focus the text input (ready for the next message)
   event.target.elements.msg.value = ''

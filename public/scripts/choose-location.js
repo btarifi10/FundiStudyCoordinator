@@ -1,5 +1,5 @@
 /* ------------------------------ Functionality ------------------------------ */
-
+import { addAction } from './action-log.js'
 import { UserService } from './user-service.js'
 import {
   loadLocation,
@@ -83,7 +83,14 @@ meetingForm.addEventListener('submit', (event) => {
       const meeting_time = document.getElementById('date').value
       const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
       recordMeeting(meetingBody)
+
+      // Record the 'MEETING' action : TO DO: check if can add whether the meeting is online or face-to-face in description
+      const time_made = moment()
+      let format = 'face-to-face'
+      if (is_online) { format = 'online' }
+      addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: `${format} meeting for ${group} has been set for ${meeting_time}` })
     })
+
   // include a statement if the user is not logged in - an alert prompts them to log in.
 })
 
