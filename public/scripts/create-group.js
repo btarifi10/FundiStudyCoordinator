@@ -5,12 +5,16 @@ const addedUsers = document.getElementById('added-users')
 
 const invitedMembers = []
 let users = null
+const existingGroups = [] // stores list of { groupname: TheGroupName }, to check for duplicates
+let membershipNum = null
 
 document.addEventListener('DOMContentLoaded', function () {
   loadUsersList()
+  loadExistingGroups()
+  loadMembershipNum()
 })
 
-function loadUsersList() {
+function loadUsersList () {
   fetch('/get-users')
     .then(response => response.json())
     .then(data => data.recordset)
@@ -20,7 +24,7 @@ function loadUsersList() {
     })
 }
 
-function populateUsersList(users) {
+function populateUsersList (users) {
   userList.innerHTML = ''
   users.forEach(element => {
     const option = document.createElement('option')
@@ -30,7 +34,28 @@ function populateUsersList(users) {
   })
 }
 
-function userSearch() {
+function loadExistingGroups () {
+  fetch('/get-groups')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(data => {
+      data.forEach(group => {
+        const groupName = group.group_name.trim()
+        existingGroups.push(groupName)
+      })
+    })
+}
+
+function loadMembershipNum () {
+  fetch('/membership-views')
+    .then(response => response.json())
+    .then(data => {
+      const groups = data.recordset
+      membershipNum = groups.length
+    })
+}
+
+function userSearch () {
   const searchTerm = document.getElementById('search').value.toLowerCase()
 
   if (searchTerm) {
@@ -39,14 +64,14 @@ function userSearch() {
   } else { populateUsersList(users) }
 }
 
-function addUsers() {
+function addUsers () {
   selectedMembers()
 
   addedUsers.innerHTML = `
   ${invitedMembers.map(member => `<li class="list-group-item">${member.username}</li>`).join('')}`
 }
 
-function selectedMembers() {
+function selectedMembers () {
   for (let i = 0; i < userList.length; i++) {
     const opt = userList.options[i]
     const user = { username: opt.text, user_id: opt.value }
@@ -56,12 +81,22 @@ function selectedMembers() {
   }
 }
 
-function createGroup() {
-  const groupName = document.getElementById('group-name').value
+function createGroup () {
+  const groupName = document.getElementById('group-name').value.trim()
   const courseCode = document.getElementById('course-code').value
 
-  if (groupName === '') {
-    alert('Please enter a group name')
+  if ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40)) {
+    alert('Please enter a valid group name')
+    return
+  }
+
+  if (existingGroups.includes(groupName)) {
+    alert('This group already exists')
+    return
+  }
+
+  if (membershipNum >= 10) {
+    alert('You cannot become a member of more than 10 groups')
     return
   }
 
@@ -70,12 +105,14 @@ function createGroup() {
     return
   }
 
-  // TODO - Yasser please check that they don't create duplicate group names...
   const dateCreated = moment()
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
+  existingGroups.push(groupName)
+  membershipNum += 1
+  alert(`Group ${groupName} is now created`)
 }
 
-function saveGroup(groupInfo) {
+function saveGroup (groupInfo) {
   fetch('/createGroup', {
     method: 'POST',
     headers: {
