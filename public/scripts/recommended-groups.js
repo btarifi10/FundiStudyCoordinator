@@ -29,16 +29,14 @@ function getTags () {
 // Populates the tag list values
 function populateTagsList (data) {
   if (data.length === 0) {
-    document.getElementById('tag-values').innerHTML = 'No Recommendations Generated as No Tags Found'
+    document.getElementById('tag-values').innerHTML = 'No Recommendations Generated As No Tags Found'
   } else {
-    console.log(data)
     let tagString = ''
     data.forEach(function ({ tag }) {
       tagString = tagString + ` ${tag.trim()},`
     })
     tagString = tagString.slice(0, -1)
-    console.log(tagString)
-    document.getElementById('tag-values').innerHTML = `Recommendations Based on Tags:<br> ${tagString}`
+    document.getElementById('tag-values').innerHTML = `Recommendations Based On Tags:<br> ${tagString}`
   }
 }
 

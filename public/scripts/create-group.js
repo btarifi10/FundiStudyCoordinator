@@ -23,7 +23,6 @@ const tagList = document.getElementById('tag-1')
 
 function populateTagsList (tags) {
   tagList.innerHTML = ''
-  console.log(tags)
   tags.forEach(element => {
     const option = document.createElement('option')
     option.text = element.tag

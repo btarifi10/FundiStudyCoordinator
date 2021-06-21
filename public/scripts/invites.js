@@ -75,7 +75,6 @@ async function getInvites () {
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data)
           resolve(data)
         })
     })

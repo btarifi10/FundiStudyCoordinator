@@ -22,7 +22,6 @@ function entireGroupSearch () {
 }
 
 function populateAllGroups (data) {
-  console.log(data)
   const table = document.querySelector('table tbody')
   if (data.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
@@ -44,7 +43,6 @@ function populateAllGroups (data) {
 }
 
 function joinGroup (_groupId) {
-  console.log(_groupId)
   const groupId = parseInt(_groupId)
   const timeSent = moment()
   const reqObj = { groupId, timeSent }
@@ -58,7 +56,6 @@ function joinGroup (_groupId) {
   })
 
   const gId = groups.findIndex(g => g.group_id === groupId)
-  console.log(gId)
 
   alert(`A Request to join ${groups[gId].group_name.trim()} has been sent`)
 
