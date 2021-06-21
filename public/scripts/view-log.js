@@ -53,6 +53,7 @@ const memberFilter = document.getElementById('member-filter')
 const descriptionSearch = document.getElementById('description-search')
 const timestampFilter = document.getElementById('timestamp-filter')
 const logAccordion = document.getElementById('log-entries')
+const displayTable = document.getElementById('log-table')
 
 /* --------------------------------- Setup --------------------------------- */
 
@@ -62,12 +63,19 @@ let selectedMember = 'All Members'
 let searchedDescription = ''
 let selectedTimeSort = 'Newest'
 
+// Retrieve the group name from the URL
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
+
 // Page load event
 document.addEventListener('DOMContentLoaded', function () {
   // TODO - Add fetch to database here...
   populateActionFilter(actions)
   populateMemberFilter(members)
   populateLog(logEntries)
+
+  document.getElementById('back-button').href = `/chat?group=${group}`
 })
 
 /* ----------------------------- Filter Events ----------------------------- */
@@ -121,6 +129,13 @@ function populateLog (logEntries) {
   const filteredByMember = filterMember(filteredByAction)
   const filteredByDescription = filterDescription(filteredByMember)
   const sortedByTime = sortTime(filteredByDescription)
+
+  // Check if no results found for current filter selection
+  if (sortedByTime.length === 0) {
+    displayTable.innerHTML = "<tr><td class='text-center' colspan='4'>No Matching Entries</td></tr>"
+  } else {
+    displayTable.innerHTML = ''
+  }
 
   // Loop variables
   let entriesHTML = ''
