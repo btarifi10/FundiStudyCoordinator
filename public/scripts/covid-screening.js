@@ -1,4 +1,3 @@
-
 'use strict'
 
 import { UserService } from './user-service.js'
@@ -49,9 +48,9 @@ function updateScreening () {
       addScreeningResult(newScreening)
 
       // Record 'SCREENING' action : TO DO: check what to put for the groupName since this is not specific to a group
-      // let status = 'failed'
-      // if (newScreening.passed) { status = 'passed' }
-      // addAction({ action: 'SCREENING', groupName: 'ALL', timestamp: newScreening.date, description: `${user.username} has ${status} their COVID screening` })
+      let status = 'failed'
+      if (newScreening.passed) { status = 'passed' }
+      addAction({ action: 'SCREENING', groupName: 'ALL', timestamp: newScreening.date, description: `${user.username} has ${status} their COVID screening` })
     })
 }
 
