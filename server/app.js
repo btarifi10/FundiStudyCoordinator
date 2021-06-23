@@ -593,6 +593,59 @@ app.get('/choose-location', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'choose-location.html'))
 })
 
+// Temp routing for log (move to logging.js)
+
+app.get('/get-actions', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query('SELECT action FROM actions')
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.get('/get-log', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('group_name', db.sql.Char, req.query.group)
+        .query(`
+        SELECT username, action, timestamp, description
+          FROM action_log AS al
+          INNER JOIN groups AS g
+            ON al.group_id = g.group_id
+          INNER JOIN actions AS a
+            ON a.action_id = al.action_id
+          INNER JOIN users AS u
+            ON u.user_id = al.user_id
+        WHERE g.group_name = (@group_name)
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 // Routing
 
 const chatRouter = require('./group-chat/chat-routes')

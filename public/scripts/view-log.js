@@ -1,51 +1,5 @@
 'use strict'
 
-// Dummy objects (will be retrieved from database)
-const actions = ['POLL', 'INVITE', 'MEETING', 'MESSAGE', 'SCREENING', 'CREATED', 'ENTER', 'LEAVE']
-
-const members = ['Nathan Jones', 'Taliya Weinstein', 'Yasser Karam', 'Basheq Tarifi', 'Tarryn Maggs']
-
-const time = moment()
-
-const logEntries = [
-  {
-    action: actions[0],
-    timestamp: moment(time).add(1, 's'),
-    username: members[0],
-    description: `This is the description for the ${actions[0]}. Contains the word flowing water`
-  },
-  {
-    action: actions[1],
-    timestamp: moment(time).add(2, 's'),
-    username: members[1],
-    description: `This is the description for the ${actions[1]}. Contains the word sheer cliff`
-  },
-  {
-    action: actions[0],
-    timestamp: moment(time).add(3, 's'),
-    username: members[2],
-    description: `This is the description for the ${actions[2]}. Contains the word sheep`
-  },
-  {
-    action: actions[3],
-    timestamp: moment(time).add(4, 's'),
-    username: members[3],
-    description: `This is the description for the ${actions[3]}. Contains the word cow`
-  },
-  {
-    action: actions[4],
-    timestamp: moment(time).add(5, 's'),
-    username: members[4],
-    description: `This is the description for the ${actions[4]}. Contains the word passed COVID SCREENING`
-  },
-  {
-    action: actions[2],
-    timestamp: moment(time).add(6, 's'),
-    username: members[0],
-    description: `This is the description for the ${actions[2]}. Contains the word flower`
-  }
-]
-
 /* ------------------------------ DOM Elements ------------------------------ */
 
 const actionFilter = document.getElementById('action-filter')
@@ -56,6 +10,8 @@ const logAccordion = document.getElementById('log-entries')
 const displayTable = document.getElementById('log-table')
 
 /* --------------------------------- Setup --------------------------------- */
+
+let logEntries = []
 
 // Filter selections
 let selectedAction = 'All Actions'
@@ -68,17 +24,36 @@ const { group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
 })
 
-// Page load event
+// On page load event, retrieve the relevant database entries
 document.addEventListener('DOMContentLoaded', function () {
-  // TODO - Add fetch to database here...
-  populateActionFilter(actions)
-  populateMemberFilter(members)
-  populateLog(logEntries)
+  // Populate action filter with possible actions
+  fetch('/get-actions')
+    .then(response => response.json())
+    .then(actions => {
+      populateActionFilter(actions.recordset)
+    })
+
+  // Populate member filter with group members
+  fetch(`/get-members?group=${group}`)
+    .then(response => response.json())
+    .then(members => {
+      populateMemberFilter(members.recordset)
+    })
+
+  // Fetch all the log entries corresponding to this group
+  fetch(`/get-log?group=${group}`)
+    .then(response => response.json())
+    .then(log => {
+      logEntries = log.recordset
+      populateLog(logEntries)
+    })
 
   document.getElementById('back-button').href = `/chat?group=${group}`
 })
 
 /* ----------------------------- Filter Events ----------------------------- */
+
+// All filter selections are applied each time a single filter option is changed
 
 actionFilter.addEventListener('change', (event) => {
   selectedAction = event.target.value
@@ -106,8 +81,8 @@ timestampFilter.addEventListener('change', (event) => {
 function populateActionFilter (actions) {
   actions.forEach(action => {
     const option = document.createElement('option')
-    option.value = action
-    option.appendChild(document.createTextNode(`${action}`))
+    option.value = action.action.trim()
+    option.appendChild(document.createTextNode(`${action.action.trim()}`))
     actionFilter.appendChild(option)
   })
 }
@@ -116,8 +91,8 @@ function populateActionFilter (actions) {
 function populateMemberFilter (members) {
   members.forEach(member => {
     const option = document.createElement('option')
-    option.value = member
-    option.appendChild(document.createTextNode(`${member}`))
+    option.value = member.username.trim()
+    option.appendChild(document.createTextNode(`${member.username.trim()}`))
     memberFilter.appendChild(option)
   })
 }
@@ -149,7 +124,7 @@ function populateLog (logEntries) {
     entriesHTML += '<div class="container">'
     entriesHTML += '<div class="row">'
     entriesHTML += '<div class="col-md-3 text-center">'
-    entriesHTML += `<span class="badge bg-secondary">${entry.action}</span>`
+    entriesHTML += `<span class="badge bg-secondary me-3">${entry.action}</span>`
     entriesHTML += '</div>'
     entriesHTML += `<div class="col-md-3 text-center">${moment(entry.timestamp).format('HH:mm:ss')}</div>`
     entriesHTML += '<div class="col-md-3 text-center">'
@@ -179,8 +154,7 @@ function filterAction (entries) {
   if (selectedAction === 'All Actions') {
     return entries
   }
-
-  return entries.filter(entry => entry.action === selectedAction)
+  return entries.filter(entry => entry.action.trim() === selectedAction)
 }
 
 // Filter by member
@@ -189,7 +163,7 @@ function filterMember (entries) {
     return entries
   }
 
-  return entries.filter(entry => entry.username === selectedMember)
+  return entries.filter(entry => entry.username.trim() === selectedMember)
 }
 
 // Filter by description
@@ -198,7 +172,7 @@ function filterDescription (entries) {
     return entries
   }
 
-  return entries.filter(entry => entry.description.toLowerCase().includes(searchedDescription))
+  return entries.filter(entry => entry.description.trim().toLowerCase().includes(searchedDescription))
 }
 
 // Sort by time in ascending or descending order
