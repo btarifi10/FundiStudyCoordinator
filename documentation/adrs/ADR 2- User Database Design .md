@@ -6,7 +6,8 @@ _Author: Taliya Weinstein (1386891)_
 
 
 ## Status: 
-Superseded
+Superseded  
+Updated ADR: [ADR 3: User Database Design ](https://github.com/witseie-elen4010/2021-008-project/blob/main/documentation/adrs/ADR%203-%20User%20Database%20Design.md)
 
 
 ## Context:
