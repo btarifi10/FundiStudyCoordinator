@@ -14,22 +14,26 @@ function handleVoting (io, socket) {
   // On a new vote
   socket.on('vote', ({ userId, pollId, option }) => {
     // Increase the vote count at the index and record the user
-    if (currentPolls[pollId].options[option]) {
-      currentPolls[pollId].options[option].votes += 1
-      currentPolls[pollId].voters.push(userId)
+    const pIndex = currentPolls.findIndex(p => p.pollId === pollId)
+
+    if (pIndex >= 0) {
+      if (currentPolls[pIndex].options[option]) {
+        currentPolls[pIndex].options[option].votes += 1
+        currentPolls[pIndex].voters.push(userId)
+      }
     }
 
     // Show the poll in the console for testing
 
     // Tell everybody else about the new vote
     const groupPolls = getGroupActivePolls(currentPolls[pollId].group)
-    io.to(currentPolls[pollId].group).emit('updateCurrentPolls', groupPolls)
-  })
+    io.to(currentPolls[pIndex].group).emit('updateCurrentPolls', groupPolls)
+  }
+  )
 
   // On poll creation, update everyone
   socket.on('pollCreated', (group) => {
     const groupPolls = getGroupActivePolls(group)
-
     io.to(group).emit('updateCurrentPolls', groupPolls)
   })
 }
