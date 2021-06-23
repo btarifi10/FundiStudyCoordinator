@@ -89,12 +89,12 @@ meetingForm.addEventListener('submit', (event) => {
       let format = 'face-to-face'
       if (is_online) { format = 'online' }
       let meetString = `${format} meeting for '${group}' has been set for <em>${moment(meeting_time).format('ddd, DD MMM YYYY')}</em> at <em>${moment(meeting_time).format('HH:mm')}</em> <br>
-      <strong>Address</strong>:  <a href="${link}"> ${place} </a>`
+      <strong>Address</strong>:  <a href="${link}" target="_blank"> ${place} </a>`
 
       if (format === 'online') {
         meetString = `${format} meeting for '${group}' has been set for <em>${moment(meeting_time).format('ddd, DD MMM YYYY')}</em> at <em>${moment(meeting_time).format('HH:mm')}</em> <br>
         <strong>Platform</strong>: ${place} <br>
-        <strong>Meeting Link</strong>: <a href="${link}"> HERE </a> `
+        <strong>Meeting Link</strong>: <a href="${link}" target="_blank"> HERE </a> `
       }
       console.log('LOGGING IN PROCESS')
       addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
