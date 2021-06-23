@@ -1,16 +1,26 @@
 'use strict'
 
+/* ------------------------------ Requirements ------------------------------ */
 const express = require('express')
 const { exists } = require('fs')
 const path = require('path')
 const db = require('./database-service')
 
+/* ----------------------------- Initial Setup ----------------------------- */
 const meetingRouter = express.Router()
 meetingRouter.use(express.json())
+
+/* ----------------------------- Routes ----------------------------- */
 
 meetingRouter.get('/meetings', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'meetings.html'))
 })
+
+meetingRouter.get('/attend-meeting', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'attend-meeting.html'))
+})
+
+/* ----------------------------- Database calls ----------------------------- */
 
 meetingRouter.get('/getMeetings', function (req, res) {
   const group = req.query.group

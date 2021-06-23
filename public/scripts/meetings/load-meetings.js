@@ -154,6 +154,9 @@ function loadButtons (meeting) {
 }
 
 /* ------------------- Load the meetings table ---------------------- */
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
 function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
   if (data.recordset.length === 0) {
@@ -174,7 +177,7 @@ function loadHTMLTable (data, option) {
   let tableHtml = ''
   tableHtml += headings
 
-  data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link }) {
+  data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link, is_online }) {
     meeting_time = new Date(meeting_time)
     // retrieve time remaining until the meeting in days
     const current_time = new Date()
@@ -190,11 +193,18 @@ function loadHTMLTable (data, option) {
     tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
     tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
     tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
-    tableHtml += `<td id = '${meeting_id}-time-diff'>${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds</td>`
+    if (option == 0) {
+      tableHtml += `<td id = '${meeting_id}-time-diff'>${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds<br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-id='attend-${meeting_id}-btn' onclick="move(${meeting_id})"> Attend</button></td>`
+    } else {
+      tableHtml += `<td id = '${meeting_id}-time-diff'>${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds</td>`
+    }
     tableHtml += '</tr>'
   })
-
   table.innerHTML = tableHtml
+}
+window.move = move
+function move (meeting_id) {
+  window.location = `/attend-meeting?group=${group}&meetingID=${meeting_id}`
 }
 
 function getTimeRemaining (chosenTime) {

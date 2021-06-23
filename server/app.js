@@ -607,6 +607,9 @@ io.on('connection', socket => {
 
   // Voting
   handleVoting(io, socket)
+
+  // Meeting Attendance
+  handleMeetingMember(io, socket)
 })
 
 /* ----------------------------- Database Test ----------------------------- */
@@ -672,6 +675,7 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
+const handleMeetingMember = require('./meetings/attendance-server')
 app.use(pollingRouter)
 
 /* ------------------------------------------------------------------------- */
