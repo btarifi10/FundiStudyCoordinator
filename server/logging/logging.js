@@ -11,9 +11,9 @@ function formatAction (groupObj) { // takes in { action, groupName, timestamp, d
   return actionObj
 }
 
-function logAction (reqObj, userId) {
-  // const reqObj = req.body // {group_name, timestamp, description}
-// console.log(inviteList)
+function logAction (actionObj, userId) {
+
+    //if ()
 
 // Make a query to the database
   db.pools
@@ -22,10 +22,10 @@ function logAction (reqObj, userId) {
     // 'creation action' regardless of invited members
       return pool.request()
         .input('user_id', db.sql.Int, userId)
-        .input('action', db.sql.Char, reqObj.action)
-        .input('group_name', db.sql.Char, reqObj.group_name)
-        .input('timestamp', db.sql.DateTimeOffset, reqObj.timestamp)
-        .input('description', db.sql.VarChar, reqObj.description)
+        .input('action', db.sql.Char, actionObj.action)
+        .input('group_name', db.sql.Char, actionObj.group_name)
+        .input('timestamp', db.sql.DateTimeOffset, actionObj.timestamp)
+        .input('description', db.sql.VarChar, actionObj.description)
         .query(`
         INSERT INTO action_log (action_id, group_id, user_id,  timestamp, description)
         SELECT action_id, group_id, (@user_id), (@timestamp), (@description)

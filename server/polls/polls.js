@@ -173,7 +173,7 @@ function createPoll (pollDetails) {
     action: 'POLL',
     groupName: pollDetails.group,
     timestamp: pollDetails.date,
-    description: `${pollDetails.type} poll has started - "${pollDetails.title}" for ${pollDetails.duration} hours `
+    description: `${pollDetails.type} poll has started - "${pollDetails.title}" for ${pollDetails.duration.toFixed(2)} hours `
   })
   logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
 

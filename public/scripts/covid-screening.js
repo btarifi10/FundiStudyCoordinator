@@ -51,7 +51,7 @@ function updateScreening () {
       // Record 'SCREENING' action : TO DO: check what to put for the groupName since this is not specific to a group
       let status = 'failed'
       if (newScreening.passed) { status = 'passed' }
-      addAction({ action: 'SCREENING', groupName: 'All', timestamp: newScreening.date, description: `${user.username} has ${status} their COVID screening` })
+      addAction({ action: 'SCREENING', groupName: '', timestamp: newScreening.date, description: `${user.username} has ${status} their COVID screening` })
       // log for every group that the user is a member of
     })
 }
