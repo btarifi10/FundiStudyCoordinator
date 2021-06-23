@@ -4,7 +4,7 @@ const mssql = require('mssql')
 // Make sure this is private to this module
 const config = {
   server: 'team8.database.windows.net',
-  database: 'StudyGroupCoordinator',
+  database: process.env.DB_NAME,
   // Put login details in env. variables for security
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
