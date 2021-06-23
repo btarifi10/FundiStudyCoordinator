@@ -173,7 +173,7 @@ function createPoll (pollDetails) {
     action: 'POLL',
     groupName: pollDetails.group,
     timestamp: pollDetails.date,
-    description: `${pollDetails.type} poll has started - "${pollDetails.title}" for ${pollDetails.duration.toFixed(2)} hours `
+    description: `${pollDetails.type} poll has started - "${pollDetails.title}" for ${pollDetails.duration} hours `
   })
   logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
 
@@ -200,7 +200,7 @@ function createPoll (pollDetails) {
       action: 'POLL',
       groupName: pollDetails.group,
       timestamp: pollDetails.date,
-      description: `${pollDetails.type} poll has ended - "${pollDetails.title} - with outcome: ${pollDetails.outcome}" `
+      description: `${pollDetails.type} poll has ended - "${pollDetails.title}" - with outcome: ${pollDetails.outcome} `
     })
     logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
 
