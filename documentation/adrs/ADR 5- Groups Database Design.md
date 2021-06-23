@@ -13,7 +13,7 @@ The groups database relational table is used to store all created groups on the 
 
 
 ## Decision:
- We will add an additional attribute to the groups table called tag which will be a foreign key of the lookup table tags. This will enable the user, upon group creation to select a catergory for the group and subsequently enable the recommendation algorithm to recommend groups to the user based on their current group tags. 
+ We will add an additional attribute to the groups table called tag which will be a foreign key of the [lookup table tags](https://github.com/witseie-elen4010/2021-008-project/blob/main/documentation/adrs/ADR%206%20-%20Tags%20Database%20Design.md). This will enable the user, upon group creation to select a catergory for the group and subsequently enable the recommendation algorithm to recommend groups to the user based on their current group tags. 
 
  We will have a group table with 5 attributes: 
  1. group_id - set as an identity.
