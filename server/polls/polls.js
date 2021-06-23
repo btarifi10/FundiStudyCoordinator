@@ -2,6 +2,7 @@
 
 const { logAction, formatAction } = require('../logging/logging.js')
 const db = require('../database-service')
+const moment = require('moment')
 
 // Keep a list of the current polls which are active
 const currentPolls = []
@@ -173,7 +174,7 @@ function createPoll (pollDetails) {
     action: 'POLL',
     groupName: pollDetails.group,
     timestamp: pollDetails.date,
-    description: `${pollDetails.type} poll has started - "${pollDetails.title}" for ${pollDetails.duration} hours `
+    description: `${pollDetails.type} poll has started - "${pollDetails.title}", Available for ${pollDetails.duration.toFixed(2)} hours `
   })
   logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
 
@@ -200,9 +201,20 @@ function createPoll (pollDetails) {
       action: 'POLL',
       groupName: pollDetails.group,
       timestamp: pollDetails.date,
-      description: `${pollDetails.type} poll has ended - "${pollDetails.title}" - with outcome: ${pollDetails.outcome} `
+      description: `${pollDetails.type} poll - "${pollDetails.title}" - has ended with outcome: ${pollDetails.outcome} `
     })
     logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
+
+    // Log an invite if the invite poll outcome is 'yes'
+    if ((pollDetails.type === 'Invite') && (pollDetails.outcome === 'Yes')) {
+      const inviteObj = formatAction({
+        action: 'INVITE',
+        groupName: pollDetails.group,
+        timestamp: moment().format(),
+        description: `Poll - "${pollDetails.title}" - is a success `
+      })
+      logAction(inviteObj, pollDetails.userId)
+    }
 
     // Add poll to DB
 

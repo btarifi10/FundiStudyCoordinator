@@ -24,7 +24,7 @@ function sendMessage (event, group, username, socket) {
   socket.emit(CHAT_MESSAGE_EVENT, chatMessage)
 
   // Record the 'MESSAGE' action
-  addAction({ action: 'MESSAGE', groupName: group, timestamp: time, description: text }) // maybe put 'none' instead of text
+  addAction({ action: 'MESSAGE', groupName: group, timestamp: time, description: `"${text}"` }) // maybe put 'none' instead of text
 
   // Clear and re-focus the text input (ready for the next message)
   event.target.elements.msg.value = ''

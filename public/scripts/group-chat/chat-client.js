@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Record user's entry into the groupchat
       const time_entered = moment()
-      addAction({ action: 'ENTER', groupName: group, timestamp: time_entered, description: `${username} entered ${group} chat` })
+      addAction({ action: 'ENTER', groupName: group, timestamp: time_entered, description: `${username} entered the '${group}' chat` })
     })
   const linkGroupPolls = document.getElementById('link-group-polls')
   linkGroupPolls.href = `polls?group=${group}`
@@ -117,6 +117,6 @@ window.onbeforeunload = function () {
       // Record user's exit from the groupchat
       const username = user.username
       const time_left = moment()
-      addAction({ action: 'LEAVE', groupName: group, timestamp: time_left, description: `${username} left ${group} chat` })
+      addAction({ action: 'LEAVE', groupName: group, timestamp: time_left, description: `${username} left the '${group}' chat` })
     })
 }

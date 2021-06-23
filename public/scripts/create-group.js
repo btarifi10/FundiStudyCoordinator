@@ -114,8 +114,8 @@ function createGroup () {
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
 
   // Record the 'CREATED' and 'INVITE' actions
-  addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: `${groupName} was created` })
-  let actionString = `Members invited to join ${groupName}: `
+  addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: `'${groupName}' was created` })
+  let actionString = `Members invited to join '${groupName}': `
   invitedMembers.forEach(member => { actionString += member.username + ', ' })
   addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
 
