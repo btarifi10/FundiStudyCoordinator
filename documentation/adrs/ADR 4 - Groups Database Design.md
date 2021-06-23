@@ -1,4 +1,4 @@
-# ADR 4: Group Database Design 
+# ADR 4: Groups Database Design 
 _Author: Taliya Weinstein (1386891)_
 
 ## Date: 
@@ -7,18 +7,18 @@ _Author: Taliya Weinstein (1386891)_
 
 ## Status: 
 Superseded
-Updated ADR: ADR 5: Group Database Design
+Updated ADR: [ADR 5: Groups Database Design](https://github.com/witseie-elen4010/2021-008-project/blob/main/documentation/adrs/ADR%205-%20Groups%20Database%20Design.md)
 
 
 ## Context:
-The group database relational table is used to all the possible group options of the web application. The key considerations used for making the database design decisions are:
+The groups database relational table is used to all the possible group options of the web application. The key considerations used for making the database design decisions are:
 
 * Team members being largely inexperienced with database design
 * The prefernce for relational design principles which incorporate normalised relations whereby relations are well-formed and encompass [only 1 business concept each](https://www.youtube.com/watch?v=kyGVhx5LwXw&list=PL1LIXLIF50uXWJ9alDSXClzNCMynac38g&index=4&ab_channel=Dr.DanielSoper)
 * The group database table needs to capture the all the base properties associated with the logging the exsistence of the group within the database.
 
 ## Decision:
- We will design a group table with 4 attributes:
+ We will design a groups table with 4 attributes:
  1. group_id - set as an identity.
  2. group_name - 40 character limitation, set to be a unique attribute 
  3. course_code - 10 character limitation
