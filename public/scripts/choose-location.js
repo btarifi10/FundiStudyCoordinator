@@ -88,7 +88,16 @@ meetingForm.addEventListener('submit', (event) => {
       const time_made = moment()
       let format = 'face-to-face'
       if (is_online) { format = 'online' }
-      addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: `${format} meeting for '${group}' has been set for ${meeting_time}` })
+      let meetString = `${format} meeting for '${group}' has been set for <em>${moment(meeting_time).format('ddd, DD MMM YYYY')}</em> at <em>${moment(meeting_time).format('HH:mm')}</em> <br>
+      <strong>Address</strong>:  <a href="${link}"> ${place} </a>`
+
+      if (format === 'online') {
+        meetString = `${format} meeting for '${group}' has been set for <em>${moment(meeting_time).format('ddd, DD MMM YYYY')}</em> at <em>${moment(meeting_time).format('HH:mm')}</em> <br>
+        <strong>Platform</strong>: ${place} <br>
+        <strong>Meeting Link</strong>: <a href="${link}"> HERE </a> `
+      }
+      console.log('LOGGING IN PROCESS')
+      addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
     })
 
   // include a statement if the user is not logged in - an alert prompts them to log in.
