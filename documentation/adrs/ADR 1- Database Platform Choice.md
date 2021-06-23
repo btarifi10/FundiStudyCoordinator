@@ -6,7 +6,7 @@ _Author: Taliya Weinstein (1386891)_
 
 
 ## Status: 
-Agreed 
+Accepted 
 
 ## Context: 
 Due to the need for data persistence, a database management system is required for various storage requirements within the web applications. Considerations for this decision include: 
