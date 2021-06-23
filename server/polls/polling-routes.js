@@ -154,8 +154,8 @@ pollingRouter.post('/api/start-custom-poll', (req, res) => {
     voters: []
   }
   */
-
-  createCustomPoll(details)
+  const userId = req.user.userId
+  createCustomPoll(details, userId)
 
   res.send(200)
 })

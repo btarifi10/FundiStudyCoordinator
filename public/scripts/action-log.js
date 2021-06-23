@@ -12,5 +12,4 @@ function addAction (groupObj) { //takes in { action, groupName, timestamp, descr
   })
 }
 
-
 export { addAction }

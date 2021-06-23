@@ -1,5 +1,6 @@
 'use strict'
 
+const { logAction, formatAction } = require('../logging/logging.js')
 const db = require('../database-service')
 
 // Keep a list of the current polls which are active
@@ -8,48 +9,48 @@ const currentPolls = []
 // Return the up to date currentPolls
 function getCurrentPolls () {
   // Just for testing: creates a few custom polls
-  if (currentPolls.length === 0) {
-    createPoll({
-      title: 'This is a test poll',
-      type: 'Custom',
-      group: 'Software Development III',
-      date: new Date(),
-      duration: 1,
-      options: ['option1', 'option2', 'option3'],
-      voters: [],
-      outcome: null
-    })
+  // if (currentPolls.length === 0) {
+  //   createPoll({
+  //     title: 'This is a test poll',
+  //     type: 'Custom',
+  //     group: 'Software Development III',
+  //     date: new Date(),
+  //     duration: 1,
+  //     options: ['option1', 'option2', 'option3'],
+  //     voters: [],
+  //     outcome: null
+  //   })
 
-    currentPolls[0].options[0].votes = 5
-    currentPolls[0].options[1].votes = 4
-    currentPolls[0].options[2].votes = 6
+  //   currentPolls[0].options[0].votes = 5
+  //   currentPolls[0].options[1].votes = 4
+  //   currentPolls[0].options[2].votes = 6
 
-    createPoll({
-      title: 'This is another test poll',
-      type: 'Custom',
-      group: 'Software Development III',
-      date: new Date(),
-      duration: 1,
-      options: ['option1', 'option2', 'option3'],
-      voters: [14],
-      outcome: null
-    })
+  //   createPoll({
+  //     title: 'This is another test poll',
+  //     type: 'Custom',
+  //     group: 'Software Development III',
+  //     date: new Date(),
+  //     duration: 1,
+  //     options: ['option1', 'option2', 'option3'],
+  //     voters: [14],
+  //     outcome: null
+  //   })
 
-    currentPolls[1].options[0].votes = 2
-    currentPolls[1].options[1].votes = 4
-    currentPolls[1].options[2].votes = 7
+  //   currentPolls[1].options[0].votes = 2
+  //   currentPolls[1].options[1].votes = 4
+  //   currentPolls[1].options[2].votes = 7
 
-    createPoll({
-      title: 'This is a sociology test poll',
-      type: 'Custom',
-      group: 'Sociology',
-      date: new Date(),
-      duration: 1,
-      options: ['option1', 'option2', 'option3'],
-      voters: [],
-      outcome: null
-    })
-  }
+  //   createPoll({
+  //     title: 'This is a sociology test poll',
+  //     type: 'Custom',
+  //     group: 'Sociology',
+  //     date: new Date(),
+  //     duration: 1,
+  //     options: ['option1', 'option2', 'option3'],
+  //     voters: [],
+  //     outcome: null
+  //   })
+  // }
 
   return currentPolls
 }
@@ -80,7 +81,7 @@ function createGroupRequestsPoll (details) {
   */
 
   const pollDetails = {
-    title: `Accept group request from ${details.username}`,
+    title: `Accept group request from ${details.username.trim()}`,
     userId: details.userId,
     type: 'Request',
     group: details.group,
@@ -99,7 +100,7 @@ function createBanningPoll (details) {
     details = {userId, userName, group, duration }
   */
   const pollDetails = {
-    title: `Ban ${details.username} from ${details.group}`,
+    title: `Ban ${details.username.trim()} from ${details.group}`,
     userId: details.userId,
     type: 'Ban',
     group: details.group,
@@ -119,7 +120,7 @@ function createInvitePoll (details) {
   */
 
   const pollDetails = {
-    title: `Invite ${details.username} to group`,
+    title: `Invite ${details.username.trim()} to group`,
     userId: details.userId,
     type: 'Invite',
     group: details.group,
@@ -133,10 +134,10 @@ function createInvitePoll (details) {
   createPoll(pollDetails)
 }
 
-function createCustomPoll (details) {
+function createCustomPoll (details, userId) {
   const pollDetails = {
     title: details.title,
-    userId: null,
+    userId: userId,
     type: 'Custom',
     group: details.group,
     date: details.date,
@@ -167,6 +168,15 @@ function createPoll (pollDetails) {
 
   const msDuration = pollDetails.duration * 60 * 60 * 1000
 
+  // Record the start of the poll
+  const actionObj = formatAction({
+    action: 'POLL',
+    groupName: pollDetails.group,
+    timestamp: pollDetails.date,
+    description: `${pollDetails.type} poll has started - "${pollDetails.title}" for ${pollDetails.duration} hours `
+  })
+  logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
+
   // Set the function which will be called after poll expiration
   setTimeout(() => {
     const poll = currentPolls[pollID]
@@ -184,6 +194,15 @@ function createPoll (pollDetails) {
     } else {
       // console.log(poll.title, 'completed')
     }
+
+    // Record end of the poll
+    const actionObj = formatAction({
+      action: 'POLL',
+      groupName: pollDetails.group,
+      timestamp: pollDetails.date,
+      description: `${pollDetails.type} poll has ended - "${pollDetails.title} - with outcome: ${pollDetails.outcome}" `
+    })
+    logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
 
     // Add poll to DB
 
