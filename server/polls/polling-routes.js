@@ -1,5 +1,4 @@
 'use strict'
-
 const express = require('express')
 const path = require('path')
 const db = require('../database-service')
@@ -7,7 +6,8 @@ const {
   createBanningPoll,
   createGroupRequestsPoll,
   createInvitePoll,
-  createCustomPoll
+  createCustomPoll,
+  getGroupHistory
 } = require('./polls.js')
 
 const { checkAuthenticated } = require('../authentication')
@@ -115,6 +115,14 @@ pollingRouter.get('/api/get-users-to-invite', (req, res) => {
     })
 })
 
+pollingRouter.get('/api/get-poll-history', (req, res) => {
+  const group = req.query.group
+  getGroupHistory(group)
+    .then(polls => {
+      res.send(polls)
+    })
+})
+
 /* --------------------- API calls to start Polls ----------------------- */
 
 // API call to start group request poll
@@ -128,7 +136,7 @@ pollingRouter.post('/api/start-requests-poll', (req, res) => {
 
   createGroupRequestsPoll(details)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 // API call to start group request poll

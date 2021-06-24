@@ -51,8 +51,7 @@ module.exports = function (app, passport) {
   // Post request to create user - checks if user is authenticated and if username already exists
   router.post('/register', checkNotAuthenticated, async (req, res) => {
     if (users.findIndex(user => user.username === req.body.username) >= 0) {
-      console.log('existing')
-      return res.redirect('/register')
+      return res.json({ message: `Account with username ${req.body.username} already exists` })
     }
 
     try {
@@ -66,8 +65,6 @@ module.exports = function (app, passport) {
         last_name: req.body.lastName
       }
 
-      console.log(user)
-
       const success = await new Promise((resolve, reject) => {
         userService.addNewUser(user)
           .then(result => resolve(result))
@@ -77,10 +74,10 @@ module.exports = function (app, passport) {
         updateUsers()
         res.redirect('/login')
       } else {
-        res.redirect('/register')
+        return res.send({ message: 'Failed to create user. Please try again' })
       }
     } catch {
-      res.redirect('/register')
+      return res.send({ message: 'Failed to create user. Please try again' })
     }
   })
 
@@ -108,12 +105,25 @@ module.exports = function (app, passport) {
   })
 
   // Post request to login - uses Passport.js for authentication
-  router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/login',
-    failureFlash: true,
-    successFlash: true
-  }))
+  // router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+  //   successRedirect: '/dashboard',
+  //   failureRedirect: '/login',
+  //   failureFlash: true
+  // }))
+
+  router.post('/login', checkNotAuthenticated, function (req, res, next) {
+    passport.authenticate('local', function (err, user, info) {
+      if (err) { return next(err) }
+      if (!user) {
+        return res.send(info)
+      }
+      req.logIn(user, function (err) {
+        if (err) { return next(err) }
+
+        res.redirect('/dashboard')
+      })
+    })(req, res, next)
+  })
 
   // Get dashboard if authenticated.
   router.get('/dashboard', checkAuthenticated, (req, res) => {
@@ -122,7 +132,6 @@ module.exports = function (app, passport) {
 
   // Retrieve current user details.
   router.get('/api/currentUser', checkAuthenticated, (req, res) => {
-    console.log(req.user)
     res.json({
       userId: req.user.userId,
       username: req.user.username,
