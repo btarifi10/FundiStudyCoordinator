@@ -30,7 +30,7 @@ function populateUsersList (users) {
   userList.innerHTML = ''
   users.forEach(element => {
     const option = document.createElement('option')
-    option.text = element.username
+    option.text = element.username.trim()
     option.value = element.user_id
     userList.add(option)
   })
@@ -73,6 +73,16 @@ function addUsers () {
 
   addedUsers.innerHTML = `
   ${invitedMembers.map(member => `<li class="list-group-item">${member.username}</li>`).join('')}`
+
+  // Remove invited members from the users list to choose from
+  const uIds = []
+  users.forEach((user, index) => {
+    invitedMembers.forEach(mem => {
+      if (user.username.trim() === mem.username.trim()) { uIds.push(index) }
+    })
+  })
+  for (let i = uIds.length - 1; i >= 0; i--) { users.splice(uIds[i], 1) }
+  populateUsersList(users)
 }
 
 function selectedMembers () {
@@ -119,11 +129,11 @@ function createGroup () {
   invitedMembers.forEach(member => { actionString += member.username + ', ' })
   addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
 
-  // Update variables to avoid creating duplicate groups, or going over membership limit (10)
+  // Update variables to avoid creating duplicate groups, or going over membership limit (10), or inviting same username
   existingGroups.push(groupName)
   membershipNum += 1
   alert(`Group '${groupName}' has been created`)
-
+  loadUsersList()
   // Clear inputs
   clearInputs()
 }

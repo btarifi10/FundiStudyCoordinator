@@ -12,9 +12,9 @@ Steps:
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
-//const moment = require('moment')
+// const moment = require('moment')
 
-describe('The correct page is displayed to the user when entering the create-join-group page', () => {
+describe('The correct page is displayed to the user when entering the create-group page', () => {
   before('Navigate to Create-Group page', () => {
     // Sign in
     cy.visit('/')
@@ -34,120 +34,163 @@ describe('The correct page is displayed to the user when entering the create-joi
     cy.get('[data-cy=sign-in-login]')
       .click()
 
-    cy.get('[data-cy=create-group]')
-      .click()
+    cy.visit('/create-group')
   })
 
   it('Displays the create-group page', () => {
-    cy.getIframeBody('dashboard-iframe').within(() => {
-      cy.get('[data-cy=group-name]')
-        .should('have.text', '')
+    cy.get('[data-cy=group-name]')
+      .should('have.text', '')
 
-      cy.get('[data-cy=course-code]')
-        .should('have.text', '')
+    cy.get('[data-cy=course-code]')
+      .should('have.text', '')
 
-      cy.get('select[data-cy="user-list"]')
-        .find('option')
-        .should('have.length', 1)
+    cy.get('select[data-cy="user-list"]')
+      .find('option')
+      .should('have.length', 1)
+      .and('have.text', 'James VI')
+  })
+})
+
+describe('Users cannot input invalid group information for group creation', () => {
+  it('Does not allow user to create group without inviting a member', () => {
+    cy.get('input[data-cy="group-name"]')
+      .type('NewGroup1')
+      .should('have.value', 'NewGroup1')
+
+    cy.get('[data-cy=course-code]')
+      .type('TEST123')
+      .should('have.value', 'TEST123')
+
+    cy.get('[data-cy=create-btn]')
+      .click()
+
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains('Please select at least one member')
     })
+  })
+
+  it('Lists members invited', () => {
+    cy.get('select[data-cy="user-list"]')
+      .select('James VI')
+
+    cy.get('[data-cy=add-btn]')
+      .click()
+
+    cy.get('[data-cy=added-users]')
+      .find('li')
+      .should('have.length', 1)
+      .and('have.text', 'James VI')
+  })
+
+  it('Does not allow user to invite same user twice', () => {
+    cy.get('select[data-cy="user-list"]')
+      .should('have.length', 1)
+      .and('have.text', '')
+  })
+  /// //////////////////////////////////////////////////////////////////////////////////////////////////////
+  it('Does not allow user to input empty group name', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .should('have.value', '')
+
+    cy.get('[data-cy=course-code]')
+      .clear()
+      .type('TEST123')
+      .should('have.value', 'TEST123')
+
+    cy.get('[data-cy=create-btn]')
+      .click()
+
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains('Please enter a valid group name')
+    })
+  })
+
+  it('Does not allow user to input group name over 40 alphanumerics', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .type('12345678901234567890123456789012345678907654321')
+      .should('have.value', '1234567890123456789012345678901234567890')
+  })
+  /// //////////////////////////////////////////////////////////////////////////////////////////////////////
+  it('Does not allow user to input course code over 10 alphanumerics', () => {
+    cy.get('input[data-cy="course-code"]')
+      .clear()
+      .type('abcd5678901')
+      .should('have.value', 'abcd567890')
+  })
+  /// //////////////////////////////////////////////////////////////////////////////////////////////////////
+  it('Filters through the user list', () => {
+    cy.get('input[data-cy="user-search"]')
+      .clear()
+      .type('Batman')
+      .should('have.length', 1)
+      .and('have.text', '')
   })
 })
 
 describe('User can create a new group with chosen members invited (automatically added for now)', () => {
-  it('Allows user to input Group information and add member to invite', () => {})
+  before('Clear any groups besides default group_id = 6', () => {
+    fetch('/clear-groups')
+  })
+  it('Allows user to input Group information and add member to invite to create a new group', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .type('NewGroup1')
+      .should('have.value', 'NewGroup1')
 
-  it('Clears the group information form when group is created successfully', () => {})
-  //   it('Allows user to input group name and select members to invite', () => {
-  //     cy.get('input[name="groupName"]')
-  //       .type('Jonas Brothers')
-  //       .should('have.value', 'Jonas Brothers')
+    cy.get('[data-cy=course-code]')
+      .clear()
+      .type('TEST123')
+      .should('have.value', 'TEST123')
 
-  //     cy.get('select[id="inviteList"]')
-  //       .select(['Albus', 'Ron'])
-  //       .invoke('val')
-  //       .should('deep.equal', ['1', '3'])
+    cy.get('[data-cy=add-btn]')
+      .click()
 
-  //     cy.get('button[id="JonasBrothers"]')
-  //       .should('not.exist')
+    cy.get('[data-cy=create-btn]')
+      .click()
 
-  //     cy.get('button[id="create-btn"]')
-  //       .click()
-  //   })
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains("Group 'NewGroup1' has been created")
+    })
+  })
 
-  // it('Updates table with new group: Admin is user, Members includes user and selected names', () => {
-  //   cy.get('table[id="table"]')
-  //     .contains('td', 'Jonas Brothers')
-  //   cy.contains('td', 'Joe,Albus,Ron')
-  //   cy.contains('td', 'Joe')
+  it('Clears the group information form when group is created successfully', () => {
+    cy.get('[data-cy=group-name]')
+      .should('have.text', '')
 
-  //   cy.get('button[class="join-row-btn"]')
-  //     .should('have.length', 4)
+    cy.get('[data-cy=course-code]')
+      .should('have.text', '')
 
-  //   cy.get('button[class="delete-row-btn"]')
-  //     .should('have.length', 1)
-  //     .should('have.id', 'JonasBrothers')
-  // })
+    cy.get('select[data-cy="user-list"]')
+      .find('option')
+      .should('have.length', 1)
+  })
 
-  // it('Does not allow user to create an existing group', () => {
-  //   cy.get('input[name="groupName"]')
-  //     .type('Jonas Brothers')
-  //     .should('have.value', 'Jonas Brothers')
+  // it('Sends invite to added user on group creation', () => {})
 
-  //   cy.get('button[id="create-btn"]')
-  //     .click()
+  it('Cannot create the same group again', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .type('NewGroup1')
+      .should('have.value', 'NewGroup1')
 
-  //   cy.on('window:alert', (txt) => {
-  //     expect(txt).to.contains('Please enter a VALID group name, that does NOT already EXIST')
-  //   })
-  // })
+    cy.get('[data-cy=course-code]')
+      .clear()
+      .type('TEST123')
+      .should('have.value', 'TEST123')
 
-  // it('Does not allow user to create a group name over 30 alphanumerics', () => {
-  //   cy.get('input[name="groupName"]')
-  //     .type('abcdefghijklmnopqrstuvwxyzabc1234')
-  //     .should('have.value', 'abcdefghijklmnopqrstuvwxyzabc1234')
+    cy.get('select[data-cy="user-list"]')
+      .select('James VI')
 
-  //   cy.on('window:alert', (txt) => {
-  //     expect(txt).to.contains('Please Enter a Valid Group Name. Group Name can only be 30 alphanumerics')
-  //   })
-  // })
-})
+    cy.get('[data-cy=add-btn]')
+      .click()
 
-describe('Users cannot input invalid group names and course codes', () => {
-  it('Does not allow user to input group name that already exists', () => {})
+    cy.get('[data-cy=create-btn]')
+      .click()
 
-  it('Does not allow user to input empty group name', () => {})
-
-  it('Does not allow user to input group name not over 40 alphanumerics', () => {})
-
-  it('Does not user to input course code not over 10 alphanumerics', () => {})
-
-  it('Shows members to invite (excluding the current user)', () => {})
-
-  it('Filters through the user list')
-})
-
-// describe('User cannot add a member twice', () => {})
-
-// describe('User')
-
-// JOIN FUNCTIONALITY (should maybe go into a separate file)
-
-describe('User can join groups that they are not members of', () => {
-  // it('Allows user to join groups they are not members of', () => {
-  //   cy.get('table[id="table"]')
-  //     .contains('td', 'LYFE')
-  //     .siblings()
-  //     .contains('Yasser,The boys')
-
-  //   cy.get('button[id="LYFE"]')
-  //     .click()
-
-  //   cy.get('table[id="table"]')
-  //     .contains('td', 'LYFE')
-  //     .siblings()
-  //     .contains('Yasser,The boys,Joe')
-
-  //   cy.get('button[class="join-row-btn"]')
-  //     .should('have.length', 3)
-  // })
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains('This group already exists')
+    })
+  })
 })

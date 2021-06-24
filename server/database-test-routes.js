@@ -32,7 +32,24 @@ testRouter.get('/clear-messages', function (req, res) {
 
 /* -------------------------------------------------------------------------- */
 
-// delete the groups added except for group_id = 6
-
+testRouter.get('/clear-groups', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query('DELETE FROM groups WHERE group_id != 6')
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 module.exports = testRouter

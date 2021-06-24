@@ -54,3 +54,23 @@ describe('The correct page is displayed to the user when entering the create-joi
     })
   })
 })
+
+describe('User can join groups that they are not members of', () => {
+    // it('Allows user to join groups they are not members of', () => {
+    //   cy.get('table[id="table"]')
+    //     .contains('td', 'LYFE')
+    //     .siblings()
+    //     .contains('Yasser,The boys')
+  
+    //   cy.get('button[id="LYFE"]')
+    //     .click()
+  
+    //   cy.get('table[id="table"]')
+    //     .contains('td', 'LYFE')
+    //     .siblings()
+    //     .contains('Yasser,The boys,Joe')
+  
+    //   cy.get('button[class="join-row-btn"]')
+    //     .should('have.length', 3)
+    // })
+  })
