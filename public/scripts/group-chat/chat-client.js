@@ -59,11 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const time_entered = moment()
       addAction({ action: 'ENTER', groupName: group, timestamp: time_entered, description: `${username} entered the '${group}' chat` })
     })
-  const linkGroupPolls = document.getElementById('link-group-polls')
-  linkGroupPolls.href = `polls?group=${group}`
+
+  // Set up tab links
+  document.getElementById('link-group-polls').href = `polls?group=${group}`
+  document.getElementById('view-log-tab').href = `view-log?group=${group}`
 })
 
-function loadRatingLink (rating) {
+function loadRatingLink(rating) {
   const a = document.createElement('a')
   const text = document.createTextNode('Rate Members')
   a.appendChild(text)
@@ -77,7 +79,7 @@ function loadRatingLink (rating) {
 
 // this may be altered to include an option for
 
-function loadMeetingLink (meeting) {
+function loadMeetingLink(meeting) {
   const a = document.createElement('a')
   const text = document.createTextNode('Create Meetings')
   a.appendChild(text)

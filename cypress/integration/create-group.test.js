@@ -12,7 +12,7 @@ Steps:
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
-const moment = require('moment')
+//const moment = require('moment')
 
 describe('The correct page is displayed to the user when entering the create-join-group page', () => {
   before('Navigate to Create-Group page', () => {
