@@ -8,21 +8,16 @@ Steps:
 4) Run 'npm run e2e' (this starts the Cypress test environment)
 5) Click on the file named 'create-join-group.test.js'
 6) This should open up a browser and run the tests below
+
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
+const moment = require('moment')
+
 describe('The correct page is displayed to the user when entering the create-join-group page', () => {
-  // before('Fill in form to enter create-join-group form', () => {
-  //    cy.visit('/intermediate-group')
-  //    cy.get('form')
-
-  //   cy.get('input[name="username"]')
-  //     .type('Joe')
-  //     .should('have.value', 'Joe')
-
-  //   cy.contains('Create And Join Groups')
-  //     .click()
-  // })
+  before('Navigate to 'Create Group' page', () => {
+    
+  })
 
   it('Displays the create-join-group page', () => {
     // cy.url()

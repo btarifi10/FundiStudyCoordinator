@@ -165,9 +165,8 @@ app.post('/create-screening', function (req, res) {
 //   res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
 // })
 
-app.get('/createGroup', function (req, res) {
+app.get('/createGroup', function (req, res) { // KEEP THIS
   res.sendFile(path.join(__dirname, '..', 'views', 'create-join-group.html'))
-  // Add code here to get stuff from the database
 })
 
 app.use(express.json())
