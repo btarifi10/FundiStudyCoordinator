@@ -82,17 +82,17 @@ describe('A single user can join and send messages in the group chat', () => {
       .click()
   })
 
-  it('Displays the page correctly', () => {
-    cy.getIframeBody('dashboard-iframe').within(() => {
-      cy.get('[data-cy=group-header-name]')
-        .should('have.text', 'Scotland')
+  // it('Displays the page correctly', () => {
+  //   cy.getIframeBody('dashboard-iframe').within(() => {
+  //     cy.get('[data-cy=group-header-name]')
+  //       .should('have.text', 'Scotland')
 
-      cy.get('[data-cy=members-in-chat]')
-        .find('li')
-        .should('have.length', 1)
-        .and('have.text', 'Archie')
-    })
-  })
+  //     cy.get('[data-cy=members-in-chat]')
+  //       .find('li')
+  //       .should('have.length', 1)
+  //       .and('have.text', 'Archie')
+  //   })
+  // })
 
   it('Can send messages that appear in the chat', () => {
     cy.getIframeBody('dashboard-iframe').within(() => {
