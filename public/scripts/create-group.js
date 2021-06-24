@@ -88,7 +88,7 @@ function selectedMembers () {
 document.getElementById('createGroup').addEventListener('click', createGroup)
 function createGroup () {
   const groupName = document.getElementById('group-name').value.trim()
-  const courseCode = document.getElementById('course-code').value
+  const courseCode = document.getElementById('course-code').value.trim()
 
   if ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40)) {
     alert('Please enter a valid group name')
@@ -119,9 +119,21 @@ function createGroup () {
   invitedMembers.forEach(member => { actionString += member.username + ', ' })
   addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
 
+  // Update variables to avoid creating duplicate groups, or going over membership limit (10)
   existingGroups.push(groupName)
   membershipNum += 1
-  alert(`Group ${groupName} is now created`)
+  alert(`Group '${groupName}' has been created`)
+
+  // Clear inputs
+  clearInputs()
+}
+
+function clearInputs () {
+  document.getElementById('group-name').value = ''
+  document.getElementById('course-code').value = ''
+  document.getElementById('search').value = ''
+  userSearch()
+  addedUsers.innerHTML = ''
 }
 
 function saveGroup (groupInfo) {
@@ -141,16 +153,17 @@ function saveGroup (groupInfo) {
         body: JSON.stringify(groupInfo)
       })
     })
-    .then(() => {
-      const actionObj = { group_name: groupInfo.groupName, description: 'CREATED' }
-      addAction(actionObj)
-    })
-    // TODO - Provide alert for success/failure
-    // .then(resp => {
-    //   if (resp.ok) {
-    //     alert('Group created successfully!')
-    //   }
+    // .then(() => {
+    //   const actionObj = { group_name: groupInfo.groupName, description: 'CREATED' }
+    //   addAction(actionObj)
     // })
+
+  // TODO - Provide alert for success/failure
+  // .then(resp => {
+  //   if (resp.ok) {
+  //     alert('Group created successfully!')
+  //   }
+  // })
   // .then(result => {
   //   if (inviteObj.invited_members.length > 0) {
   //     console.log('function sendInvites')
