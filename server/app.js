@@ -648,7 +648,14 @@ app.use('/', profileRouter)
 const { pollingRouter } = require('./polls/polling-routes')
 app.use(pollingRouter)
 
-/* ------------------------------------------------------------------------- */
+/* ------------------------------ Tests ------------------------------------- */
+
+if (process.env.DEPLOYMENT === 'TEST') {
+  const testRouter = require('./database-test-routes')
+  app.use(testRouter)
+}
+
+/* -------------------------------------------------------------------------- */
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
