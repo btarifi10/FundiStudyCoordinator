@@ -91,7 +91,7 @@ app.get('/get-members', function (req, res) {
       return pool.request()
         .input('group_name', db.sql.Char, req.query.group)
         .input('user_name', db.sql.Char, req.query.username)
-        .query(`select username
+        .query(`select rating, username
         from users U 
         inner join memberships M
         on U.user_id = M.user_id
