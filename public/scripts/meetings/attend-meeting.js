@@ -165,6 +165,9 @@ socket.on('sendPosition', function (data) {
             // send a message to other members to say the current user has arrived if their
             // position is the same after 2 requests
             socket.emit('arrived', true)
+            updateLocation = false
+            sendLocation.setAttribute('class', 'btn btn-primary')
+            sendLocation.innerHTML = 'Continue Sharing'
           }
         }
       )
