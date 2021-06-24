@@ -15,8 +15,24 @@ developer dependencies)
 const moment = require('moment')
 
 describe('The correct page is displayed to the user when entering the create-join-group page', () => {
-  before('Navigate to 'Create Group' page', () => {
-    
+   before('Navigate to Create-Group page', () => {
+    // Sign in
+    cy.visit('/')
+
+    cy.get('[data-cy=sign-in-homepage]').click()
+
+    cy.get('form')
+
+    cy.get('[data-cy=username]')
+      .type('Archie')
+      .should('have.value', 'Archie')
+
+    cy.get('[data-cy=password]')
+      .type('sh33p123')
+      .should('have.value', 'sh33p123')
+
+    cy.get('[data-cy=sign-in-login]')
+      .click()
   })
 
   it('Displays the create-join-group page', () => {
