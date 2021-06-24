@@ -32,38 +32,38 @@
       <br>
       <!-- <form> -->
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Group name</label>
-        <input type="text" class="form-control" id="group-name" aria-describedby="emailHelp" maxlength="40" required>
+        <label for="exampleInputEmail1" class="form-label" >Group name</label>
+        <input type="text" class="form-control" id="group-name" aria-describedby="emailHelp" maxlength="40" data-cy="group-name" required>
         <div id="emailHelp" class="form-text">Not more than 40 characters (cannot include '#')</div>
       </div>
       <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Course code</label>
-        <input type="text" class="form-control" id="course-code" maxlength="10">
+        <label for="exampleInputPassword1" class="form-label" >Course code</label>
+        <input type="text" class="form-control" id="course-code" maxlength="10" data-cy="course-code">
         <div id="course-code" class="form-text">Not more than 10 characters</div>
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Search for users</label>
         <div class="row">
           <div class="col-md-10">
-            <input type="text" class="form-control d-inline-block" id="search" >
+            <input type="text" class="form-control d-inline-block" id="search" data-cy="user-search" >
             <div id="searchInstr" class="form-text">Select one or more users from the list below and <i
                 class="bi bi-plus-square-fill"></i> them</div>
           </div>
           <div class="col-md-2 text-end">
-            <button class="btn btn-secondary" id="addUsers" ><i class="bi bi-plus-lg"></i></button>
+            <button class="btn btn-secondary" id="addUsers" ><i class="bi bi-plus-lg" data-cy="add-btn"></i></button>
           </div>
         </div>
       </div>
       <div class="mb-3">
-        <select class="form-select" style="height:200px" multiple aria-label="multiple select example"
+        <select class="form-select" style="height:200px" multiple aria-label="multiple select example" data-cy="user-list"
           id="user-list"></select>
       </div>
-      <button class="btn btn-primary" id="createGroup">Create</button>
+      <button class="btn btn-primary" id="createGroup" data-cy="create-btn">Create</button>
       <!-- </form> -->
     </div>
 
     <div class="col-md-3">
-      <ul class="list-group small" id="added-users">
+      <ul class="list-group small" id="added-users" data-cy="added-users">
 
       </ul>
     </div>

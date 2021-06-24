@@ -34,43 +34,33 @@ describe('The correct page is displayed to the user when entering the create-joi
     cy.get('[data-cy=sign-in-login]')
       .click()
 
+    cy.get('[data-cy=create-group]')
+      .click()
   })
 
-  it('Displays the create-join-group page', () => {
-    // cy.url()
-    //   .should('include', '/createGroup?username=Joe')
+  it('Displays the create-group page', () => {
+    cy.getIframeBody('dashboard-iframe').within(() => {
+      cy.get('[data-cy=group-name]')
+        .should('have.text', '')
 
-    // cy.get('input[name="groupName"]')
-    //   .should('have.value', '')
+      cy.get('[data-cy=course-code]')
+        .should('have.text', '')
 
-    // cy.get('select[id="inviteList"]')
-    //   .find('option')
-    //   .should('have.length', 3)
-
-    // cy.get('button[id="create-btn"]')
-    //   .should('exist')
-
-    // cy.get('table[id="table"]')
-    //   .find('th')
-    //   .should('have.length', 6)
-
-    // cy.get('table[id="table"]')
-    //   .find('tbody').find('tr')
-    //   .should('have.length', 4)
-
-    // cy.get('button[class="join-row-btn"]')
-    //   .should('have.length', 4)
-
-    // cy.get('button[class="delete-row-btn"]')
-    //   .should('have.length', 0)
+      cy.get('select[data-cy="user-list"]')
+        .find('option')
+        .should('have.length', 1)
+    })
   })
 })
 
 describe('User can create a new group with chosen members invited (automatically added for now)', () => {
-//   it('Allows user to input group name and select members to invite', () => {
-//     cy.get('input[name="groupName"]')
-//       .type('Jonas Brothers')
-//       .should('have.value', 'Jonas Brothers')
+  it('Allows user to input Group information and add member to invite', () => {})
+
+  it('Clears the group information form when group is created successfully', () => {})
+  //   it('Allows user to input group name and select members to invite', () => {
+  //     cy.get('input[name="groupName"]')
+  //       .type('Jonas Brothers')
+  //       .should('have.value', 'Jonas Brothers')
 
   //     cy.get('select[id="inviteList"]')
   //       .select(['Albus', 'Ron'])
@@ -121,6 +111,26 @@ describe('User can create a new group with chosen members invited (automatically
   //   })
   // })
 })
+
+describe('Users cannot input invalid group names and course codes', () => {
+  it('Does not allow user to input group name that already exists', () => {})
+
+  it('Does not allow user to input empty group name', () => {})
+
+  it('Does not allow user to input group name not over 40 alphanumerics', () => {})
+
+  it('Does not user to input course code not over 10 alphanumerics', () => {})
+
+  it('Shows members to invite (excluding the current user)', () => {})
+
+  it('Filters through the user list')
+})
+
+// describe('User cannot add a member twice', () => {})
+
+// describe('User')
+
+// JOIN FUNCTIONALITY (should maybe go into a separate file)
 
 describe('User can join groups that they are not members of', () => {
   // it('Allows user to join groups they are not members of', () => {
