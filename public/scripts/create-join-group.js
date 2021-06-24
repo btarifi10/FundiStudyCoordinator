@@ -286,7 +286,7 @@ function clearForm () {
   userSearch.onkeyup()
 }
 
-// Checks for alphanumerical group namem that meets length requirement from user
+// Checks for alphanumerical group name that meets length requirement from user
 function invalidForm () {
   const groupName = document.getElementById('groupName').value
   return ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40))

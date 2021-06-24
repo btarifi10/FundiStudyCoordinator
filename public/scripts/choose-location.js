@@ -1,6 +1,6 @@
 'use strict'
 /* ------------------------------ Functionality ------------------------------ */
-
+import { addAction } from './action-log.js'
 import { UserService } from './user-service.js'
 import { getMinimimumDestination, getUserDestination, getUniDestination } from './recommend-locations.js'
 import {
@@ -89,7 +89,23 @@ meetingForm.addEventListener('submit', (event) => {
       const meeting_time = document.getElementById('date').value
       const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
       recordMeeting(meetingBody)
+
+      // Record the 'MEETING' action : TO DO: check if can add whether the meeting is online or face-to-face in description
+      const time_made = moment()
+      let format = 'face-to-face'
+      if (is_online) { format = 'online' }
+      let meetString = `${format} meeting for '${group}' has been set for <em>${moment(meeting_time).format('ddd, DD MMM YYYY')}</em> at <em>${moment(meeting_time).format('HH:mm')}</em> <br>
+      <strong>Address</strong>:  <a href="${link}" target="_blank"> ${place} </a>`
+
+      if (format === 'online') {
+        meetString = `${format} meeting for '${group}' has been set for <em>${moment(meeting_time).format('ddd, DD MMM YYYY')}</em> at <em>${moment(meeting_time).format('HH:mm')}</em> <br>
+        <strong>Platform</strong>: ${place} <br>
+        <strong>Meeting Link</strong>: <a href="${link}" target="_blank"> HERE </a> `
+      }
+      console.log('LOGGING IN PROCESS')
+      addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
     })
+
   // include a statement if the user is not logged in - an alert prompts them to log in.
 })
 
