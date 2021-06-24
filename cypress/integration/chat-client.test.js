@@ -55,6 +55,25 @@ describe('A single user can join and send messages in the group chat', () => {
       .and('include.text', `${moment().format('HH:mm')}`)
       .and('include.text', 'Hello? Any sheep around here?')
   })
+
+  it('Cannot send empty messages', () => {
+    cy.get('[data-cy=chat-form]').within(() => {
+      cy.get('input:invalid').should('have.length', 1)
+
+      cy.get('[data-cy=send-button]').click()
+
+      cy.get('input:invalid').should('have.length', 1)
+
+      cy.get('[data-cy=message-input]')
+        .type('No? Just me?')
+
+      cy.get('input:invalid').should('have.length', 0)
+
+      cy.get('[data-cy=send-button]').click()
+
+      cy.get('input:invalid').should('have.length', 1)
+    })
+  })
 })
 
 /* -------------------------------------------------------------------------- */
