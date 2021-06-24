@@ -51,64 +51,64 @@ function in cypress called getIframeBody()... see usage below
 
 ----------------------------------------------------------------------------- */
 
-const moment = require('moment')
+// const moment = require('moment')
 
-describe('A single user can join and send messages in the group chat', () => {
-  before('Clear messages table and navigate to group chat', () => {
-    // Clear messages table
-    fetch('/clear-messages')
+// describe('A single user can join and send messages in the group chat', () => {
+//   before('Clear messages table and navigate to group chat', () => {
+//     // Clear messages table
+//     fetch('/clear-messages')
 
-    // Sign in
-    cy.visit('/')
+//     // Sign in
+//     cy.visit('/')
 
-    cy.get('[data-cy=sign-in-homepage]').click()
+//     cy.get('[data-cy=sign-in-homepage]').click()
 
-    cy.get('form')
+//     cy.get('form')
 
-    cy.get('[data-cy=username]')
-      .type('Archie')
-      .should('have.value', 'Archie')
+//     cy.get('[data-cy=username]')
+//       .type('Archie')
+//       .should('have.value', 'Archie')
 
-    cy.get('[data-cy=password]')
-      .type('sh33p123')
-      .should('have.value', 'sh33p123')
+//     cy.get('[data-cy=password]')
+//       .type('sh33p123')
+//       .should('have.value', 'sh33p123')
 
-    cy.get('[data-cy=sign-in-login]')
-      .click()
+//     cy.get('[data-cy=sign-in-login]')
+//       .click()
 
-    // Navigate to the 'Scotland' group
-    cy.getIframeBody('dashboard-iframe')
-      .contains('Scotland')
-      .click()
-  })
+//     // Navigate to the 'Scotland' group
+//     cy.getIframeBody('dashboard-iframe')
+//       .contains('Scotland')
+//       .click()
+//   })
 
-  it('Displays the page correctly', () => {
-    cy.getIframeBody('dashboard-iframe').within(() => {
-      cy.get('[data-cy=group-header-name]')
-        .should('have.text', 'Scotland')
+//   it('Displays the page correctly', () => {
+//     cy.getIframeBody('dashboard-iframe').within(() => {
+//       cy.get('[data-cy=group-header-name]')
+//         .should('have.text', 'Scotland')
 
-      cy.get('[data-cy=members-in-chat]')
-        .find('li')
-        .should('have.length', 1)
-        .and('have.text', 'Archie')
-    })
-  })
+//       cy.get('[data-cy=members-in-chat]')
+//         .find('li')
+//         .should('have.length', 1)
+//         .and('have.text', 'Archie')
+//     })
+//   })
 
-  it('Can send messages that appear in the chat', () => {
-    cy.getIframeBody('dashboard-iframe').within(() => {
-      cy.get('form')
-      cy.get('[data-cy=message-input]')
-        .type('Hello? Any sheep around here?')
-        .should('have.focus')
+//   it('Can send messages that appear in the chat', () => {
+//     cy.getIframeBody('dashboard-iframe').within(() => {
+//       cy.get('form')
+//       cy.get('[data-cy=message-input]')
+//         .type('Hello? Any sheep around here?')
+//         .should('have.focus')
 
-      cy.get('[data-cy=send-button]').click()
+//       cy.get('[data-cy=send-button]').click()
 
-      cy.get('[data-cy="message-area"]')
-        .find('.message')
-        .should('have.length', 1)
-        .and('include.text', 'Archie')
-        .and('include.text', `${moment().format('HH:mm')}`)
-        .and('include.text', 'Hello? Any sheep around here?')
-    })
-  })
-})
+//       cy.get('[data-cy="message-area"]')
+//         .find('.message')
+//         .should('have.length', 1)
+//         .and('include.text', 'Archie')
+//         .and('include.text', `${moment().format('HH:mm')}`)
+//         .and('include.text', 'Hello? Any sheep around here?')
+//     })
+//   })
+// })
