@@ -20,10 +20,15 @@ import { recordMessage } from '../../public/scripts/group-chat/chat-messages'
 
 const moment = require('moment')
 
+const JOIN_CHAT_EVENT = 'joinChat'
+const CHAT_MESSAGE_EVENT = 'chatMessage'
+
 /* -------------------------------------------------------------------------- */
 
 describe('A single user can join and send messages in the group chat', () => {
-  before('Clear messages table and navigate to group chat', configureMessageTest)
+  before('Clear messages table and navigate to group chat', () => {
+    configureMessageTest(true)
+  })
 
   it('Displays the page correctly', () => {
     cy.get('[data-cy=group-header-name]')
@@ -55,7 +60,9 @@ describe('A single user can join and send messages in the group chat', () => {
 /* -------------------------------------------------------------------------- */
 
 describe('A user can share links to external content in the chat', () => {
-  before('Clear messages table and navigate to group chat', configureMessageTest)
+  before('Clear messages table and navigate to group chat', () => {
+    configureMessageTest(true)
+  })
 
   it('Can send links with protocols', () => {
     cy.get('[data-cy=message-input]')
@@ -156,8 +163,13 @@ describe('A user can share links to external content in the chat', () => {
 
 describe('Messages are correctly grouped by date', () => {
   before('Configure message test and add time spaced messages', () => {
-    configureMessageTest()
-    addTimeSpacedMessages()
+    cy.request('/clear-messages')
+      .then(() => {
+        addTimeSpacedMessages()
+      })
+      .then(() => {
+        configureMessageTest(false)
+      })
   })
 
   it('Groups and formats date-dividers relative to the current day', () => {
@@ -180,15 +192,41 @@ describe('Messages are correctly grouped by date', () => {
 
 describe('Interact with other users in the group chat', () => {
   before('Clear messages table and navigate to group chat', () => {
-    configureMessageTest()
+    configureMessageTest(true)
+    cy.wait(1000)
+    mockOtherUser()
+  })
+
+  it('Updates list of chat members when a new member joins', () => {
+    cy.get('[data-cy=members-in-chat]')
+      .find('li')
+      .should('have.length', 2)
+
+    cy.get('[data-cy=members-in-chat]')
+      .find('li')
+      .first()
+      .should('have.text', 'Archie')
+      .next()
+      .should('have.text', 'James VI')
+  })
+
+  it('Receive messages from other members in chat', () => {
+    cy.get('[data-cy="message-area"]')
+      .find('.message').last()
+      .should('have.length', 1)
+      .and('include.text', 'James VI')
+      .and('include.text', `${moment().format('HH:mm')}`)
+      .and('include.text', 'Archy! Tell me a joke. I\'m feeling rather upset today. The sheep farmers are staging a coup')
   })
 })
 
 /* ---------------------------- Helper Functions ---------------------------- */
 
-function configureMessageTest () {
+function configureMessageTest (clear) {
   // Clear messages table
-  fetch('/clear-messages')
+  if (clear) {
+    fetch('/clear-messages')
+  }
 
   // Sign in
   cy.visit('/')
@@ -226,4 +264,21 @@ function addTimeSpacedMessages () {
     }
     recordMessage(databaseMessage)
   }
+}
+
+function mockOtherUser () {
+  cy.window()
+    .then(function (win) {
+      const mockUser = { username: 'James VI', group: 'Scotland' }
+      const text = 'Archy! Tell me a joke. I\'m feeling rather upset today. The sheep farmers are staging a coup'
+      const chatMessage = {
+        username: mockUser.username,
+        text: text,
+        time: moment().format('HH:mm')
+      }
+
+      const socket = win.io()
+      socket.emit(JOIN_CHAT_EVENT, mockUser)
+      socket.emit(CHAT_MESSAGE_EVENT, chatMessage)
+    })
 }
