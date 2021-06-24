@@ -12,12 +12,28 @@ Steps:
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
-const moment = require('moment')
+//const moment = require('moment')
 
 describe('The correct page is displayed to the user when entering the create-join-group page', () => {
-  before('Navigate to 'Create Group' page', () => {
-    
-  })
+  // before('Navigate to Create-Group page', () => {
+  //   // Sign in
+  //   cy.visit('/')
+
+  //   cy.get('[data-cy=sign-in-homepage]').click()
+
+  //   cy.get('form')
+
+  //   cy.get('[data-cy=username]')
+  //     .type('Archie')
+  //     .should('have.value', 'Archie')
+
+  //   cy.get('[data-cy=password]')
+  //     .type('sh33p123')
+  //     .should('have.value', 'sh33p123')
+
+  //   cy.get('[data-cy=sign-in-login]')
+  //     .click()
+  // })
 
   it('Displays the create-join-group page', () => {
     // cy.url()
@@ -49,23 +65,23 @@ describe('The correct page is displayed to the user when entering the create-joi
   })
 })
 
- describe('User can create a new group with chosen members invited (automatically added for now)', () => {
+describe('User can create a new group with chosen members invited automatically', () => {
 //   it('Allows user to input group name and select members to invite', () => {
 //     cy.get('input[name="groupName"]')
 //       .type('Jonas Brothers')
 //       .should('have.value', 'Jonas Brothers')
 
-//     cy.get('select[id="inviteList"]')
-//       .select(['Albus', 'Ron'])
-//       .invoke('val')
-//       .should('deep.equal', ['1', '3'])
+  //     cy.get('select[id="inviteList"]')
+  //       .select(['Albus', 'Ron'])
+  //       .invoke('val')
+  //       .should('deep.equal', ['1', '3'])
 
-//     cy.get('button[id="JonasBrothers"]')
-//       .should('not.exist')
+  //     cy.get('button[id="JonasBrothers"]')
+  //       .should('not.exist')
 
-//     cy.get('button[id="create-btn"]')
-//       .click()
-//   })
+  //     cy.get('button[id="create-btn"]')
+  //       .click()
+  //   })
 
   // it('Updates table with new group: Admin is user, Members includes user and selected names', () => {
   //   cy.get('table[id="table"]')
@@ -105,7 +121,7 @@ describe('The correct page is displayed to the user when entering the create-joi
   // })
 })
 
-describe('User can join groups that they are not members of', () => {
+describe('User can request to join groups that they are not members of', () => {
   // it('Allows user to join groups they are not members of', () => {
   //   cy.get('table[id="table"]')
   //     .contains('td', 'LYFE')
