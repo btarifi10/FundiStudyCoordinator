@@ -16,6 +16,8 @@ developer dependencies)
 
 ----------------------------------------------------------------------------- */
 
+import { recordMessage } from '../../public/scripts/group-chat/chat-messages'
+
 const moment = require('moment')
 
 /* -------------------------------------------------------------------------- */
@@ -150,6 +152,38 @@ describe('A user can share links to external content in the chat', () => {
   })
 })
 
+/* -------------------------------------------------------------------------- */
+
+describe('Messages are correctly grouped by date', () => {
+  before('Configure message test and add time spaced messages', () => {
+    configureMessageTest()
+    addTimeSpacedMessages()
+  })
+
+  it('Groups and formats date-dividers relative to the current day', () => {
+    cy.get('[data-cy="message-area"]')
+      .find('.date')
+      .should(dates => {
+        expect(dates[0]).to.have.text(`${moment(moment().subtract(7, 'd')).format('ddd, DD MMM YYYY')}`)
+        expect(dates[1]).to.have.text(`${moment(moment().subtract(6, 'd')).format('dddd')}`)
+        expect(dates[2]).to.have.text(`${moment(moment().subtract(5, 'd')).format('dddd')}`)
+        expect(dates[3]).to.have.text(`${moment(moment().subtract(4, 'd')).format('dddd')}`)
+        expect(dates[4]).to.have.text(`${moment(moment().subtract(3, 'd')).format('dddd')}`)
+        expect(dates[5]).to.have.text(`${moment(moment().subtract(2, 'd')).format('dddd')}`)
+        expect(dates[6]).to.have.text('Yesterday')
+        expect(dates[7]).to.have.text('Today')
+      })
+  })
+})
+
+/* -------------------------------------------------------------------------- */
+
+describe('Interact with other users in the group chat', () => {
+  before('Clear messages table and navigate to group chat', () => {
+    configureMessageTest()
+  })
+})
+
 /* ---------------------------- Helper Functions ---------------------------- */
 
 function configureMessageTest () {
@@ -176,4 +210,20 @@ function configureMessageTest () {
 
   // Navigate to the 'Scotland' group chat
   cy.visit('/chat?group=Scotland')
+}
+
+function addTimeSpacedMessages () {
+  let time = moment().add(1, 'days')
+
+  for (let i = 0; i < 8; i++) {
+    time = moment(time).subtract(1, 'days').format()
+    const text = `Sent at ${time}`
+    const databaseMessage = {
+      group: 'Scotland',
+      username: 'Archie',
+      text: text,
+      time: time
+    }
+    recordMessage(databaseMessage)
+  }
 }
