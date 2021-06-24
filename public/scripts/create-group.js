@@ -5,7 +5,7 @@ import { addAction } from './action-log.js'
 const userList = document.getElementById('user-list')
 const addedUsers = document.getElementById('added-users')
 
-const invitedMembers = []
+let invitedMembers = []
 let users = null
 const existingGroups = [] // stores list of { groupname: TheGroupName }, to check for duplicates
 let membershipNum = null // to limit user to membership of 10 groups
@@ -134,6 +134,7 @@ function clearInputs () {
   document.getElementById('search').value = ''
   userSearch()
   addedUsers.innerHTML = ''
+  invitedMembers = []
 }
 
 function saveGroup (groupInfo) {
@@ -153,27 +154,4 @@ function saveGroup (groupInfo) {
         body: JSON.stringify(groupInfo)
       })
     })
-    // .then(() => {
-    //   const actionObj = { group_name: groupInfo.groupName, description: 'CREATED' }
-    //   addAction(actionObj)
-    // })
-
-  // TODO - Provide alert for success/failure
-  // .then(resp => {
-  //   if (resp.ok) {
-  //     alert('Group created successfully!')
-  //   }
-  // })
-  // .then(result => {
-  //   if (inviteObj.invited_members.length > 0) {
-  //     console.log('function sendInvites')
-  //     fetch('/sendInvites', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(inviteObj)
-  //     })
-  //   }
-  // })
 }
