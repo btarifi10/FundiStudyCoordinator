@@ -11,15 +11,25 @@ const { group, meetingID } = Qs.parse(location.search, {
 const userService = UserService.getUserServiceInstance()
 let currentUser = null
 
-let updateLocation = false
+// set the location settings to update the user location
+let updateLocation = true
+let timeIndex = 0
+
+// set up socket stuff
 const io = window.io
+const SERVER_MESSAGE = 'Mmessage'
 /* ------------------------------- CONSTANTS ------------------------------- */
 const BASE_URL = 'https://maps.googleapis.com/maps/api/js?'
 const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
-let map = null
 
-const SERVER_MESSAGE = 'Mmessage'
+// Defining constants used for directions links
+const URL_BASE = 'https://www.google.com/maps/'
+const API_NUM = '1'
+
+// Setting up map variables and marker array
+let map = null
 const gmarkers = []
+
 /* ------------------------------ DOM Elements ------------------------------ */
 
 const chatForm = document.getElementById('chat-form')
@@ -36,16 +46,17 @@ const sendLocation = document.getElementById('send-location')
 const socket = io()
 // Join the meeting
 document.addEventListener('DOMContentLoaded', () => {
-  createMapScript()
-  console.log(group)
-  console.log(meetingID)
   meeting.innerText = group
   meetingId.innerText = meetingID
   let pos = null
+
+  // console.log(group)
+  // console.log(meetingID)
   userService.getCurrentUser()
     .then(user => {
       currentUser = user
       const username = user.username
+      createMapScript()
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -54,8 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
               lng: position.coords.longitude
             }
             socket.emit('joinMeeting', { username, group, meetingID, position: pos })
-            // socket.emit('marker', pos)
-          }
+          },
+          function () {},
+          { enableHighAccuracy: true }
         )
       }
     })
@@ -94,70 +106,73 @@ socket.on(SERVER_MESSAGE, message => {
   // Automatically scroll down to the newly added message
   messageArea.scrollTop = messageArea.scrollHeight
 })
+
 // ***********************************
-// socket.on('marker', data => {
-//   const posLat = data.lat
-//   const posLng = data.lng
-//   const marker = addMarker({
-//     coords: { lat: posLat, lng: posLng },
-//     label: 'M',
-//     title: 'Marker-username'
-//   })
-// })
-// ***********************************
-// Retrieve and render the group name and list of chat members
-// also markers
-socket.on('meetingInfo', ({ group, members, markers }) => {
+// Retrieve and render the group name, list of chat members and map markers
+socket.on('meetingInfo', ({ group, members }) => {
   // display the group name
   groupName.innerText = group
-
+  // load member names and links
+  members.map(member => loadMemberLink(member))
+  // remove then add markers again.
   removeMarkers()
-  chatMembers.innerHTML = `
-    ${members.map(member => `<li><a onclick="updateMap('${member.position}')">${member.label} - ${member.username}</a></li>`).join('')}
-  `
-  // markers.map(marker => addMarker({ coords: { lat: marker.lat, lng: marker.lng } }))
   members.map(member => addMarker({
     coords: { lat: member.position.lat, lng: member.position.lng },
     label: member.label,
     title: member.username
   }))
 })
-// ***********************************
-function removeMarkers () {
-  for (let i = 0; i < gmarkers.length; i++) {
-    gmarkers[i].setMap(null)
-  }
-  gmarkers.length = 0
-}
 
-let i = 0
 // ***********************************
-socket.on('news-by-server', function (data) {
-  // alert(data)
-  // when receiving message from server, update location and send back
-  const newPos = { lat: -25.2, lng: 28.2 }
-  userService.getCurrentUser()
-    .then(user => {
-      currentUser = user
-      const username = user.username
-      let pos = null
+// server asks for new position every few moments
+// receive request to send new position
+// send request for old position
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            }
-            console.log(i++)
-            socket.emit('changePosition', { username, group, meetingID, newPosition: pos })
-          }
-        )
-      }
-    })
+// ask the server for the user's old position when server sends request
+socket.on('news-by-server', () => {
+  socket.emit('receivePosition')
 })
 
-/* ------------------------------ Event Listener ------------------------------ */
+// change to check whether their destination is either their home address or the meeting
+// location. Can only be implemented once location accuracy has been improved.
+socket.on('sendPosition', function (data) {
+  // retrieve saved current user position from the server
+  const oldPos = { lat: data.lat, lng: data.lng }
+
+  let pos = null
+  // only check/send for change in position if the user has elected to update their location
+  // and there has not been two successive requests wherein the user position has remained the same
+  if (timeIndex < 2 && updateLocation == true) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          // Check if the position is different to the old position
+          if (oldPos.lat == pos.lat && oldPos.lng == pos.lng) {
+            timeIndex++
+            // console.log(`timeIndex= ${timeIndex}`)
+          } else {
+            // reset the timeIndex to zero since the position is different
+            timeIndex = 0
+          }
+          // request time will change to either every 5min or every 2min.
+          if (timeIndex == 0) {
+            socket.emit('changePosition', { newPosition: pos })
+          } else if (timeIndex == 2) {
+            // send a message to other members to say the current user has arrived if their
+            // position is the same after 2 requests
+            socket.emit('arrived', true)
+          }
+        }
+      )
+    }
+  }
+})
+
+/* ------------------------------ Event Listeners ------------------------------ */
 
 // Run when a message is sent
 chatForm.addEventListener('submit', (event) => {
@@ -168,27 +183,85 @@ chatForm.addEventListener('submit', (event) => {
 sendLocation.addEventListener('click', (event) => {
   if (updateLocation == false) {
     updateLocation = true // set updateLocation to true
-    // CHANGE THE COLOUR OF THE BUTTON TOO!
+    timeIndex = 0
     sendLocation.setAttribute('class', 'btn btn-secondary')
+    sendLocation.innerHTML = 'Stop Sharing'
   } else {
     updateLocation = false
+    timeIndex = 3 // setting to a value above 2
+    socket.emit('arrived', false) // stopped sharing their location
     sendLocation.setAttribute('class', 'btn btn-primary')
-  }
-
-  addMarker({
-    coords: { lat: -26.0324, lng: 28.0742 }, label: 'label', title: 'username'
-  }) // for each member add the marker
-  addMarker({
-    coords: { lat: -26.05, lng: 28.1 }, label: 'label', title: 'username'
-  })
-
-  if (updateLocation == true) {
-    console.log('I am executing')
-    setInterval(myTimer(), 10000)
-    window.setTimeout(myTimer(), 5000)
+    sendLocation.innerHTML = 'Continue Sharing'
   }
 })
+
+/* ------------------------------ Helper Functions ------------------------------ */
+
+// Add marker function
+function addMarker (props) {
+  if (typeof google === 'object' && typeof google.maps === 'object') {
+    const marker = new google.maps.Marker({
+      position: props.coords,
+      label: props.label,
+      // animation: google.maps.Animation.DROP, // too messy with multiple users
+      title: props.title,
+      map: map // map we want to add it to
+    // icon: //set a new colour marker for every student - rather using labels
+    })
+
+    const infoWindow = new google.maps.InfoWindow()
+    marker.addListener('click', function () {
+      infoWindow.close()
+      infoWindow.setContent(marker.getTitle())
+      infoWindow.open(marker.getMap(), marker)
+    })
+    gmarkers.push(marker)
+  }
+}
+
 // ***********************************
+// remove all map markers
+function removeMarkers () {
+  for (let i = 0; i < gmarkers.length; i++) {
+    gmarkers[i].setMap(null)
+  }
+  gmarkers.length = 0
+}
+// ***********************************
+// add usernames to list and link map directions to the username
+function loadMemberLink (member) {
+  removePlace(chatMembers)
+  // create list element
+  const li = document.createElement('li')
+  // create anchor element
+  const a = document.createElement('a')
+  a.innerHTML = `'${member.label}' - ${member.username}`
+  a.setAttribute('class', 'btn')
+  const URL = createDirectionLink(member.position)
+  a.href = URL
+  a.target = '_blank' // changes whether or not a new window is created
+  li.appendChild(a)
+  chatMembers.appendChild(li)
+}
+
+// ***********************************
+// remove child elements from an element
+function removePlace (placeDiv) {
+  while (placeDiv.hasChildNodes()) {
+    placeDiv.removeChild(placeDiv.lastChild)
+  }
+}
+// ***********************************
+// Build a valid URL
+function createDirectionLink (location) {
+  const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${location.lat},${location.lng}`
+  const encodedURL = encodeURI(URL)
+  return encodedURL
+}
+// ***********************************
+
+/* ---------------------------- STATIC LOCATION TESTING ---------------------------- */
+// to show a position change
 groupName.addEventListener('click', (event) => {
   const newPos = { lat: -25.2, lng: 28.2 }
   userService.getCurrentUser()
@@ -196,90 +269,5 @@ groupName.addEventListener('click', (event) => {
       currentUser = user
       const username = user.username
       socket.emit('changePosition', { username, group, meetingID, newPosition: newPos })
-      // socket.emit('marker', newPos) // check if this is working preoperly
     })
 })
-
-/* ------------------------------ Helper Functions ------------------------------ */
-// Flickers each time a user resends their location
-// Nice if we could make it so that it only uses the drop when the user first joins.
-// Add marker function
-function addMarker (props) {
-  // either populate markers everytime from the member array stuff
-  // or make a unique ID which we remove each time
-  // let markerID = getMarkerUniqueId(props.coords.lat, props.coords.lng)
-  const marker = new google.maps.Marker({
-    position: props.coords,
-    label: props.label, // 'tazzymagglesinhfsd', // labels[labelIndex++ % labels.length],
-    // animation: google.maps.Animation.DROP, // too messy with multiple users
-    title: props.username,
-    map: map // map we want to add it to
-    // icon: //set a new colour marker for every student
-  })
-
-  const username = 'try-this'
-  const infoWindow = new google.maps.InfoWindow()
-  marker.addListener('click', function () {
-    infoWindow.close()
-    infoWindow.setContent(marker.getTitle())
-    infoWindow.open(marker.getMap(), marker)
-  })
-  gmarkers.push(marker)
-}
-// ***********************************
-let intCheck = 1
-function myTimer () {
-  console.log(intCheck++)
-}
-// ***********************************
-// I think i need to do this with the SERVER side rather, since the info is served in the server
-window.updateMap = updateMap
-function updateMap (newPosition) {
-  console.log(newPosition)
-  console.log(newPosition.lat)
-  console.log(newPosition.lng)
-  // const posString = `${newPosition.lat},${newPosition.lng}`
-  // console.log(posString)
-  // const mapEle = document.getElementById('map')
-  // const destination = `https://www.google.com/maps/embed/v1/place?key=AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU&q=${posString}`
-  // mapEle.setAttribute('src', destination)
-}
-/* ----------------------------- Main Functions ----------------------------- */
-
-// function getPosition () {
-//   let pos = null
-//   if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(
-//       (position) => {
-//         pos = {
-//           lat: position.coords.latitude,
-//           lng: position.coords.longitude
-//         }
-//         console.log(pos)
-//         return pos
-//       }
-//     )
-//   }
-//   // else {
-//   pos = { lat: 0, lng: 0 }
-//   return pos
-//   // }
-// }
-
-/*
-This shows the alert box every 3 seconds:
-setInterval(function(){alert("Hello")},3000);
-
-setInterval(): executes a function, over and over again, at specified time intervals
-setTimeout() : executes a function, once, after waiting a specified number of milliseconds
-
-Execute function FetchData() once after 1000 milliseconds:
-
-setTimeout(FetchData,1000);
-Execute function FetchData() repeatedly every 1000 milliseconds:
-
-setInterval(FetchData,1000);
-
-https://www.w3schools.com/js/js_timing.asp
-
-*/

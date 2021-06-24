@@ -1,3 +1,4 @@
+const { checkAuthenticated } = require('./authentication.js')
 'use strict'
 
 /* ------------------------------ Requirements ------------------------------ */
@@ -12,17 +13,17 @@ meetingRouter.use(express.json())
 
 /* ----------------------------- Routes ----------------------------- */
 
-meetingRouter.get('/meetings', function (req, res) {
+meetingRouter.get('/meetings', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'meetings.html'))
 })
 
-meetingRouter.get('/attend-meeting', function (req, res) {
+meetingRouter.get('/attend-meeting', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'attend-meeting.html'))
 })
 
 /* ----------------------------- Database calls ----------------------------- */
 
-meetingRouter.get('/getMeetings', function (req, res) {
+meetingRouter.get('/getMeetings', checkAuthenticated, function (req, res) {
   const group = req.query.group
   const option = req.query.option
   // Make a query to the database
@@ -53,7 +54,7 @@ meetingRouter.get('/getMeetings', function (req, res) {
     })
 })
 
-meetingRouter.get('/faceMeetings', function (req, res) {
+meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
   const group_name = req.query.group_name
   const user_id = req.query.user_id
   const online = false
@@ -84,7 +85,7 @@ meetingRouter.get('/faceMeetings', function (req, res) {
     })
 })
 
-meetingRouter.post('/record-meeting', function (req, res) {
+meetingRouter.post('/record-meeting', checkAuthenticated, function (req, res) {
   // Retrieve the message data
   const meeting = req.body
   console.log(meeting)

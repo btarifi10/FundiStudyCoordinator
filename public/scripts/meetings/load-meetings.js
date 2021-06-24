@@ -194,17 +194,25 @@ function loadHTMLTable (data, option) {
     tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
     tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
     if (option == 0) {
-      tableHtml += `<td id = '${meeting_id}-time-diff'>${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds<br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-id='attend-${meeting_id}-btn' onclick="move(${meeting_id})"> Attend</button></td>`
+      tableHtml += `<td id = '${meeting_id}-time-diff'>
+      ${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds
+      <br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-id='attend-${meeting_id}-btn' 
+      onclick="move(${meeting_id})"> Attend</button></td>`
     } else {
-      tableHtml += `<td id = '${meeting_id}-time-diff'>${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds</td>`
+      tableHtml += `<td id = '${meeting_id}-time-diff'>
+      ${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds</td>`
     }
     tableHtml += '</tr>'
   })
   table.innerHTML = tableHtml
 }
+
 window.move = move
 function move (meeting_id) {
-  window.location = `/attend-meeting?group=${group}&meetingID=${meeting_id}`
+  if (confirm('Do you wish to attend the meeting? Please note that your location or information shared in the chat will not be saved')) {
+    const URL = `/attend-meeting?group=${group}&meetingID=${meeting_id}`
+    window.open(URL, '_blank') || window.location.replace(URL)
+  }
 }
 
 function getTimeRemaining (chosenTime) {

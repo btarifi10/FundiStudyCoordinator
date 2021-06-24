@@ -15,39 +15,50 @@ const SERVER_MESSAGE = 'Mmessage'
 const BOT_NAME = 'Study Bot'
 const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 let labelIndex = 0
-const markers = []
 /* ---------------------------- Public Functions ---------------------------- */
 
 function handleMeetingMember (io, socket) {
   socket.on('joinMeeting', ({ username, group, meetingID, position }) => {
     handleJoinEvent(io, socket, username, group, meetingID, position)
-    // for (let i = 0; markers.length > 1; i++) {
-    //   socket.emit('marker', markers[i])
-    // }
   })
 
   socket.on('meetingMessage', (message) => {
     handleChatMessage(io, socket, message)
   })
 
-  // socket.on('marker', (data) => {
-  //   markers.push(data)
-  //   // io.to(member.group).emit("marker", data)
-  //   const member = getCurrentMember(socket.id)
-  //   io.to(member.group).emit('marker', data)
-  // })
-
-  socket.on('changePosition', ({ username, group, meetingID, newPosition }) => {
+  socket.on('changePosition', ({ newPosition }) => {
     handleLocation(io, socket, newPosition)
+  })
+
+  socket.on('arrived', (check) => {
+    handleArrival(socket, check)
   })
 
   socket.on('disconnect', () => {
     handleDisconnect(io, socket)
   })
 
+  socket.on('receivePosition', () => {
+    const member = getCurrentMember(socket.id)
+    const pos = member.position
+    socket.emit('sendPosition', pos)
+  })
+
   setInterval(function () {
-    socket.emit('news-by-server', 'Searching location')
-  }, 10000)
+    socket.emit('news-by-server')
+  }, 10000) // request every 10seconds
+}
+
+function handleArrival (socket, check) {
+  const member = getCurrentMember(socket.id)
+  let arrivalText = ''
+  if (check == true) {
+    arrivalText = `${member.username} has arrived safely at their destination!`
+  } else if (check == false) {
+    arrivalText = `${member.username} has stopped sharing their location!`
+  }
+  const joinMessage = formatMessage(BOT_NAME, arrivalText)
+  socket.broadcast.to(member.group).emit(SERVER_MESSAGE, joinMessage)
 }
 
 /* --------------------------- Private Functions --------------------------- */
@@ -58,14 +69,13 @@ function handleJoinEvent (io, socket, username, group, meetingID, position) {
   const member = addMember(socket.id, username, group, meetingID, position, label)
   socket.join(member.group)
 
-  // TODO - display welcome message only when member joins group for the first time
+  // Since the meetings attendance pages are non-persistent, these messages
+  // are sent every time a user joins the meeting
   // Welcome the member that has just joined
-  const welcomeText = `Hey ${member.username}! ${member.position.lat},${member.position.lng} 
-  By being in this chat you have indicated your attendance to the meeting for ${member.group}!`
+  const welcomeText = `Welcome ${member.username}! By being in this chat you have confirmed your attendance to the meeting for ${member.group}!`
   const welcomeMessage = formatMessage(BOT_NAME, welcomeText)
   socket.emit(SERVER_MESSAGE, welcomeMessage)
 
-  // TODO - display join message only when member joins group for the first time
   // Notify the other members in the group of the new member's arrival
   const joinText = `${member.username} has joined the chat!`
   const joinMessage = formatMessage(BOT_NAME, joinText)
@@ -74,8 +84,7 @@ function handleJoinEvent (io, socket, username, group, meetingID, position) {
   // Send the updated list of chat members to be rendered on the client
   io.to(member.group).emit('meetingInfo', {
     group: member.group,
-    members: getAllMembers(member.group),
-    markers: markers
+    members: getAllMembers(member.group)
   })
 }
 
@@ -90,14 +99,10 @@ function handleLocation (io, socket, newPosition) {
   changeMemberPosition(socket.id, newPosition)
 
   const member = getCurrentMember(socket.id)
-  // const member = addMember(socket.id, username, group, meetingID, newPosition)
-  // Send the updated list of chat members to be rendered on the client
-  // addMember
-  // socket.join(member.group)
+
   io.to(member.group).emit('meetingInfo', {
     group: member.group,
-    members: getAllMembers(member.group),
-    markers: markers
+    members: getAllMembers(member.group)
   })
 }
 
@@ -108,7 +113,6 @@ function handleDisconnect (io, socket) {
   // Continue only if a member is found
   if (!member) { return }
 
-  // TODO - display leaving message only when member leaves group
   const leavingText = `${member.username} has left the meeting...`
   const leavingMessage = formatMessage(BOT_NAME, leavingText)
   io.to(member.group).emit(SERVER_MESSAGE, leavingMessage)
