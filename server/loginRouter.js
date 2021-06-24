@@ -62,7 +62,11 @@ module.exports = function (app, passport) {
         username: req.body.username,
         user_password: hashPasswd,
         first_name: req.body.firstName,
-        last_name: req.body.lastName
+        last_name: req.body.lastName,
+        address_line_1: req.body.addressLine1,
+        address_line_2: req.body.addressLine2,
+        city: req.body.city,
+        postal_code: req.body.postalCode
       }
 
       const success = await new Promise((resolve, reject) => {
@@ -137,7 +141,11 @@ module.exports = function (app, passport) {
       username: req.user.username,
       firstName: req.user.firstName,
       lastName: req.user.lastName,
-      rating: req.user.rating
+      rating: req.user.rating,
+      addressLine1: req.user.addressLine1,
+      addressLine2: req.user.addressLine2,
+      city: req.user.city,
+      postalCode: req.user.postalCode
     })
   })
 

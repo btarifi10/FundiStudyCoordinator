@@ -1,12 +1,13 @@
+'use strict'
 /* ------------------------------ Functionality ------------------------------ */
 
 import { UserService } from './user-service.js'
+import { getMinimimumDestination, getUserDestination, getUniDestination } from './recommend-locations.js'
 import {
   loadLocation,
   loadPlatform,
   loadHTMLTable
 } from './load-meetings.js'
-'use strict'
 
 const { group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -38,13 +39,13 @@ const viewMeetings = document.getElementById('View-btn')
 
 // Update which meeting options should be displayed for the user
 meetingChoice.addEventListener('change', (event) => {
-  if (event.target.value == 'online') {
+  if (event.target.value === 'online') {
     loadPlatform()
   }
-  if (event.target.value == 'face-to-face') {
+  if (event.target.value === 'face-to-face') {
     loadLocation()
   }
-  if (event.target.value == 'none-selected') {
+  if (event.target.value === 'none-selected') {
     window.alert('Please select a viable option')
   }
 })
@@ -54,6 +55,11 @@ document.querySelector('#place').addEventListener('input', function (event) {
   if (event.target.id == 'addressInput') {
     const mapFrame = document.getElementById('map')
     mapFrame.src = generateMapURL(event.target.value)
+    const inputHelp = document.getElementById('location-hint')
+    if (inputHelp) {
+      if (!inputHelp.classList.contains('d-none')) { inputHelp.classList.add('d-none') }
+      inputHelp.innerText = ''
+    }
   }
 })
 
@@ -152,3 +158,61 @@ function createDirectionLink () {
   // addressList.appendChild(li)
   return encodedURL
 }
+
+/* ------------------ Get Recommended Locations ----------------------- */
+function recommendCentralLocation () {
+  getMinimimumDestination(group)
+    .then(minAddress => {
+      if (!minAddress) {
+        window.alert('No group member has registered with an address')
+        return
+      }
+      // Update the map once the address is found
+      document.getElementById('addressInput').value = minAddress.address
+      const mapFrame = document.getElementById('map')
+      mapFrame.src = generateMapURL(minAddress.address)
+      const inputHelp = document.getElementById('location-hint')
+      if (inputHelp) {
+        if (inputHelp.classList.contains('d-none')) { inputHelp.classList.remove('d-none') }
+        inputHelp.innerText = 'This address minimises the total distance travelled by group members'
+      }
+    })
+}
+window.recommendCentralLocation = recommendCentralLocation
+
+function recommendUserLocation () {
+  userService.getCurrentUser()
+    .then(user => {
+      currentUser = user
+      return getUserDestination(group, currentUser.username)
+    })
+    .then(userAddress => {
+      if (!userAddress) {
+        window.alert('You have not registered with an address')
+        return
+      }
+      // Update the map once the address is found
+      document.getElementById('addressInput').value = userAddress.address
+      const mapFrame = document.getElementById('map')
+      mapFrame.src = generateMapURL(userAddress.address)
+      const inputHelp = document.getElementById('location-hint')
+      if (inputHelp) {
+        if (inputHelp.classList.contains('d-none')) { inputHelp.classList.remove('d-none') }
+        inputHelp.innerText = `${currentUser.firstName}'s address`
+      }
+    })
+}
+window.recommendUserLocation = recommendUserLocation
+
+function recommendUniLocation () {
+  const witsAddress = getUniDestination()
+  document.getElementById('addressInput').value = witsAddress
+  const mapFrame = document.getElementById('map')
+  mapFrame.src = generateMapURL(witsAddress)
+  const inputHelp = document.getElementById('location-hint')
+  if (inputHelp) {
+    if (inputHelp.classList.contains('d-none')) { inputHelp.classList.remove('d-none') }
+    inputHelp.innerText = 'University of the Witwatersrand, Johannesburg'
+  }
+}
+window.recommendUniLocation = recommendUniLocation
