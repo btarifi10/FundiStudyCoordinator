@@ -39,14 +39,14 @@
         <br>
         <h5 class="text-center"><i class="fas fa-comments"></i> Members in Chat </h5>
         <hr>
-        <ul id="chat-members" class="list-unstyled text-center"> </ul>
+        <ul id="chat-members" class="list-unstyled text-center" data-cy="members-in-chat"> </ul>
       </div>
 
       <!-- CHAT AREA (MIDDLE) -->
       <div class="col-md-7">
 
         <!-- Area that gets populated with messages -->
-        <div class="message-area">
+        <div class="message-area" data-cy="message-area">
 
           <!-- Initial Loading Spinner -->
           <div class="text-center" id="spinner">
@@ -64,11 +64,11 @@
                 <div class="form-group">
                   <!-- <textarea class="form-control" placeholder="Enter Message" required autocomplete="off"></textarea> -->
                   <input id="msg" type="text" class="form-control" placeholder="Enter Message" pattern=".{1,1000}"
-                    required title="Message must be between 1 and 1000 characters long" autocomplete="off" />
+                    required title="Message must be between 1 and 1000 characters long" autocomplete="off" data-cy="message-input"/>
                 </div>
               </div>
               <div class="col-md-2">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane" data-cy="send-button"></i> Send</button>
               </div>
             </div>
           </form>
@@ -87,7 +87,7 @@
           <!-- <hr>
           <li> <a href="/meetings" class="btn"><i class="fas fa-handshake"></i> Create Meeting </a></li> -->
           <hr>
-          <li  id ='rate-members'> <i class="fas fa-thumbs-up"></i>  </li>
+          <li  id ='rate-members'><i class="fa fa-thumbs-up" aria-hidden="true"></i>   </li>
           <hr>
           <li><a href="#" id="link-group-polls" class="btn"><i class="fas fa-user-plus"></i> Group Polls </a></li>
           <hr>
