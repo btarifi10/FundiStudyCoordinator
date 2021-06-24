@@ -1,9 +1,9 @@
 'use strict'
 
 const express = require('express')
-const { exists } = require('fs')
 const path = require('path')
 const db = require('./database-service')
+const fetch = require('node-fetch')
 
 const meetingRouter = express.Router()
 meetingRouter.use(express.json())
@@ -126,6 +126,42 @@ meetingRouter.post('/record-meeting', function (req, res) {
       res.send({
         Error: err
       })
+    })
+})
+
+meetingRouter.get('/get-member-addresses', (req, res) => {
+  db.pools
+  // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('groupName', db.sql.Char, req.query.group)
+        .query(`
+        SELECT username, address_line_1, address_line_2, city, postal_code
+        FROM users INNER JOIN memberships ON users.user_id=memberships.user_id WHERE
+        memberships.group_id=(SELECT group_id FROM groups WHERE group_name=@groupName);
+        `)
+    })
+  // Send back the result
+    .then(result => {
+      console.log(result.recordset)
+      res.send(result.recordset)
+    })
+  // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+meetingRouter.get('/get-distance-matrix', (req, res) => {
+  const DIST_MATRIX_BASE_URL = 'https://maps.googleapis.com/maps/api/distancematrix/json'
+  const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
+
+  fetch(`${DIST_MATRIX_BASE_URL}?origins=${req.query.origins}&destinations=${req.query.destinations}&key=${API_KEY}`)
+    .then(res => res.json())
+    .then(data => {
+      res.send(data)
     })
 })
 
