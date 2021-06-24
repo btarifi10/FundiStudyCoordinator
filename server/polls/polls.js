@@ -155,15 +155,18 @@ function createCustomPoll (details, userId) {
 function createPoll (pollDetails) {
   const options = []
 
+  let c = Math.random(10)
   pollDetails.options.forEach(o => {
-    options.push({ option: o, votes: 0, color: randomRGB() })
+    c = c + 1
+    options.push({ option: o, votes: 0, color: selectColor(c) })
   })
 
   pollDetails.options = options
 
-  pollDetails.pollId = currentPolls.length
+  let pollID = 0
+  if (currentPolls.length > 0) { pollID = currentPolls.reduce((max, p) => max > p.pollId ? max : p.pollId) + 1 }
 
-  const pollID = pollDetails.pollId
+  pollDetails.pollId = pollID
 
   currentPolls.push(pollDetails)
 
@@ -180,7 +183,8 @@ function createPoll (pollDetails) {
 
   // Set the function which will be called after poll expiration
   setTimeout(() => {
-    const poll = currentPolls[pollID]
+    const pIndex = currentPolls.findIndex(p => p.pollId === pollID)
+    const poll = currentPolls[pIndex]
     // Get the outcome
     const outcome = poll.options.reduce((max, option) => max.votes > option.votes ? max : option)
     poll.outcome = outcome.option
@@ -217,7 +221,10 @@ function createPoll (pollDetails) {
     }
 
     // Add poll to DB
+    currentPolls.splice(pIndex, 1)
 
+    // Add poll to DB
+    addPollToDb(poll)
     // socketIO update
   }, msDuration)
 }
@@ -225,6 +232,11 @@ function createPoll (pollDetails) {
 function randomRGB () {
   const r = () => Math.random() * 256 >> 0
   return `rgb(${r()}, ${r()}, ${r()})`
+}
+
+function selectColor (number) {
+  const hue = number * 137.508 // use golden angle approximation
+  return `hsl(${hue},50%,75%)`
 }
 
 /* --------------------- Handling Poll outcomes ----------------------- */
@@ -249,6 +261,122 @@ function handleBanOutcome (poll) {
 
 /* ------------------------ Updating the database -------------------- */
 
+// Post poll to Database
+function addPollToDb (poll) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return (
+        pool
+          .request()
+          .input('title', db.sql.Char, poll.title)
+          .input('group', db.sql.Char, poll.group)
+          .input('poll_type', db.sql.Char, poll.type)
+          .input('userId', db.sql.Int, poll.userId)
+          .input('start_date', db.sql.DateTimeOffset, poll.date)
+          .input('duration', db.sql.Float, poll.duration)
+          .input('outcome', db.sql.Char, poll.outcome)
+          .query(`
+            INSERT INTO polls (title, group_name, poll_type, user_id, start_date, duration, outcome)
+            VALUES (@title, @group, @poll_type, @userId, @start_date, @duration, @outcome);
+
+            SELECT SCOPE_IDENTITY();
+          `)
+      )
+    }).then(result => {
+      const pollId = result.recordset[0]['']
+      db.pools
+      // Run query
+        .then((pool) => {
+          return (
+            poll.options.forEach(opt => {
+              pool
+                .request()
+                .input('pollId', db.sql.Int, pollId)
+                .input('candidate', db.sql.VarChar, opt.option)
+                .input('votes', db.sql.Int, opt.votes)
+                .query(`
+            INSERT INTO poll_stats (poll_id, candidate, votes)
+            VALUES (@pollId, @candidate, @votes);
+          `)
+            })
+          )
+        })
+    })
+}
+
+function getGroupHistory (group) {
+  async function getDetails () {
+    const allPolls = await getCompletedPolls(group)
+    const allVotes = await getCompletedPollsVotes(group)
+    return { allPolls, allVotes }
+  }
+
+  return getDetails().then(({ allPolls, allVotes }) => {
+    if (allPolls.length === 0) { return null }
+
+    const groupPolls = []
+    allPolls.forEach(p => {
+      const poll = {
+        title: p.title,
+        userId: p.user_id,
+        type: p.poll_type,
+        group: p.group_name,
+        date: p.start_date,
+        duration: p.duration,
+        options: [],
+        outcome: p.outcome
+      }
+
+      let c = Math.random(10)
+      allVotes.forEach(v => {
+        if (v.poll_id === p.poll_id) {
+          c = c + 1
+          poll.options.push({
+            option: v.candidate,
+            votes: v.votes,
+            color: selectColor(c)
+          })
+        }
+      })
+
+      groupPolls.push(poll)
+    })
+    return groupPolls
+  })
+}
+
+function getCompletedPolls (group) {
+  return db.pools
+    // Run query
+    .then((pool) => {
+      return (
+        pool
+          .request()
+          .input('group', db.sql.Char, group)
+          .query(`
+            SELECT * FROM polls WHERE group_name=@group
+          `)
+      )
+    }).then(result => result.recordset)
+}
+
+function getCompletedPollsVotes (group) {
+  return db.pools
+  // Run query
+    .then((pool) => {
+      return (
+        pool
+          .request()
+          .input('group', db.sql.Char, group)
+          .query(`
+        SELECT * FROM poll_stats WHERE poll_id IN 
+        (SELECT poll_id FROM polls where group_name=@group);
+      `)
+      )
+    }).then(result => result.recordset)
+}
+
 // Upon group request approval
 function addUserToGroup (userId, groupName) {
   db.pools
@@ -259,7 +387,8 @@ function addUserToGroup (userId, groupName) {
           .request()
           .input('group', db.sql.Char, groupName)
           .input('userId', db.sql.Int, userId)
-          .input('time', db.sql.DateTimeOffset, new Date()).query(`
+          .input('time', db.sql.DateTimeOffset, new Date())
+          .query(`
             INSERT INTO memberships (user_id, group_id, date_joined)
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name=@group), @time);
           `)
@@ -307,5 +436,6 @@ module.exports = {
   createCustomPoll,
   createGroupRequestsPoll,
   createBanningPoll,
-  createInvitePoll
+  createInvitePoll,
+  getGroupHistory
 }

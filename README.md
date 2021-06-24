@@ -11,8 +11,11 @@ Nathan Jones (1619191), Yasser Karam (1624228), Tarryn Maggs (719597), Basheq Ta
 _Note that_ `dummy.txt` _is just an empty placeholder document to maintain the desired directory structure on GitHub_
 
 ## Database details
-The database for the project, named `StudyGroupCoordinator` is located at the server team8.database.windows.net.
+The database(s) for the project are located at the server team8.database.windows.net.
 
-Environment variables are used for storing the database credentials. These are as follows:
+Environment variables are used for storing the database details and credentials. These are as follows:
 - Username (environment variable `DB_USER`): `Team08` 
 - Password (environment variable `DB_PASSWORD`): `Sh33p123`
+- Production database (environment variable `DB_NAME`): `StudyGroupCoordinator`
+- Testing database (environment variable `DB_NAME`): `TestDataBase`
+- Deployment flag (environment variable `DEPLOYMENT`): `PRODUCTION` or `TEST`

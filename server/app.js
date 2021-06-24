@@ -85,17 +85,19 @@ app.get('/get-other-groups', function (req, res) { // KEEP THIS
     })
 })
 
-// Retrieves the members of a group to populate the ratings list
+// Retrieves the members of a group to populate the ratings list, exclusing the
+// current member
 app.get('/get-members', function (req, res) {
   db.pools
     .then((pool) => {
       return pool.request()
         .input('group_name', db.sql.Char, req.query.group)
+        .input('user_name', db.sql.Char, req.query.username)
         .query(`select username
         from users U 
         inner join memberships M
         on U.user_id = M.user_id
-        where M.group_id = (select group_id from groups
+        where NOT U.username= @user_name AND M.group_id = (select group_id from groups
         where group_name =@group_name); `)
     })
     .then(result => {
@@ -127,32 +129,10 @@ app.get('/get-current', function (req, res) {
     })
 })
 
-// Updates the ratings of the newly rated individual
-app.post('/update-ranking', function (req, res) {
-  db.pools
-    .then((pool) => {
-      return pool.request()
-        .input('ranking', db.sql.Float, req.body.newRating)
-        .input('number_ranking', db.sql.Int, req.body.newNumberRanking)
-        .input('username', db.sql.Char, req.body.userName)
-        .query(`UPDATE users set rating = @ranking, number_ratings = @number_ranking
-          where username= @username;`)
-    })
-    .then(result => {
-      res.send(result)
-    })
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
-
+// Logs a screening event to the database based on the userId, whether the user has passed given
+// the criteria described by Wits's COVID-screening and the date the last COVID-screening was completed.
 app.post('/create-screening', function (req, res) {
   const newScreen = req.body
-  // console.log(newScreen)
-  // console.log(newScreen.user_id, newScreen.passed, newScreen.date)
-  // Make a query to the database
   db.pools
     .then((pool) => {
       return pool.request()
@@ -163,14 +143,10 @@ app.post('/create-screening', function (req, res) {
         INSERT Into screening(user_id, passed,date_screened)
         VALUES (@userid, @passed, @date);
         `)
-      // VALUES ((@userid), (@passed), (@date));
     })
-    // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -199,7 +175,6 @@ app.use(express.json())
 // Return list of all usernames excluding the current user
 app.get('/get-users', checkAuthenticated, function (req, res) { // KEEP THIS
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
         .input('user_id', db.sql.Char, req.user.userId)
@@ -672,7 +647,14 @@ const { pollingRouter } = require('./polls/polling-routes')
 // const { checkAuthenticated } = require('./authentication')
 app.use(pollingRouter)
 
-/* ------------------------------------------------------------------------- */
+/* ------------------------------ Tests ------------------------------------- */
+
+if (process.env.DEPLOYMENT === 'TEST') {
+  const testRouter = require('./database-test-routes')
+  app.use(testRouter)
+}
+
+/* -------------------------------------------------------------------------- */
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
