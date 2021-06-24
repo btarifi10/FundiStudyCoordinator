@@ -159,7 +159,7 @@ function createDirectionLink () {
   return encodedURL
 }
 
-/* ------------------ Get Recommended Location ----------------------- */
+/* ------------------ Get Recommended Locations ----------------------- */
 function recommendCentralLocation () {
   getMinimimumDestination(group)
     .then(minAddress => {
@@ -167,7 +167,7 @@ function recommendCentralLocation () {
         window.alert('No group member has registered with an address')
         return
       }
-      console.log(minAddress)
+      // Update the map once the address is found
       document.getElementById('addressInput').value = minAddress.address
       const mapFrame = document.getElementById('map')
       mapFrame.src = generateMapURL(minAddress.address)
@@ -191,6 +191,7 @@ function recommendUserLocation () {
         window.alert('You have not registered with an address')
         return
       }
+      // Update the map once the address is found
       document.getElementById('addressInput').value = userAddress.address
       const mapFrame = document.getElementById('map')
       mapFrame.src = generateMapURL(userAddress.address)

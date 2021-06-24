@@ -2,12 +2,15 @@
 
 const WITS_ADDRESS = '1 Jan Smuts Ave, Braamfontein, Johannesburg, 2000'
 
+// Fetch member addresses
 function getMemberAddresses (group) {
   return fetch(`/get-member-addresses?group=${group}`)
     .then(res => res.json())
 }
 
+// Compute the minimum distance
 function getMinimimumDestination (group, DMService) {
+  // First get the addresses
   async function getAddresses () {
     const addr = await getMemberAddresses(group)
     return formatAddresses(addr)
@@ -15,13 +18,18 @@ function getMinimimumDestination (group, DMService) {
 
   let addresses = null
   async function getMinimumAddress () {
+    // Wait for the addresses
     addresses = await getAddresses()
     if (addresses) {
       const addressList = addresses.map(a => a.address)
 
+      // Get the distance matrix
       const distMatrixRaw = await getDistanceMatrix(addressList, addressList, DMService)
+      // extract relevant data per location
       const distancesPerOrigin = extractDistanceMatrixData(distMatrixRaw)
+      // determine total distance to each address
       const totalDistancePerOrigin = getTotalDistanceToOrigin(distancesPerOrigin)
+      // extract minimum
       return totalDistancePerOrigin.reduce((prev, current) => (prev.totalDistance < current.totalDistance) ? prev : current)
     } else return null
   }
@@ -29,6 +37,8 @@ function getMinimimumDestination (group, DMService) {
   return getMinimumAddress()
 }
 
+// Get the addresses and then filter it by username. Return null
+// if the user has no address linked
 function getUserDestination (group, username) {
   async function getAddresses () {
     const addr = await getMemberAddresses(group)
@@ -45,6 +55,7 @@ function getUniDestination () {
   return WITS_ADDRESS
 }
 
+// Format address fields to one string
 function formatAddresses (addresses) {
   const formattedAddresses = addresses.map(a => {
     if (a.address_line_1) {
@@ -78,6 +89,7 @@ function getDistanceMatrix (originList, destList) {
   })
 }
 
+// Only extract the addresses and list of travel distances for each one
 function extractDistanceMatrixData (distMat) {
   const origins = distMat.origin_addresses
   const destinations = distMat.destination_addresses
@@ -96,6 +108,7 @@ function extractDistanceMatrixData (distMat) {
   return addrDistances
 }
 
+// Sum up the lists of travel distances
 function getTotalDistanceToOrigin (distPerOrigin) {
   return distPerOrigin.map(element => {
     return {
