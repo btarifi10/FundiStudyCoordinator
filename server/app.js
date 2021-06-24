@@ -187,6 +187,8 @@ app.get('/get-users', checkAuthenticated, function (req, res) { // KEEP THIS
     // Send back the result
     .then(result => {
       res.send(result)
+      console.log('FROM SERVER:')
+      console.log(result)
     })
     .catch(err => {
       res.send({

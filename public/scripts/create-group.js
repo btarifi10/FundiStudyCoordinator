@@ -6,7 +6,8 @@ const userList = document.getElementById('user-list')
 const addedUsers = document.getElementById('added-users')
 
 let invitedMembers = []
-let users = null
+let users = []
+let usersLeft = []
 const existingGroups = [] // stores list of { groupname: TheGroupName }, to check for duplicates
 let membershipNum = null // to limit user to membership of 10 groups
 
@@ -17,18 +18,19 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function loadUsersList () {
-  fetch('/get-users')
+  return fetch('/get-users')
     .then(response => response.json())
     .then(data => data.recordset)
     .then(data => {
       users = data
+      usersLeft = data
       populateUsersList(users)
     })
 }
 
-function populateUsersList (users) {
+function populateUsersList (list) {
   userList.innerHTML = ''
-  users.forEach(element => {
+  list.forEach(element => {
     const option = document.createElement('option')
     option.text = element.username.trim()
     option.value = element.user_id
@@ -62,9 +64,9 @@ function userSearch () {
   const searchTerm = document.getElementById('search').value.toLowerCase()
 
   if (searchTerm) {
-    const matchingUsers = users.filter(u => u.username.toLowerCase().includes(searchTerm))
+    const matchingUsers = usersLeft.filter(u => u.username.toLowerCase().includes(searchTerm))
     populateUsersList(matchingUsers)
-  } else { populateUsersList(users) }
+  } else { populateUsersList(usersLeft) }
 }
 
 document.getElementById('addUsers').addEventListener('click', addUsers)
@@ -74,15 +76,10 @@ function addUsers () {
   addedUsers.innerHTML = `
   ${invitedMembers.map(member => `<li class="list-group-item">${member.username}</li>`).join('')}`
 
-  // Remove invited members from the users list to choose from
-  const uIds = []
-  users.forEach((user, index) => {
-    invitedMembers.forEach(mem => {
-      if (user.username.trim() === mem.username.trim()) { uIds.push(index) }
-    })
+  usersLeft = users.filter(user => {
+    return invitedMembers.findIndex(u => u.username.trim() === user.username.trim()) === -1
   })
-  for (let i = uIds.length - 1; i >= 0; i--) { users.splice(uIds[i], 1) }
-  populateUsersList(users)
+  populateUsersList(usersLeft)
 }
 
 function selectedMembers () {
@@ -121,6 +118,7 @@ function createGroup () {
   }
 
   const dateCreated = moment()
+  console.log('step 1')
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
 
   // Record the 'CREATED' and 'INVITE' actions
@@ -129,20 +127,26 @@ function createGroup () {
   invitedMembers.forEach(member => { actionString += member.username + ', ' })
   addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
 
+  console.log('step 2')
   // Update variables to avoid creating duplicate groups, or going over membership limit (10), or inviting same username
   existingGroups.push(groupName)
   membershipNum += 1
+
+  console.log('CREATE BTN CLICKED')
   alert(`Group '${groupName}' has been created`)
-  loadUsersList()
+
   // Clear inputs
   clearInputs()
+  console.log('step 3')
+  usersLeft = users
+  populateUsersList(users)
 }
 
 function clearInputs () {
   document.getElementById('group-name').value = ''
   document.getElementById('course-code').value = ''
   document.getElementById('search').value = ''
-  userSearch()
+  // userSearch()
   addedUsers.innerHTML = ''
   invitedMembers = []
 }

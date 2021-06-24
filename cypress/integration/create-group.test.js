@@ -52,6 +52,9 @@ describe('The correct page is displayed to the user when entering the create-gro
 })
 
 describe('Users cannot input invalid group information for group creation', () => {
+  before('Clear any groups besides default group_id = 6', () => {
+    fetch('/clear-groups')
+  })
   it('Does not allow user to create group without inviting a member', () => {
     cy.get('input[data-cy="group-name"]')
       .type('NewGroup1')
@@ -69,7 +72,18 @@ describe('Users cannot input invalid group information for group creation', () =
     })
   })
 
+  it('Filters through the user list', () => {
+    cy.get('input[data-cy="user-search"]')
+      .clear()
+      .type('Batman')
+      .should('have.length', 1)
+      .and('have.text', '')
+  })
+
   it('Lists members invited', () => {
+    cy.get('input[data-cy="user-search"]')
+      .clear()
+
     cy.get('select[data-cy="user-list"]')
       .select('James VI')
 
@@ -83,6 +97,9 @@ describe('Users cannot input invalid group information for group creation', () =
   })
 
   it('Does not allow user to invite same user twice', () => {
+    cy.get('input[data-cy="user-search"]')
+      .type('James')
+
     cy.get('select[data-cy="user-list"]')
       .should('have.length', 1)
       .and('have.text', '')
@@ -120,18 +137,11 @@ describe('Users cannot input invalid group information for group creation', () =
       .should('have.value', 'abcd567890')
   })
   /// //////////////////////////////////////////////////////////////////////////////////////////////////////
-  it('Filters through the user list', () => {
-    cy.get('input[data-cy="user-search"]')
-      .clear()
-      .type('Batman')
-      .should('have.length', 1)
-      .and('have.text', '')
-  })
 })
 
 describe('User can create a new group with chosen members invited (automatically added for now)', () => {
   before('Clear any groups besides default group_id = 6', () => {
-    fetch('/clear-groups')
+    cy.request('/clear-groups')
   })
   it('Allows user to input Group information and add member to invite to create a new group', () => {
     cy.get('input[data-cy="group-name"]')
@@ -144,8 +154,11 @@ describe('User can create a new group with chosen members invited (automatically
       .type('TEST123')
       .should('have.value', 'TEST123')
 
-    cy.get('[data-cy=add-btn]')
-      .click()
+    // cy.get('[data-cy=user-list]')
+    //   .select('James VI')
+
+    // cy.get('[data-cy=add-btn]')
+    //   .click()
 
     cy.get('[data-cy=create-btn]')
       .click()
@@ -162,9 +175,10 @@ describe('User can create a new group with chosen members invited (automatically
     cy.get('[data-cy=course-code]')
       .should('have.text', '')
 
-    cy.get('select[data-cy="user-list"]')
-      .find('option')
-      .should('have.length', 1)
+    cy.get('[data-cy=user-list]')
+      .contains('James VI')
+      // .find('option')
+      // .should('have.text', 'James VI')
   })
 
   // it('Sends invite to added user on group creation', () => {})

@@ -38,7 +38,10 @@ testRouter.get('/clear-groups', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-        .query('DELETE FROM groups WHERE group_id != 6')
+        .query("DELETE FROM invites WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')")
+        .query("DELETE FROM memberships WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')")
+        .query("DELETE FROM action_log WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')")
+        .query("DELETE FROM groups WHERE (group_name ='NewGroup1')")
     })
     // Send back the result
     .then(result => {
