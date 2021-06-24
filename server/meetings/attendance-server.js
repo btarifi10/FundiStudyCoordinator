@@ -46,7 +46,7 @@ function handleMeetingMember (io, socket) {
 
   setInterval(function () {
     socket.emit('news-by-server')
-  }, 10000) // request every 10seconds
+  }, 120000) // request every 2min
 }
 
 function handleArrival (socket, check) {
