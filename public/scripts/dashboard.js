@@ -52,11 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
   )
 })
 
-window.iframeLoaded = iframeLoaded
-function iframeLoaded (iframeObj) {
-  const iUrl = iframeObj.contentWindow.location
-  let href = iUrl.toString()
-  href = href.replace(`${iUrl.origin.toString()}/`, '')
-  const url = window.location.toString().split('#')[0]
-  window.location = url + `#${href}`
-}
+// window.iframeLoaded = iframeLoaded
+// function iframeLoaded (iframeObj) {
+//   const iUrl = iframeObj.contentWindow.location
+//   let href = iUrl.toString()
+//   href = href.replace(`${iUrl.origin.toString()}/`, '')
+//   const url = window.location.toString().split('#')[0]
+//   window.location = url + `#${href}`
+// }

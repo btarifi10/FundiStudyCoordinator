@@ -10,6 +10,7 @@ import {
   displayChatMembers,
   displayMessage
 } from './chat-display.js'
+import { addAction } from '../action-log.js'
 
 const io = window.io
 
@@ -53,12 +54,18 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit(JOIN_CHAT_EVENT, { username, group })
       const rating = document.getElementById('rate-members')
       loadRatingLink(rating)
+
+      // Record user's entry into the groupchat
+      const time_entered = moment()
+      addAction({ action: 'ENTER', groupName: group, timestamp: time_entered, description: `${username} entered the '${group}' chat` })
     })
-  const linkGroupPolls = document.getElementById('link-group-polls')
-  linkGroupPolls.href = `polls?group=${group}`
+
+  // Set up tab links
+  document.getElementById('link-group-polls').href = `polls?group=${group}`
+  document.getElementById('view-log-tab').href = `view-log?group=${group}`
 })
 
-function loadRatingLink (rating) {
+function loadRatingLink(rating) {
   const a = document.createElement('a')
   const text = document.createTextNode('Rate Members')
   a.appendChild(text)
@@ -72,7 +79,7 @@ function loadRatingLink (rating) {
 
 // this may be altered to include an option for
 
-function loadMeetingLink (meeting) {
+function loadMeetingLink(meeting) {
   const a = document.createElement('a')
   const text = document.createTextNode('Create Meetings')
   a.appendChild(text)
@@ -105,3 +112,13 @@ socket.on(MESSAGE_EVENT, message => {
 chatForm.addEventListener('submit', (event) => {
   sendMessage(event, group, currentUser.username, socket)
 }, false)
+
+window.onbeforeunload = function () {
+  userService.getCurrentUser()
+    .then(user => {
+      // Record user's exit from the groupchat
+      const username = user.username
+      const time_left = moment()
+      addAction({ action: 'LEAVE', groupName: group, timestamp: time_left, description: `${username} left the '${group}' chat` })
+    })
+}

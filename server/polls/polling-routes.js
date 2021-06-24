@@ -1,5 +1,4 @@
 'use strict'
-
 const express = require('express')
 const path = require('path')
 const db = require('../database-service')
@@ -7,7 +6,8 @@ const {
   createBanningPoll,
   createGroupRequestsPoll,
   createInvitePoll,
-  createCustomPoll
+  createCustomPoll,
+  getGroupHistory
 } = require('./polls.js')
 
 const { checkAuthenticated } = require('../authentication')
@@ -98,7 +98,7 @@ pollingRouter.get('/api/get-users-to-invite', (req, res) => {
             group_id = (SELECT group_id
               FROM groups
               WHERE group_name=@group)) AND user_id NOT IN
-          (SELECT user_id FROM invites WHERE
+          (SELECT receiver_id FROM invites WHERE
             group_id= (SELECT group_id
               FROM groups
               WHERE group_name=@group) );
@@ -115,6 +115,14 @@ pollingRouter.get('/api/get-users-to-invite', (req, res) => {
     })
 })
 
+pollingRouter.get('/api/get-poll-history', (req, res) => {
+  const group = req.query.group
+  getGroupHistory(group)
+    .then(polls => {
+      res.send(polls)
+    })
+})
+
 /* --------------------- API calls to start Polls ----------------------- */
 
 // API call to start group request poll
@@ -128,7 +136,7 @@ pollingRouter.post('/api/start-requests-poll', (req, res) => {
 
   createGroupRequestsPoll(details)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 // API call to start group request poll
@@ -154,8 +162,8 @@ pollingRouter.post('/api/start-custom-poll', (req, res) => {
     voters: []
   }
   */
-
-  createCustomPoll(details)
+  const userId = req.user.userId
+  createCustomPoll(details, userId)
 
   res.send(200)
 })

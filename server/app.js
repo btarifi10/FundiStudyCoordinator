@@ -19,6 +19,8 @@ const flash = require('express-flash')
 const session = require('express-session')
 const handleChatMember = require('./group-chat/chat-server')
 const { handleVoting } = require('./polls/polling-service')
+const { logAction } = require('./logging/logging.js')
+const { checkAuthenticated } = require('./authentication')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
@@ -62,7 +64,7 @@ app.delete('/delete/:membership_id', (request, response) => {
 })
 
 // Retrieves all the groups from the database to load for the home-page
-app.get('/get-other-groups', function (req, res) {
+app.get('/get-other-groups', function (req, res) { // KEEP THIS
   db.pools
     .then((pool) => {
       return pool.request()
@@ -106,11 +108,12 @@ app.get('/get-members', function (req, res) {
     .then((pool) => {
       return pool.request()
         .input('group_name', db.sql.Char, req.query.group)
-        .query(`select username
+        .input('user_name', db.sql.Char, req.query.username)
+        .query(`select rating, username
         from users U 
         inner join memberships M
         on U.user_id = M.user_id
-        where M.group_id = (select group_id from groups
+        where NOT U.username= @user_name AND M.group_id = (select group_id from groups
         where group_name =@group_name); `)
     })
     .then(result => {
@@ -258,24 +261,23 @@ app.get('/get-tag-values', function (req, res) {
 /* ----------------------------- Yasser's Code ----------------------------- */
 
 // const db = require('./database-service')
-const bodyParser = require('body-parser')
-const { mainModule } = require('process')
-app.use(bodyParser.urlencoded({ extended: false }))
+// const bodyParser = require('body-parser')
+// const { mainModule } = require('process')
+// app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/intermediate-group', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
-})
+// app.get('/intermediate-group', function (req, res) {
+//   res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
+// })
 
-app.get('/createGroup', function (req, res) {
+app.get('/createGroup', function (req, res) { // KEEP THIS
   res.sendFile(path.join(__dirname, '..', 'views', 'create-join-group.html'))
-  // Add code here to get stuff from the database
 })
 
 app.use(express.json())
 
-app.get('/get-users', function (req, res) {
+// Return list of all usernames excluding the current user
+app.get('/get-users', checkAuthenticated, function (req, res) { // KEEP THIS
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
         .input('user_id', db.sql.Char, req.user.userId)
@@ -290,7 +292,6 @@ app.get('/get-users', function (req, res) {
     .then(result => {
       res.send(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -298,40 +299,41 @@ app.get('/get-users', function (req, res) {
     })
 })
 
-app.get('/getUsersInGroup', function (req, res) {
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        .input('groupname', db.sql.Char, req.query.groupname)
-        .query(`
-        SELECT *
-        FROM users AS u 
-        INNER JOIN memberships AS m
-            ON u.user_id = m.user_id
-        INNER JOIN groups AS g
-            ON g.group_id = m.group_id
-        WHERE g.group_id IN (
-        SELECT group_id 
-        FROM groups
-        WHERE group_name = (@groupname)
-        )
+// app.get('/getUsersInGroup', checkAuthenticated, function (req, res) {
+//   db.pools
+//     // Run query
+//     .then((pool) => {
+//       return pool.request()
+//         .input('groupname', db.sql.Char, req.query.groupname)
+//         .query(`
+//         SELECT *
+//         FROM users AS u
+//         INNER JOIN memberships AS m
+//             ON u.user_id = m.user_id
+//         INNER JOIN groups AS g
+//             ON g.group_id = m.group_id
+//         WHERE g.group_id IN (
+//         SELECT group_id
+//         FROM groups
+//         WHERE group_name = (@groupname)
+//         )
 
-        `)
-    })
-    // Send back the result
-    .then(result => {
-      res.send(result)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
+//         `)
+//     })
+//     // Send back the result
+//     .then(result => {
+//       res.send(result)
+//     })
+//     // If there's an error, return that with some description
+//     .catch(err => {
+//       res.send({
+//         Error: err
+//       })
+//     })
+// })
 
-app.get('/get-groups', function (req, res) {
+// Returns list of existing groups
+app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
   db.pools
     // Run query
     .then((pool) => {
@@ -346,9 +348,7 @@ app.get('/get-groups', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -423,8 +423,9 @@ app.get('/getRequests', function (req, res) {
     })
 })
 
-app.post('/createGroup', function (req, res) {
+app.post('/createGroup', checkAuthenticated, function (req, res) {
   const { groupName, courseCode, dateCreated, tagValue } = req.body
+
   db.pools
     .then((pool) => {
       return pool.request()
@@ -449,8 +450,8 @@ app.post('/createGroup', function (req, res) {
     })
 })
 
-app.post('/complete-group-creation', function (req, res) {
-  const { groupName, courseCode, invitedMembers, dateCreated } = req.body
+app.post('/complete-group-creation', checkAuthenticated, function (req, res) {
+  const { groupName, invitedMembers, dateCreated } = req.body
   db.pools
     .then((pool) => {
       invitedMembers.forEach(member => {
@@ -550,7 +551,7 @@ app.post('/sendInvites', function (req, res) {
     })
 })
 
-app.post('/sendRequest', function (req, res) {
+app.post('/sendRequest', checkAuthenticated, function (req, res) {
   const reqObj = req.body
   // console.log(inviteList)
   // Make a query to the database
@@ -579,6 +580,12 @@ app.post('/sendRequest', function (req, res) {
     })
 })
 
+app.post('/logAction', checkAuthenticated, function (req, res) {
+  const reqObj = req.body // {group_name, timestamp, description}
+  const userId = req.user.userId
+  logAction(reqObj, userId)
+})
+
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
   const { id } = req.params
@@ -605,7 +612,7 @@ app.get('/profileViews/:id', (req, res) => {
     })
 })
 
-app.get('/membership-views', function (req, res) {
+app.get('/membership-views', function (req, res) { // KEEP THIS
   // save the currentUser ID as a variable to use in the select query
   const id = req.user.userId
   // Make a query to the database
@@ -655,6 +662,59 @@ app.get('/choose-location', function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'choose-location.html'))
 })
 
+// Temp routing for log (move to logging.js)
+
+app.get('/get-actions', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query('SELECT action FROM actions')
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.get('/get-log', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('group_name', db.sql.Char, req.query.group)
+        .query(`
+        SELECT username, action, timestamp, description
+          FROM action_log AS al
+          INNER JOIN groups AS g
+            ON al.group_id = g.group_id
+          INNER JOIN actions AS a
+            ON a.action_id = al.action_id
+          INNER JOIN users AS u
+            ON u.user_id = al.user_id
+        WHERE g.group_name = (@group_name)
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 // Routing
 
 const chatRouter = require('./group-chat/chat-routes')
@@ -678,9 +738,17 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
+// const { checkAuthenticated } = require('./authentication')
 app.use(pollingRouter)
 
-/* ------------------------------------------------------------------------- */
+/* ------------------------------ Tests ------------------------------------- */
+
+if (process.env.DEPLOYMENT === 'TEST') {
+  const testRouter = require('./database-test-routes')
+  app.use(testRouter)
+}
+
+/* -------------------------------------------------------------------------- */
 
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
