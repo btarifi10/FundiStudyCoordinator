@@ -19,6 +19,7 @@ We will design tags such that it has 2 attributes:
 2. tag - resticted to be 20 characters
 
 
+We will use tag_id as the primary key.
 
 ## Consequences:
 1. Users are restricted in the tags they can give ( 85 unique options). This does present a tradeoff between personalisable group tags and a more manageable constrained option list.
