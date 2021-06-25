@@ -611,11 +611,7 @@ app.get('/profileViews/:id', checkAuthenticated, (req, res) => {
     })
 })
 
-<<<<<<< HEAD
 app.get('/membership-views', checkAuthenticated, function (req, res) {
-=======
-app.get('/membership-views', function (req, res) { // KEEP THIS
->>>>>>> main
   // save the currentUser ID as a variable to use in the select query
   const id = req.user.userId
   // Make a query to the database
