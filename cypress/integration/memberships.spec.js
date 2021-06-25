@@ -1,6 +1,28 @@
 'use strict'
+describe('My groups contents and links', () => {
+  before('Log in', () => {
+    configureTests()
+  })
+  it('displays the username, first and last names and rating', () => {
+    cy.get('[data-cy=profile-btn]').click()
 
-describe('Profile testing links', () => {
+    cy.getIframeBody('dashboard-iframe').within(() => {
+      cy.wait(2000)
+      cy.get('[data-cy=username-text]')
+        .contains('Archie')
+      cy.get('[data-cy=profile-table]').within(() => {
+        cy.get('[data-cy=user-first-name]')
+          .contains('Archibald')
+        cy.get('[data-cy=user-last-name]')
+          .contains('Armstrong')
+        cy.get('[data-cy=user-rating]')
+          .contains('5')
+      })
+    })
+  })
+})
+
+describe('My groups contents and links', () => {
   before('Log in', () => {
     configureTests()
   })
