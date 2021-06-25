@@ -1,13 +1,13 @@
 'use strict'
 /* ------------------------------ Functionality ------------------------------ */
-import { addAction } from './action-log.js'
-import { UserService } from './user-service.js'
-import { getMinimimumDestination, getUserDestination, getUniDestination } from './recommend-locations.js'
+import { addAction } from '../action-log.js'
+import { UserService } from '../user-service.js'
+import { getMinimimumDestination, getUserDestination, getUniDestination } from '../recommend-locations.js'
 import {
   loadLocation,
   loadPlatform
 } from './load-meetings.js'
-import { formatChatMessage, formatDatabaseMessage, recordMessage } from './group-chat/chat-messages.js'
+import { formatChatMessage, formatDatabaseMessage, recordMessage } from '../group-chat/chat-messages.js'
 
 const { group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
