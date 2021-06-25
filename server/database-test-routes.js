@@ -30,7 +30,44 @@ testRouter.get('/clear-messages', function (req, res) {
     })
 })
 
-/* ---------------------------- Rating Test Routes ---------------------------- */
+/* ---------------------------- Screening Test Routes ---------------------------- */
+
+// Clear all screening entries
+testRouter.get('/delete-screening', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query('DELETE FROM screening')
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Determines that the correct value was entered into the screening table
+testRouter.get('/screening', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query(`select passed from screening
+                where user_id = 4;`)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+/* -------------------------------------------------------------------------- */
 
 // Resets the ratings to the agreed start values
 testRouter.get('/reset-ratings', function (req, res) {
