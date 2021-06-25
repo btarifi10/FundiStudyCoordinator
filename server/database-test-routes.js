@@ -32,4 +32,50 @@ testRouter.get('/clear-messages', function (req, res) {
 
 /* -------------------------------------------------------------------------- */
 
+testRouter.get('/clear-groups', function (req, res) {
+  console.log('HELLOO THERE, I am clearing the database from any NewGroup1')
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query(`
+        DELETE FROM invites WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
+        DELETE FROM memberships WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
+        DELETE FROM action_log WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
+        DELETE FROM groups WHERE (group_name ='NewGroup1')
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+testRouter.get('/clear-requests', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query("DELETE FROM group_requests WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')")
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 module.exports = testRouter

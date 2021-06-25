@@ -40,20 +40,102 @@ course_code = 'UNICORN007'
 (NOTE: Both User 1 and User 2 are part of this group)
 */
 describe('Group creation is logged', () => {
-    before('Navigate to Create Group Page')
+  before('Navigate to Create Group Page', () => {
+    cy.request('/clear-groups')
+    loginAsArchie()
+    cy.visit('/create-group')
+  })
+  it('Creates the group', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .type('NewGroup1')
+      .should('have.value', 'NewGroup1')
+
+    cy.get('[data-cy=course-code]')
+      .clear()
+      .type('TEST123')
+      .should('have.value', 'TEST123')
+
+    cy.get('select[data-cy="user-list"]')
+      .select('James VI')
+
+    cy.get('[data-cy=add-btn]')
+      .click()
+
+    cy.get('[data-cy=added-users]')
+      .find('li')
+      .should('have.length', 1)
+      .and('have.text', 'James VI')
+
+    cy.get('[data-cy=create-btn]')
+      .click()
+
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains("Group 'NewGroup1' has been created")
+    })
+  })
+
+  it('Shows the group in the action log of the group', () => {
+    // acces the group created, and click on activity log to view 'group created'
+  })
 })
 
-describe('Invites upon group creation are logged', () => {})
+describe('Invites upon group creation are logged', () => {
+  before('Navigate to Create Group Page', () => {
+    cy.request('/clear-groups')
+    loginAsArchie()
+    cy.visit('/create-group')
+  })
+
+  it('Invites two users to new group', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .type('NewGroup1')
+      .should('have.value', 'NewGroup1')
+
+    cy.get('[data-cy=course-code]')
+      .clear()
+      .type('TEST123')
+      .should('have.value', 'TEST123')
+
+    cy.get('select[data-cy="user-list"]')
+      .select('James VI')
+
+    cy.get('[data-cy=add-btn]')
+      .click()
+
+    cy.get('select[data-cy="user-list"]')
+      .select('barry')
+
+    cy.get('[data-cy=add-btn]')
+      .click()
+
+    cy.get('[data-cy=added-users]')
+      .find('li')
+      .should('have.length', 2)
+
+    cy.get('[data-cy=create-btn]')
+      .click()
+
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains("Group 'NewGroup1' has been created")
+    })
+  })
+
+  it('Shows the invites for both users invites', () => {
+    loginAsJames()
+    cy.visit('/invites')
+
+    cy.get('[data-cy=invite-table]')
+      .contains('NewGroup1')
+  })
+})
 
 describe('Entering and Leaving a group chat is logged', () => {})
 
 describe('Messages sent in a group chat are logged', () => {})
 
 describe('COVID screening results are logged', () => {})
-
-
-
-
 
 /* ---------------------------- Helper Functions ---------------------------- */
 
