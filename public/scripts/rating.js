@@ -34,14 +34,13 @@ const ratingSubmission = document.getElementById('submitButton')
 ratingSubmission.addEventListener('click', (event) => {
   event.preventDefault()
   submitRating()
-  location.href = '/chat'
+  alert('Rating Captured')
 })
 
 // Handles the retrieval of the passed rating so as to update based on an average with the current
 // rating given
 function submitRating () {
   const nameSelected = selectMembers.value.trim()
-  console.log(nameSelected)
   fetch(`/get-current?nameSelected=${nameSelected}`)//  , {
     .then(response => response.json())
     .then(data => {
@@ -64,10 +63,6 @@ function submitRating () {
       postNewRating(ratingUpdated)
     })
 }
-
-
-
-
 
 // Sends back the updated rating to be posted to the database
 function postNewRating (ratingUpdated) {

@@ -30,9 +30,34 @@ testRouter.get('/clear-messages', function (req, res) {
     })
 })
 
+/* ---------------------------- Rating Test Routes ---------------------------- */
+
+// Resets the ratings to the agreed start values
+testRouter.get('/reset-ratings', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query(`UPDATE users SET rating = CASE user_id
+                      WHEN 4 THEN 5
+                      WHEN 28 THEN 3.5
+                      ELSE NULL 
+                    END, 
+                      number_ratings = CASE user_id
+                      WHEN 4 THEN 1 
+                      WHEN 28 THEN 2 
+                      ELSE NULL
+                  END; `)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 /* -------------------------------------------------------------------------- */
-
-// delete the groups added except for group_id = 6
-
 
 module.exports = testRouter

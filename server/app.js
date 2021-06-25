@@ -147,6 +147,7 @@ app.get('/get-current', function (req, res) {
 
 // Updates the ratings of the newly rated individual
 app.post('/update-ranking', function (req, res) {
+  console.log(req)
   db.pools
     .then((pool) => {
       return pool.request()
