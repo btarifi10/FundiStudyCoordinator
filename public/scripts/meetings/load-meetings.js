@@ -1,27 +1,12 @@
-function loadButtons (meeting) {
-  const a = document.createElement('button')
-  const text = document.createTextNode('Online')
-  a.appendChild(text)
-  a.setAttribute('class', 'btn btn-primary')
-  a.setAttribute('data-id', 'onlineMeet')
-  a.setAttribute('type', 'submit')
-  meeting.appendChild(a)
 
-  const a2 = document.createElement('button')
-  const text2 = document.createTextNode('face-to-face')
-  a2.appendChild(text2)
-  a2.setAttribute('class', 'btn btn-primary')
-  a2.setAttribute('data-id', 'faceMeet')
-  a2.setAttribute('type', 'submit')
-  meeting.appendChild(a2)
-}
-
+/* --------- Remove previous contents added to the element----------- */
 function removePlace (placeDiv) {
   while (placeDiv.hasChildNodes()) {
     placeDiv.removeChild(placeDiv.lastChild)
   }
 }
 
+/* ----------------- Load the online meeting form ------------------- */
 function loadPlatform () {
   const placeDiv = document.getElementById('place')
   removePlace(placeDiv)
@@ -60,7 +45,6 @@ function loadPlatform () {
   placeDiv.appendChild(createBreak)
 
   // Create Link division for input
-  // create the link division
   const linkDiv = document.createElement('div')
 
   // create the link explanation
@@ -94,6 +78,7 @@ function loadPlatform () {
   placeDiv.appendChild(createBreak)
 }
 
+/* -------------- Load the face-to-face meeting form ---------------- */
 function loadLocation () {
   const placeDiv = document.getElementById('place')
   removePlace(placeDiv)
@@ -199,38 +184,119 @@ function loadLocation () {
   placeDiv.appendChild(createBreak)
 }
 
+/** ------------------- VIEW MEETINGS HELPERS ---------------------- **/
+/* ------------- Load the View Meetings Options buttons ------------- */
+function loadButtons (meeting) {
+  const a = document.createElement('button')
+  const text = document.createTextNode('Online')
+  a.appendChild(text)
+  a.setAttribute('class', 'btn btn-primary')
+  a.setAttribute('data-id', 'onlineMeet')
+  a.setAttribute('type', 'submit')
+
+  const i = document.createElement('i')
+  i.setAttribute('class', 'fas fa-globe')
+  a.appendChild(i)
+  meeting.appendChild(a)
+
+  const a2 = document.createElement('button')
+  const text2 = document.createTextNode('face-to-face')
+  a2.appendChild(text2)
+  a2.setAttribute('class', 'btn btn-primary')
+  a2.setAttribute('data-id', 'faceMeet')
+  a2.setAttribute('type', 'submit')
+  const i2 = document.createElement('i')
+  i2.setAttribute('class', 'fa fa-map-marker')
+  a2.appendChild(i2)
+  meeting.appendChild(a2)
+}
+
+/* ------------------- Load the meetings table ---------------------- */
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
 function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
-  if (data.recordsets.length === 0) {
-    table.innerHTML = "<tr><td class='no-data' colspan='7'>No meetings</td></tr>"
+  if (data.recordset.length === 0) {
+    table.innerHTML = "<tr><td class='no-data' colspan='5'>No meetings</td></tr>"
     return
   }
 
   let headings = ''
   headings += '<thead>'
-  headings += '<th>meeting id</th>'
+  headings += '<th>Meeting ID</th>'
   headings += '<th>Group Name</th>'
   headings += '<th>creator id</th>'
   headings += '<th>Meeting Time</th>'
   headings += '<th>Place/Location</th>'
+  headings += '<th>Time Remaining</th>'
   headings += '</thead>'
 
   let tableHtml = ''
   tableHtml += headings
-  data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link, is_online }) { // group_num, group_online, group_url }) {
-    if (is_online == option) {
-      tableHtml += '<tr>'
-      tableHtml += `<td id='${meeting_id}-id'>${meeting_id}</td>`
-      tableHtml += `<td id='${meeting_id}-meeting-id'>${group_name}</td>`
-      tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
-      tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
-      tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
-      tableHtml += `<td id = '${meeting_id}-link'></td>`
-      tableHtml += '</tr>'
-    }
-  })
 
+  data.recordset.forEach(function ({ meeting_id, group_name, creator_id, meeting_time, place, link, is_online }) {
+    meeting_time = new Date(meeting_time)
+    // retrieve time remaining until the meeting in days
+    const current_time = new Date()
+    let sign = ' '
+    const remaining = getTimeRemaining(meeting_time)
+    if (meeting_time.getTime() - current_time.getTime() < 0) {
+      sign = '-'
+    }
+
+    tableHtml += '<tr>'
+    tableHtml += `<td id='${meeting_id}-meeting-id'>${meeting_id}</td>`
+    tableHtml += `<td id='${meeting_id}-meeting-group-name'>${group_name}</td>`
+    tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
+    tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
+    tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
+    if (option == 0) {
+      tableHtml += `<td id = '${meeting_id}-time-diff'>
+      ${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds
+      <br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-id='attend-${meeting_id}-btn' 
+      onclick="move(${meeting_id})"> Attend</button></td>`
+    } else {
+      tableHtml += `<td id = '${meeting_id}-time-diff'>
+      ${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds</td>`
+    }
+    tableHtml += '</tr>'
+  })
   table.innerHTML = tableHtml
+}
+
+window.move = move
+function move (meeting_id) {
+  if (confirm('Do you wish to attend the meeting? Please note that your location or information shared in the chat will not be saved')) {
+    const URL = `/attend-meeting?group=${group}&meetingID=${meeting_id}`
+    window.open(URL, '_blank') || window.location.replace(URL)
+  }
+}
+
+function getTimeRemaining (chosenTime) {
+  const current_time = new Date()
+  // to seconds
+  let sec_remaining = Math.abs(chosenTime.getTime() - current_time.getTime()) / (1000)
+
+  // first calculate thenumber of whole days
+  const days_remaining = Math.floor(sec_remaining / 86400)
+  sec_remaining -= days_remaining * 86400 // subtract the number of days
+
+  const hours_remaining = Math.floor(sec_remaining / 3600) % 24
+  sec_remaining -= hours_remaining * 3600
+
+  const min_remaining = Math.floor(sec_remaining / 60) % 60
+  sec_remaining -= min_remaining * 60
+
+  sec_remaining = Math.floor(sec_remaining % 60)
+  // }
+
+  return {
+    days: days_remaining,
+    hours: hours_remaining,
+    minutes: min_remaining,
+    seconds: sec_remaining
+  }
 }
 
 export {

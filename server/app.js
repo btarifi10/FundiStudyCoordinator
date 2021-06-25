@@ -587,7 +587,7 @@ app.post('/logAction', checkAuthenticated, function (req, res) {
 })
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
-app.get('/profileViews/:id', (req, res) => {
+app.get('/profileViews/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params
   // Make a query to the database
   db.pools
@@ -602,7 +602,6 @@ app.get('/profileViews/:id', (req, res) => {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -612,7 +611,7 @@ app.get('/profileViews/:id', (req, res) => {
     })
 })
 
-app.get('/membership-views', function (req, res) { // KEEP THIS
+app.get('/membership-views', checkAuthenticated, function (req, res) {
   // save the currentUser ID as a variable to use in the select query
   const id = req.user.userId
   // Make a query to the database
@@ -630,7 +629,6 @@ app.get('/membership-views', function (req, res) { // KEEP THIS
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -643,15 +641,15 @@ app.get('/membership-views', function (req, res) { // KEEP THIS
 const meetingRouter = require('./meeting-routes')
 app.use(meetingRouter)
 
-app.get('/profile', function (req, res) {
+app.get('/profile', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
 })
 
-app.get('/my-groups', function (req, res) {
+app.get('/my-groups', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'my-groups.html'))
 })
 
-app.get('/home', function (req, res) {
+app.get('/home', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'home.html'))
 })
 
@@ -729,6 +727,9 @@ io.on('connection', socket => {
 
   // Voting
   handleVoting(io, socket)
+
+  // Meeting Attendance
+  handleMeetingMember(io, socket)
 })
 
 /* ------------------------------ Invites: Basheq ---------------------------------- */
@@ -738,7 +739,7 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
-// const { checkAuthenticated } = require('./authentication')
+const handleMeetingMember = require('./meetings/attendance-server')
 app.use(pollingRouter)
 
 /* ------------------------------ Tests ------------------------------------- */
