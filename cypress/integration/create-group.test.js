@@ -12,6 +12,33 @@ Steps:
 NOTE: You will have needed to have installed all dependencies (including
 developer dependencies)
 ----------------------------------------------------------------------------- */
+/* Permanent data in database
+User 1:
+user_id = 4
+first_name = 'Archibald'
+last_name = 'Armstrong'
+username = 'Archie'
+user_password = sh33p123
+
+User 2:
+user_id = 5
+first_name = 'James'
+last_name = 'Stuart'
+username = 'James VI'
+user_password = longlivetheking
+
+User 3: barry
+user_id = 28
+
+Group 2: Hall 30
+group_id: 29
+
+Group 1:
+group_id = 6
+group_name = 'Scotland'
+course_code = 'UNICORN007'
+(NOTE: Both User 1 and User 2 are part of this group)
+*/
 // const moment = require('moment')
 
 describe('The correct page is displayed to the user when entering the create-group page', () => {
@@ -46,8 +73,7 @@ describe('The correct page is displayed to the user when entering the create-gro
 
     cy.get('select[data-cy="user-list"]')
       .find('option')
-      .should('have.length', 1)
-      .and('have.text', 'James VI')
+      .should('have.length', 2)
   })
 })
 
@@ -72,12 +98,23 @@ describe('Users cannot input invalid group information for group creation', () =
     })
   })
 
-  it('Filters through the user list', () => {
+  it('Filters through the user list upon user input', () => {
     cy.get('input[data-cy="user-search"]')
       .clear()
-      .type('Batman')
+      .type('B')
+
+    cy.get('select[data-cy="user-list"]')
+      .find('option')
       .should('have.length', 1)
-      .and('have.text', '')
+      .and('have.text', 'barry')
+
+    cy.get('input[data-cy="user-search"]')
+      .clear()
+      .type('flowers')
+
+    cy.get('select[data-cy="user-list"]')
+      .find('option')
+      .should('have.length', 0)
   })
 
   it('Lists members invited', () => {
@@ -94,6 +131,9 @@ describe('Users cannot input invalid group information for group creation', () =
       .find('li')
       .should('have.length', 1)
       .and('have.text', 'James VI')
+
+    cy.get('select[data-cy="user-list"]')
+      .not('have.text', 'James VI')
   })
 
   it('Does not allow user to invite same user twice', () => {
@@ -129,7 +169,7 @@ describe('Users cannot input invalid group information for group creation', () =
       .type('12345678901234567890123456789012345678907654321')
       .should('have.value', '1234567890123456789012345678901234567890')
   })
-  /// //////////////////////////////////////////////////////////////////////////////////////////////////////
+
   it('Does not allow user to input course code over 10 alphanumerics', () => {
     cy.get('input[data-cy="course-code"]')
       .clear()
@@ -154,12 +194,6 @@ describe('User can create a new group with chosen members invited (automatically
       .type('TEST123')
       .should('have.value', 'TEST123')
 
-    // cy.get('[data-cy=user-list]')
-    //   .select('James VI')
-
-    // cy.get('[data-cy=add-btn]')
-    //   .click()
-
     cy.get('[data-cy=create-btn]')
       .click()
 
@@ -177,8 +211,9 @@ describe('User can create a new group with chosen members invited (automatically
 
     cy.get('[data-cy=user-list]')
       .contains('James VI')
-      // .find('option')
-      // .should('have.text', 'James VI')
+
+    cy.get('[data-cy=user-list]')
+      .contains('barry')
   })
 
   // it('Sends invite to added user on group creation', () => {})

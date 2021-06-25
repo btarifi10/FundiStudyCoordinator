@@ -74,7 +74,7 @@ function addUsers () {
   selectedMembers()
 
   addedUsers.innerHTML = `
-  ${invitedMembers.map(member => `<li class="list-group-item">${member.username}</li>`).join('')}`
+  ${invitedMembers.map(member => `<li class="list-group-item">${member.username.trim()}</li>`).join('')}`
 
   usersLeft = users.filter(user => {
     return invitedMembers.findIndex(u => u.username.trim() === user.username.trim()) === -1
