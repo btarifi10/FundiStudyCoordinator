@@ -70,6 +70,7 @@ function loadRatingLink(rating) {
   const text = document.createTextNode('Rate Members')
   a.appendChild(text)
   a.setAttribute('class', 'btn')
+  a.setAttribute('data-cy', 'rating-option')
 
   const username = currentUser.username
   a.href = `/rating?group=${group}&username=${username}`

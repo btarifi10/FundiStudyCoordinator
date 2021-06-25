@@ -34,20 +34,19 @@ const ratingSubmission = document.getElementById('submitButton')
 ratingSubmission.addEventListener('click', (event) => {
   event.preventDefault()
   submitRating()
+  alert('Rating Captured')
 })
 
 // Handles the retrieval of the passed rating so as to update based on an average with the current
 // rating given
 function submitRating () {
   const nameSelected = selectMembers.value.trim()
-  console.log(nameSelected)
   fetch(`/get-current?nameSelected=${nameSelected}`)//  , {
     .then(response => response.json())
     .then(data => {
       const ratingInfo = data.recordset[0]
       let newRating = null
       let newNumRating = null
-      console.log(ratingInfo)
 
       if (ratingInfo.length === 0) {
         newRating = getNewRanking()
@@ -74,7 +73,6 @@ function postNewRating (ratingUpdated) {
     },
     body: JSON.stringify(ratingUpdated)
   })
-  // window.history.back()
 }
 
 // Retrieves the new entry for the rating form the checkbox
