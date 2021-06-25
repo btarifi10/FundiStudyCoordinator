@@ -3,16 +3,18 @@ let users = []
 
 const { UserService } = require('./user-service')
 const userService = UserService.getUserServiceInstance()
+const express = require('express')
+const path = require('path')
+const bcrypt = require('bcrypt')
+const db = require('./database-service')
 
 function updateUsers () {
   userService.getAllUsers().then(
-    data => {
-      users = data
-    }
+    data => { users = data }
   )
 }
 
-function clearUsersExcept (userIds) {
+function resetUsers () {
   if (process.env.DEPLOYMENT === 'TEST') {
     updateUsers()
   }
@@ -20,12 +22,8 @@ function clearUsersExcept (userIds) {
 
 function loginRouter (app, passport) {
   // Import dependencies.
-  const router = require('express').Router()
-  const express = require('express')
+  const router = express.Router()
   router.use(express.json())
-  const path = require('path')
-  const bcrypt = require('bcrypt')
-  const db = require('./database-service')
 
   updateUsers()
 
@@ -182,5 +180,5 @@ function loginRouter (app, passport) {
 
 module.exports = {
   loginRouter,
-  clearUsersExcept
+  resetUsers
 }

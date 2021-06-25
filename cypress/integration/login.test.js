@@ -74,6 +74,8 @@ describe('Registration and successive sign in and sign out', () => {
 
     cy.url().should('eq', Cypress.config().baseUrl + 'login')
 
+    cy.wait(2000)
+
     cy.get('form')
 
     cy.get('[data-cy=username]')
