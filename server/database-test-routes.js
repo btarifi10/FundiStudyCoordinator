@@ -71,4 +71,7 @@ testRouter.get('/screening', function (req, res) {
 
 /* -------------------------------------------------------------------------- */
 
+// delete the groups added except for group_id = 6
+
+
 module.exports = testRouter

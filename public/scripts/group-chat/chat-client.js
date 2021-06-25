@@ -10,6 +10,7 @@ import {
   displayChatMembers,
   displayMessage
 } from './chat-display.js'
+import { addAction } from '../action-log.js'
 
 const io = window.io
 
@@ -53,6 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit(JOIN_CHAT_EVENT, { username, group })
       const rating = document.getElementById('rate-members')
       loadRatingLink(rating)
+
+      // Record user's entry into the groupchat
+      const time_entered = moment()
+      addAction({ action: 'ENTER', groupName: group, timestamp: time_entered, description: `${username} entered the '${group}' chat` })
     })
 
   // Set up tab links
@@ -107,3 +112,13 @@ socket.on(MESSAGE_EVENT, message => {
 chatForm.addEventListener('submit', (event) => {
   sendMessage(event, group, currentUser.username, socket)
 }, false)
+
+window.onbeforeunload = function () {
+  userService.getCurrentUser()
+    .then(user => {
+      // Record user's exit from the groupchat
+      const username = user.username
+      const time_left = moment()
+      addAction({ action: 'LEAVE', groupName: group, timestamp: time_left, description: `${username} left the '${group}' chat` })
+    })
+}

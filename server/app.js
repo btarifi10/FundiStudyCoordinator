@@ -19,6 +19,8 @@ const flash = require('express-flash')
 const session = require('express-session')
 const handleChatMember = require('./group-chat/chat-server')
 const { handleVoting } = require('./polls/polling-service')
+const { logAction } = require('./logging/logging.js')
+const { checkAuthenticated } = require('./authentication')
 /* ----------------------------- Initial Setup ----------------------------- */
 
 const app = express()
@@ -62,7 +64,7 @@ app.delete('/delete/:membership_id', (request, response) => {
 })
 
 // Retrieves all the groups from the database to load for the home-page
-app.get('/get-other-groups', function (req, res) {
+app.get('/get-other-groups', function (req, res) { // KEEP THIS
   db.pools
     .then((pool) => {
       return pool.request()
@@ -83,8 +85,24 @@ app.get('/get-other-groups', function (req, res) {
     })
 })
 
-// Retrieves the members of a group to populate the ratings list, exclusing the
-// current member
+// Retrieves all the tags for selection when creating a new group
+app.get('/get-tags', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query('SELECT * from tags;')
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Retrieves the members of a group to populate the ratings list
 app.get('/get-members', function (req, res) {
   db.pools
     .then((pool) => {
@@ -127,8 +145,28 @@ app.get('/get-current', function (req, res) {
     })
 })
 
-// Logs a screening event to the database based on the userId, whether the user has passed given
-// the criteria described by Wits's COVID-screening and the date the last COVID-screening was completed.
+// Updates the ratings of the newly rated individual
+app.post('/update-ranking', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('ranking', db.sql.Float, req.body.newRating)
+        .input('number_ranking', db.sql.Int, req.body.newNumberRanking)
+        .input('username', db.sql.Char, req.body.userName)
+        .query(`UPDATE users set rating = @ranking, number_ratings = @number_ranking
+          where username= @username;`)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Posts the results of the screening to the database
 app.post('/create-screening', function (req, res) {
   const newScreen = req.body
   db.pools
@@ -152,24 +190,93 @@ app.post('/create-screening', function (req, res) {
     })
 })
 
-/* ----------------------------- Yasser's Code ----------------------------- */
-
-const bodyParser = require('body-parser')
-const { mainModule } = require('process')
-app.use(bodyParser.urlencoded({ extended: false }))
-
-app.get('/intermediate-group', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
+// Retrieves the recommended groups with the same tag that the user is already a part of
+app.get('/get-recommendation', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`WITH tag1 AS 
+        (SELECT tag 
+        FROM groups AS g 
+        INNER JOIN memberships AS m
+        ON g.group_id = m.group_id
+        INNER JOIN users AS u
+        ON m.user_id = u.user_id
+        WHERE u.user_id IN (
+        SELECT user_id 
+        FROM users
+        WHERE user_id = @userId ))
+        SELECT DISTINCT group_id, group_name, course_code 
+        from groups as Gr
+        Inner join tag1  as t
+        on Gr.tag = t.tag
+        AND group_id NOT IN (
+        SELECT group_id FROM group_requests WHERE user_id=@userId)
+        AND group_id NOT IN (
+        SELECT group_id FROM memberships WHERE user_id=@userId);`
+        )
+    })
+    .then(result => {
+      res.send(result.recordset)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
 })
 
-app.get('/createGroup', function (req, res) {
+// Retrieves the tags from the groups the user is currently a part of
+app.get('/get-tag-values', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`select Distinct tag 
+        from tags as t
+        inner join (SELECT tag  as tag_id
+        FROM groups AS g 
+        INNER JOIN memberships AS m
+        ON g.group_id = m.group_id
+        INNER JOIN users AS u
+        ON m.user_id = u.user_id
+        WHERE u.user_id IN (
+        SELECT user_id 
+        FROM users
+        WHERE user_id = @userId )) as w
+        on t.tag_id= w.tag_id;`
+        )
+    })
+    .then(result => {
+      res.send(result.recordset)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+/* ----------------------------- Yasser's Code ----------------------------- */
+
+// const db = require('./database-service')
+// const bodyParser = require('body-parser')
+// const { mainModule } = require('process')
+// app.use(bodyParser.urlencoded({ extended: false }))
+
+// app.get('/intermediate-group', function (req, res) {
+//   res.sendFile(path.join(__dirname, '..', 'views', 'intermediate-group.html'))
+// })
+
+app.get('/createGroup', function (req, res) { // KEEP THIS
   res.sendFile(path.join(__dirname, '..', 'views', 'create-join-group.html'))
-  // Add code here to get stuff from the database
 })
 
 app.use(express.json())
 
-app.get('/get-users', function (req, res) {
+// Return list of all usernames excluding the current user
+app.get('/get-users', checkAuthenticated, function (req, res) { // KEEP THIS
   db.pools
     .then((pool) => {
       return pool.request()
@@ -185,7 +292,6 @@ app.get('/get-users', function (req, res) {
     .then(result => {
       res.send(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -193,40 +299,41 @@ app.get('/get-users', function (req, res) {
     })
 })
 
-app.get('/getUsersInGroup', function (req, res) {
-  db.pools
-    // Run query
-    .then((pool) => {
-      return pool.request()
-        .input('groupname', db.sql.Char, req.query.groupname)
-        .query(`
-        SELECT *
-        FROM users AS u 
-        INNER JOIN memberships AS m
-            ON u.user_id = m.user_id
-        INNER JOIN groups AS g
-            ON g.group_id = m.group_id
-        WHERE g.group_id IN (
-        SELECT group_id 
-        FROM groups
-        WHERE group_name = (@groupname)
-        )
+// app.get('/getUsersInGroup', checkAuthenticated, function (req, res) {
+//   db.pools
+//     // Run query
+//     .then((pool) => {
+//       return pool.request()
+//         .input('groupname', db.sql.Char, req.query.groupname)
+//         .query(`
+//         SELECT *
+//         FROM users AS u
+//         INNER JOIN memberships AS m
+//             ON u.user_id = m.user_id
+//         INNER JOIN groups AS g
+//             ON g.group_id = m.group_id
+//         WHERE g.group_id IN (
+//         SELECT group_id
+//         FROM groups
+//         WHERE group_name = (@groupname)
+//         )
 
-        `)
-    })
-    // Send back the result
-    .then(result => {
-      res.send(result)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
-})
+//         `)
+//     })
+//     // Send back the result
+//     .then(result => {
+//       res.send(result)
+//     })
+//     // If there's an error, return that with some description
+//     .catch(err => {
+//       res.send({
+//         Error: err
+//       })
+//     })
+// })
 
-app.get('/get-groups', function (req, res) {
+// Returns list of existing groups
+app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
   db.pools
     // Run query
     .then((pool) => {
@@ -241,9 +348,7 @@ app.get('/get-groups', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -318,26 +423,26 @@ app.get('/getRequests', function (req, res) {
     })
 })
 
-app.post('/createGroup', function (req, res) {
-  const { groupName, courseCode, invitedMembers, dateCreated } = req.body
+app.post('/createGroup', checkAuthenticated, function (req, res) {
+  const { groupName, courseCode, dateCreated, tagValue } = req.body
 
-  // Make a query to the database
   db.pools
-    // Run query
     .then((pool) => {
       return pool.request()
         .input('group_name', db.sql.Char, groupName)
         .input('course_code', db.sql.Char, courseCode)
         .input('date_created', db.sql.DateTimeOffset, dateCreated)
+        .input('tag_value', db.sql.Char, tagValue)
         .query(`
-          INSERT INTO groups (group_name, course_code, date_created)
-          VALUES ((@group_name),(@course_code),(@date_created));
+          INSERT INTO groups (group_name, course_code, date_created, tag)
+          VALUES (@group_name,@course_code,@date_created,(select tag_id from
+            tags where tag = @tag_value));
         `)
     })
     .then(result => {
       res.send(result)
+      console.log(result)
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -345,14 +450,10 @@ app.post('/createGroup', function (req, res) {
     })
 })
 
-app.post('/complete-group-creation', function (req, res) {
-  const { groupId, groupName, courseCode, invitedMembers, dateCreated } = req.body
-  // Make a query to the database
+app.post('/complete-group-creation', checkAuthenticated, function (req, res) {
+  const { groupName, invitedMembers, dateCreated } = req.body
   db.pools
-    // Run query
     .then((pool) => {
-      // console.log('INSIDE server-createMembership carrying: ')
-      // console.log(membershipInfo)
       invitedMembers.forEach(member => {
         console.log(member)
         pool.request()
@@ -373,15 +474,9 @@ app.post('/complete-group-creation', function (req, res) {
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name = @groupName), @dateCreated);
           `)
     })
-    // Send back the result
     .then(result => {
       res.redirect('/dashboard')
-      // if (result.rowsAffected[0] === 1) {
-      //   res.sendStatus(200)
-      // }
-      // console.log('done with createMembership')
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -391,12 +486,9 @@ app.post('/complete-group-creation', function (req, res) {
 
 app.post('/createMembership', function (req, res) {
   const membershipInfo = req.body
-  // Make a query to the database
   db.pools
     // Run query
     .then((pool) => {
-      // console.log('INSIDE server-createMembership carrying: ')
-      // console.log(membershipInfo)
       membershipInfo.members.forEach(member => {
         console.log(member)
         console.log(membershipInfo.group_name.trim())
@@ -414,12 +506,9 @@ app.post('/createMembership', function (req, res) {
           `)
       })
     })
-    // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('done with createMembership')
     })
-    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -462,7 +551,7 @@ app.post('/sendInvites', function (req, res) {
     })
 })
 
-app.post('/sendRequest', function (req, res) {
+app.post('/sendRequest', checkAuthenticated, function (req, res) {
   const reqObj = req.body
   // console.log(inviteList)
   // Make a query to the database
@@ -491,8 +580,14 @@ app.post('/sendRequest', function (req, res) {
     })
 })
 
+app.post('/logAction', checkAuthenticated, function (req, res) {
+  const reqObj = req.body // {group_name, timestamp, description}
+  const userId = req.user.userId
+  logAction(reqObj, userId)
+})
+
 /* ----------------------------- Tarryn's Code ----------------------------- */
-app.get('/profileViews/:id', (req, res) => {
+app.get('/profileViews/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params
   // Make a query to the database
   db.pools
@@ -507,7 +602,6 @@ app.get('/profileViews/:id', (req, res) => {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -517,7 +611,7 @@ app.get('/profileViews/:id', (req, res) => {
     })
 })
 
-app.get('/membership-views', function (req, res) {
+app.get('/membership-views', checkAuthenticated, function (req, res) {
   // save the currentUser ID as a variable to use in the select query
   const id = req.user.userId
   // Make a query to the database
@@ -535,7 +629,6 @@ app.get('/membership-views', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -548,15 +641,15 @@ app.get('/membership-views', function (req, res) {
 const meetingRouter = require('./meeting-routes')
 app.use(meetingRouter)
 
-app.get('/profile', function (req, res) {
+app.get('/profile', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'profile.html'))
 })
 
-app.get('/my-groups', function (req, res) {
+app.get('/my-groups', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'my-groups.html'))
 })
 
-app.get('/home', function (req, res) {
+app.get('/home', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'home.html'))
 })
 
@@ -634,8 +727,10 @@ io.on('connection', socket => {
 
   // Voting
   handleVoting(io, socket)
-})
 
+  // Meeting Attendance
+  handleMeetingMember(io, socket)
+})
 
 /* ------------------------------ Invites: Basheq ---------------------------------- */
 
@@ -644,6 +739,7 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
+const handleMeetingMember = require('./meetings/attendance-server')
 app.use(pollingRouter)
 
 /* ------------------------------ Tests ------------------------------------- */

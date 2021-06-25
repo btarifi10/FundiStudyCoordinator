@@ -24,7 +24,7 @@ function getMinimimumDestination (group, DMService) {
       const addressList = addresses.map(a => a.address)
 
       // Get the distance matrix
-      const distMatrixRaw = await getDistanceMatrix(addressList, addressList, DMService)
+      const distMatrixRaw = await getDistanceMatrix(addressList, addressList)
       // extract relevant data per location
       const distancesPerOrigin = extractDistanceMatrixData(distMatrixRaw)
       // determine total distance to each address

@@ -379,7 +379,7 @@ function startBanPoll (id) {
   }).then(response => {
     if (response.ok) {
       socket.emit('pollCreated', group)
-      window.alert(`The poll to ban ${member.username} been successfully created.`)
+      window.alert(`The poll to ban ${member.username.trim()} been successfully created.`)
     }
   })
 }

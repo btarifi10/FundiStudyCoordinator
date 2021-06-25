@@ -164,6 +164,7 @@ function updateGroupList () {
   const inviteList = document.getElementById('inviteList')
   const userinput = document.getElementById('groupName').value.trim()
   const courseCode = document.getElementById('courseCode').value.trim()
+
   const duplicate = database.find(group => group.group_name.normalize().trim() === userinput.normalize())
   let invitedMembers = []
   invitedMembers = selectedMembers(inviteList)
@@ -286,7 +287,7 @@ function clearForm () {
   userSearch.onkeyup()
 }
 
-// Checks for alphanumerical group namem that meets length requirement from user
+// Checks for alphanumerical group name that meets length requirement from user
 function invalidForm () {
   const groupName = document.getElementById('groupName').value
   return ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40))
