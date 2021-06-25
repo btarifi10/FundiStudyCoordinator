@@ -98,7 +98,7 @@ pollingRouter.get('/api/get-users-to-invite', (req, res) => {
             group_id = (SELECT group_id
               FROM groups
               WHERE group_name=@group)) AND user_id NOT IN
-          (SELECT user_id FROM invites WHERE
+          (SELECT receiver_id FROM invites WHERE
             group_id= (SELECT group_id
               FROM groups
               WHERE group_name=@group) );
@@ -162,8 +162,8 @@ pollingRouter.post('/api/start-custom-poll', (req, res) => {
     voters: []
   }
   */
-
-  createCustomPoll(details)
+  const userId = req.user.userId
+  createCustomPoll(details, userId)
 
   res.send(200)
 })

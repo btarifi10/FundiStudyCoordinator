@@ -34,23 +34,35 @@
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Group name</label>
         <input type="text" class="form-control" id="group-name" aria-describedby="emailHelp" maxlength="40" required>
-        <div id="emailHelp" class="form-text">Unique and not more than 40 characters</div>
+        <div id="emailHelp" class="form-text">Not more than 40 characters (cannot include '#')</div>
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Course code</label>
         <input type="text" class="form-control" id="course-code" maxlength="10">
         <div id="course-code" class="form-text">Not more than 10 characters</div>
       </div>
+
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Tag Selection</label>
+        <div class="row">
+          <div class="mb-3">
+            <select class="form-select" style="height:50px" 
+              id="tag-1"></select>
+          </div>
+          </div> 
+        </div> 
+
+
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Search for users</label>
         <div class="row">
           <div class="col-md-10">
-            <input type="text" class="form-control d-inline-block" id="search" onkeyup="userSearch()">
-            <div id="search" class="form-text">Select one or more users from the list below and <i
+            <input type="text" class="form-control d-inline-block" id="search" >
+            <div id="searchInstr" class="form-text">Select one or more users from the list below and <i
                 class="bi bi-plus-square-fill"></i> them</div>
           </div>
           <div class="col-md-2 text-end">
-            <button class="btn btn-secondary" onclick="addUsers()"><i class="bi bi-plus-lg"></i></button>
+            <button class="btn btn-secondary" id="addUsers" ><i class="bi bi-plus-lg"></i></button>
           </div>
         </div>
       </div>
@@ -58,7 +70,7 @@
         <select class="form-select" style="height:200px" multiple aria-label="multiple select example"
           id="user-list"></select>
       </div>
-      <button class="btn btn-primary" onclick="createGroup()">Create</button>
+      <button class="btn btn-primary" id="createGroup">Create</button>
       <!-- </form> -->
     </div>
 
@@ -70,7 +82,7 @@
 
   </div>
 
-  <script src="scripts/create-group.js"></script>
+  <script type="module" src="scripts/create-group.js"></script>
 
   <!-- Moment.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"

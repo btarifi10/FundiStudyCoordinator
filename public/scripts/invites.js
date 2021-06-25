@@ -1,8 +1,10 @@
 'use strict'
 
 let invites = []
+let membershipNum = null
 
 document.addEventListener('DOMContentLoaded', function () {
+  getMembershipNum()
   getInvites()
     .then(() => loadInvitesTable())
 })
@@ -36,6 +38,13 @@ function loadInvitesTable () {
 function acceptInvite (id) {
   const inviteId = parseInt(id)
   const groupId = invites.find(i => i.invite_id === inviteId).group_id
+
+  // If a member of 10 groups - tell them they must leave a group to accept the invitation
+  console.log(membershipNum)
+  if (membershipNum >= 10) {
+    window.alert('You must leave a group to accept this invite. You can only be a member of 10 groups')
+    return
+  }
 
   fetch(`/api/acceptInvite?inviteId=${inviteId}&groupId=${groupId}`, {
     method: 'POST'
@@ -75,11 +84,19 @@ async function getInvites () {
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data)
           resolve(data)
         })
     })
   } catch (e) {
     console.log(e)
   }
+}
+
+function getMembershipNum () {
+  fetch('/membership-views')
+    .then(response => response.json())
+    .then(data => {
+      const groups = data.recordset
+      membershipNum = groups.length
+    })
 }

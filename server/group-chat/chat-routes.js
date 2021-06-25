@@ -21,6 +21,10 @@ chatRouter.get('/rating', function (req, res) {
   res.sendFile(path.join(__dirname, '..', '..', 'views', 'rating.html'))
 })
 
+chatRouter.get('/view-log', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', '..', 'views', 'view-log.html'))
+})
+
 /* ---------------------------- Database Routes ---------------------------- */
 
 chatRouter.get('/get-chat', function (req, res) {
