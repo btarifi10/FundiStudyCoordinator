@@ -62,48 +62,6 @@ describe('Group creation is logged', () => {
     cy.get('[data-cy=add-btn]')
       .click()
 
-    cy.get('[data-cy=added-users]')
-      .find('li')
-      .should('have.length', 1)
-      .and('have.text', 'James VI')
-
-    cy.get('[data-cy=create-btn]')
-      .click()
-
-    cy.on('window:alert', (txt) => {
-      expect(txt).to.contains("Group 'NewGroup1' has been created")
-    })
-  })
-
-  it('Shows the group in the action log of the group', () => {
-    // acces the group created, and click on activity log to view 'group created'
-  })
-})
-
-describe('Invites upon group creation are logged', () => {
-  before('Navigate to Create Group Page', () => {
-    cy.request('/clear-groups')
-    loginAsArchie()
-    cy.visit('/create-group')
-  })
-
-  it('Invites two users to new group', () => {
-    cy.get('input[data-cy="group-name"]')
-      .clear()
-      .type('NewGroup1')
-      .should('have.value', 'NewGroup1')
-
-    cy.get('[data-cy=course-code]')
-      .clear()
-      .type('TEST123')
-      .should('have.value', 'TEST123')
-
-    cy.get('select[data-cy="user-list"]')
-      .select('James VI')
-
-    cy.get('[data-cy=add-btn]')
-      .click()
-
     cy.get('select[data-cy="user-list"]')
       .select('barry')
 
@@ -120,18 +78,55 @@ describe('Invites upon group creation are logged', () => {
     cy.on('window:alert', (txt) => {
       expect(txt).to.contains("Group 'NewGroup1' has been created")
     })
+    cy.wait(1000)
   })
+})
 
-  it('Shows the invites for both users invites', () => {
+describe('Creator of group is member of group created', () => {
+  before('Navigate to Create Group Page', () => {
+    loginAsArchie()
+    cy.visit('/my-groups')
+  })
+  it('Shows the group in the action log of the group', () => {
+    // acces the group created, and click on activity log to view 'group created'
+    cy.get('[data-cy=groups-table]')
+      .contains('NewGroup1')
+  })
+})
+
+describe('James invited to group can view invite', () => {
+  before('Navigate to Invites page', () => {
     loginAsJames()
     cy.visit('/invites')
+  })
 
+  it('Shows the invites in the table', () => {
     cy.get('[data-cy=invite-table]')
       .contains('NewGroup1')
   })
 })
 
-describe('Entering and Leaving a group chat is logged', () => {})
+describe('barry invited to group can view invite', () => {
+  before('Navigate to Invites page', () => {
+    loginAsBarry()
+    cy.visit('/invites')
+  })
+
+  it('Shows the invites in the table', () => {
+    cy.get('[data-cy=invite-table]')
+      .contains('NewGroup1')
+  })
+})
+
+describe('Entering and Leaving a group chat is logged', () => {
+  before('Navigate to Create Group Page', () => {
+    loginAsArchie()
+    cy.visit('/chat?group=Scotland')
+  })
+  it('Allows user to enter group chat', () => {
+
+  })
+})
 
 describe('Messages sent in a group chat are logged', () => {})
 
@@ -172,6 +167,25 @@ function loginAsJames () {
   cy.get('[data-cy=password]')
     .type('longlivetheking')
     .should('have.value', 'longlivetheking')
+
+  cy.get('[data-cy=sign-in-login]')
+    .click()
+}
+
+function loginAsBarry () {
+  cy.visit('/')
+
+  cy.get('[data-cy=sign-in-homepage]').click()
+
+  cy.get('form')
+
+  cy.get('[data-cy=username]')
+    .type('barry')
+    .should('have.value', 'barry')
+
+  cy.get('[data-cy=password]')
+    .type('flash')
+    .should('have.value', 'flash')
 
   cy.get('[data-cy=sign-in-login]')
     .click()
