@@ -45,11 +45,10 @@ describe('The correct page is displayed to the user when entering the create-gro
   before('Navigate to Create-Group page', () => {
     cy.request('/clear-groups')
     loginAsArchie()
+    cy.visit('/create-group')
   })
 
   it('Displays the create-group page', () => {
-    cy.visit('/create-group')
-
     cy.get('[data-cy=group-name]')
       .should('have.text', '')
 
@@ -58,11 +57,15 @@ describe('The correct page is displayed to the user when entering the create-gro
 
     cy.get('select[data-cy="user-list"]')
       .find('option')
-      .should('have.length', 2)
+      .should('have.length', 3)
   })
 })
 
 describe('Users cannot input invalid group information for group creation', () => {
+  before('Navigate to Create-Group page', () => {
+    loginAsArchie()
+    cy.visit('/create-group')
+  })
   it('Does not allow user to create group without inviting a member', () => {
     cy.get('input[data-cy="group-name"]')
       .type('NewGroup1')
@@ -83,7 +86,7 @@ describe('Users cannot input invalid group information for group creation', () =
   it('Filters through the user list upon user input', () => {
     cy.get('input[data-cy="user-search"]')
       .clear()
-      .type('B')
+      .type('Barr')
 
     cy.get('select[data-cy="user-list"]')
       .find('option')
@@ -162,6 +165,10 @@ describe('Users cannot input invalid group information for group creation', () =
 })
 
 describe('User can create a new group with chosen members invited automatically', () => {
+  before('Navigate to Create-Group page', () => {
+    loginAsArchie()
+    cy.visit('/create-group')
+  })
   it('Allows user to input Group information and add member to invite to create a new group', () => {
     cy.get('input[data-cy="group-name"]')
       .clear()
@@ -173,6 +180,12 @@ describe('User can create a new group with chosen members invited automatically'
       .type('TEST123')
       .should('have.value', 'TEST123')
 
+    cy.get('select[data-cy="user-list"]')
+      .select('James VI')
+
+    cy.get('[data-cy=add-btn]')
+      .click()
+
     cy.get('[data-cy=added-users]')
       .find('li')
       .should('have.length', 1)
@@ -181,111 +194,78 @@ describe('User can create a new group with chosen members invited automatically'
     cy.get('[data-cy=create-btn]')
       .click()
 
-    const dateCreated = moment()
-    cy.request('/createGroup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ groupName: 'NewGroup1', courseCode: 'TEST123', invitedMembers: ['James VI'], dateCreated: dateCreated })
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains("Group 'NewGroup1' has been created")
     })
-      .then(result => {
-        cy.request('/complete-group-creation', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ groupName: 'NewGroup1', courseCode: 'TEST123', invitedMembers: ['James VI'], dateCreated: dateCreated })
-        })
-      })
-
-    // cy.on('window:alert', (txt) => {
-    //   expect(txt).to.contains("Group 'NewGroup1' has been created")
-    // })
   })
 
-  // it('Clears the group information form when group is created successfully', () => {
-  //   cy.get('[data-cy=group-name]')
-  //     .should('have.text', '')
+  it('Clears the group information form when group is created successfully', () => {
+    cy.get('[data-cy=group-name]')
+      .should('have.text', '')
 
-  //   cy.get('[data-cy=course-code]')
-  //     .should('have.text', '')
+    cy.get('[data-cy=course-code]')
+      .should('have.text', '')
 
-  //   cy.get('[data-cy=user-list]')
-  //     .contains('James VI')
+    cy.get('[data-cy=user-list]')
+      .contains('James VI')
 
-  //   cy.get('[data-cy=user-list]')
-  //     .contains('barry')
-  // })
-
-  // it('Cannot create the same group again', () => {
-  //   cy.get('input[data-cy="group-name"]')
-  //     .clear()
-  //     .type('NewGroup1')
-  //     .should('have.value', 'NewGroup1')
-
-  //   cy.get('[data-cy=course-code]')
-  //     .clear()
-  //     .type('TEST123')
-  //     .should('have.value', 'TEST123')
-
-  //   cy.get('select[data-cy="user-list"]')
-  //     .select('James VI')
-
-  //   cy.get('[data-cy=add-btn]')
-  //     .click()
-
-  //   cy.get('[data-cy=create-btn]')
-  //     .click()
-
-  //   cy.on('window:alert', (txt) => {
-  //     expect(txt).to.contains('This group already exists')
-  //   })
-  //   cy.wait(3000)
-  // })
-
-  // clear the group 'NewGroup1' made
-})
-/*
-describe('User can view new group in My Group page', () => {
-  before('Log in as Archie', loginAsArchie)
-  it('Shows group in My Groups page', () => {
-    cy.visit('/my-groups')
-
-    // cy.get('[data-cy=groups-table]')
-    // .contains('Hall')
+    cy.get('[data-cy=user-list]')
+      .contains('barry')
   })
 
-  // it('Sends invite to added user on group creation', () => {
-  //   // Sign in as James VI
-  //   cy.visit('/')
+  it('Cannot create the same group again', () => {
+    cy.get('input[data-cy="group-name"]')
+      .clear()
+      .type('NewGroup1')
+      .should('have.value', 'NewGroup1')
 
-  //   cy.get('[data-cy=sign-in-homepage]').click()
+    cy.get('[data-cy=course-code]')
+      .clear()
+      .type('TEST123')
+      .should('have.value', 'TEST123')
 
-  //   cy.get('form')
+    cy.get('select[data-cy="user-list"]')
+      .select('James VI')
 
-  //   cy.get('[data-cy=username]')
-  //     .type('James VI')
-  //     .should('have.value', 'James VI')
+    cy.get('[data-cy=add-btn]')
+      .click()
 
-  //   cy.get('[data-cy=password]')
-  //     .type('longlivetheking')
-  //     .should('have.value', 'longlivetheking')
+    cy.get('[data-cy=create-btn]')
+      .click()
 
-  //   cy.get('[data-cy=sign-in-login]')
-  //     .click()
-
-  //   cy.visit('/invites')
-
-  //   // cy.get('[data-cy=invite-table]')
-  //   //   .contains('NewGroup1')
-  // })
-
-  it('Clears the groups (FOR TEST consistency)', () => {
-    //cy.request('/clear-groups')
+    cy.on('window:alert', (txt) => {
+      expect(txt).to.contains('This group already exists')
+    })
   })
 })
-*/
+
+// describe('User can view new group in My Group page', () => {
+//   before('Navigate to My-Groups page', () => {
+//     loginAsArchie()
+//     cy.visit('/my-groups')
+//   })
+//   it('Shows the new group that was created amongst other groups user is a member of', () => {
+//     cy.get('[data-cy=groups-table]')
+//       .contains('Hall')
+//   })
+
+//   it('Clears the groups (FOR TEST consistency)', () => {
+//     // cy.request('/clear-groups')
+//   })
+// })
+
+describe('User invited to group can view invite', () => {
+  before('Navigate to Invites page', () => {
+    loginAsJames()
+    cy.visit('/invites')
+  })
+
+  it('Shows the invites in the table', () => {
+    cy.get('[data-cy=invite-table]')
+      .contains('NewGroup1')
+  })
+})
+
 /* ---------------------------- Helper Functions ---------------------------- */
 
 function loginAsArchie () {
@@ -302,6 +282,25 @@ function loginAsArchie () {
   cy.get('[data-cy=password]')
     .type('sh33p123')
     .should('have.value', 'sh33p123')
+
+  cy.get('[data-cy=sign-in-login]')
+    .click()
+}
+
+function loginAsJames () {
+  cy.visit('/')
+
+  cy.get('[data-cy=sign-in-homepage]').click()
+
+  cy.get('form')
+
+  cy.get('[data-cy=username]')
+    .type('James VI')
+    .should('have.value', 'James VI')
+
+  cy.get('[data-cy=password]')
+    .type('longlivetheking')
+    .should('have.value', 'longlivetheking')
 
   cy.get('[data-cy=sign-in-login]')
     .click()

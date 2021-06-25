@@ -2,6 +2,11 @@
 
 import { addAction } from './action-log.js'
 
+// just trying to pass user_id for addAction
+import { UserService } from './user-service.js'
+const userService = UserService.getUserServiceInstance()
+const currentUser = null
+
 const userList = document.getElementById('user-list')
 const addedUsers = document.getElementById('added-users')
 
@@ -120,22 +125,30 @@ function createGroup () {
   const dateCreated = moment()
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
 
-  // Record the 'CREATED' and 'INVITE' actions
-  addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: `'${groupName}' was created` })
-  let actionString = `Members invited to join '${groupName}': `
-  invitedMembers.forEach(member => { actionString += member.username + ', ' })
-  addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
-
   // Update variables to avoid creating duplicate groups, or going over membership limit (10), or inviting same username
   existingGroups.push(groupName)
   membershipNum += 1
 
-  alert(`Group '${groupName}' has been created`)
+  // alert(`Group '${groupName}' has been created`)
 
   // Clear inputs
   clearInputs()
   usersLeft = users
   populateUsersList(users)
+
+  // Record the 'CREATED' and 'INVITE' actions
+  // userService.getCurrentUser()
+  //   .then(user => {
+  //     currentUser = user
+  //     const userId = currentUser.userId
+  //     console.log(userId)
+  //     addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: `'${groupName}' was created`, userId: userId })
+  //   })
+
+  addAction({ action: 'CREATED', groupName: groupName, timestamp: dateCreated, description: `'${groupName}' was created` })
+  let actionString = `Members invited to join '${groupName}': `
+  invitedMembers.forEach(member => { actionString += member.username + ', ' })
+  addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
 }
 
 function clearInputs () {

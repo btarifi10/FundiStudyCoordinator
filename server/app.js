@@ -315,9 +315,9 @@ app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
 //     })
 // })
 
-app.post('/createGroup', checkAuthenticated, function (req, res) { // KEEP THIS
+app.post('/createGroup', function (req, res) { // KEEP THIS
   const { groupName, courseCode, dateCreated } = req.body
-  console.log('The group being created by server call to database:')
+  console.log('The group being created on server side:')
   console.log(req.body)
   db.pools
     // Run query
@@ -341,7 +341,7 @@ app.post('/createGroup', checkAuthenticated, function (req, res) { // KEEP THIS
     })
 })
 
-app.post('/complete-group-creation', checkAuthenticated, function (req, res) { // KEEP THIS
+app.post('/complete-group-creation', function (req, res) { // KEEP THIS
   const { groupName, invitedMembers, dateCreated } = req.body
   console.log('the member info:')
   console.log(req.body)
@@ -349,7 +349,7 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) { /
     // Run query
     .then((pool) => {
       invitedMembers.forEach(member => {
-        console.log('The member being added:')
+        console.log('The member being invited:')
         console.log(member)
         pool.request()
           .input('userId', db.sql.Int, member.user_id)
@@ -360,6 +360,7 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) { /
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name = @groupName), @dateCreated);
           `)
       })
+      console.log('THE MEMBERSHIP')
       return pool.request()
         .input('userId', db.sql.Int, req.user.userId)
         .input('groupName', db.sql.Char, groupName)
@@ -371,11 +372,14 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) { /
     })
     // Send back the result
     .then(result => {
-      res.redirect('/dashboard')
+      res.send(result)
+    })
+    //.then(result => {
+      //res.redirect('/dashboard')
       // if (result.rowsAffected[0] === 1) {
       //   res.sendStatus(200)
       // }
-    })
+   // })
     // If there's an error, return that with some description
     .catch(err => {
       res.send({
@@ -457,7 +461,7 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) { /
 //     })
 // })
 
-app.post('/sendRequest', checkAuthenticated, function (req, res) { // KEEP THIS
+app.post('/sendRequest', function (req, res) { // KEEP THIS
   const reqObj = req.body
   // console.log(inviteList)
   // Make a query to the database
@@ -489,8 +493,11 @@ app.post('/sendRequest', checkAuthenticated, function (req, res) { // KEEP THIS
 app.post('/logAction', checkAuthenticated, function (req, res) {
   const reqObj = req.body // {group_name, timestamp, description}
   const userId = req.user.userId
+  console.log('The userID is:')
+  console.log(userId)
   logAction(reqObj, userId)
 })
+
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
@@ -700,6 +707,7 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
+const { authenticate } = require('passport')
 // const { checkAuthenticated } = require('./authentication')
 app.use(pollingRouter)
 
