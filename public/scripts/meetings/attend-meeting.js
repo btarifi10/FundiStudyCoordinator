@@ -113,6 +113,7 @@ socket.on('meetingInfo', ({ group, members }) => {
   // display the group name
   groupName.innerText = group
   // load member names and links
+  removePlace(chatMembers)
   members.map(member => loadMemberLink(member))
   // remove then add markers again.
   removeMarkers()
@@ -233,7 +234,6 @@ function removeMarkers () {
 // ***********************************
 // add usernames to list and link map directions to the username
 function loadMemberLink (member) {
-  removePlace(chatMembers)
   // create list element
   const li = document.createElement('li')
   // create anchor element

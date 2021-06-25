@@ -26,11 +26,11 @@
     <div class="container">
         <!-- HEADER -->
     <header class="group-header">
-        <h1 class="page-header"><i class="fas fa-handshake"></i>  <span id="group-name"></span></h1>
+        <h1 class="page-header"><i class="fas fa-handshake"></i>  <span id="group-name" data-cy="group-header-name"></span></h1>
         <a href="/" class="btn btn-primary"><i class="fas fa-home"></i> Home </a>
       </header>
-      <h2>Meeting ID: <span id="meeting-id"></span></h2>
-      <button class = "btn btn-secondary" id='send-location'>Stop Sharing</button>
+      <h2>Meeting ID: <span id="meeting-id" data-cy="meeting-header-id"></span></h2>
+      <button class = "btn btn-secondary" id='send-location' data-cy='location-sharing-btn'>Stop Sharing</button>
       <hr>
       <div class="row">
   
@@ -39,7 +39,7 @@
           <br>
           <h5 class="text-center"><i class="fas fa-comments"></i> Members in Attendance </h5>
           <hr>
-          <ul id="chat-members" class="list-unstyled text-center"> </ul>
+          <ul id="chat-members" class="list-unstyled text-center" data-cy="members-in-chat"> </ul>
         </div>
   
         <!-- CHAT AREA (MIDDLE) -->
@@ -51,7 +51,7 @@
         <div id='map'></div>
   
           <!-- Area that gets populated with messages -->
-          <div class="message-area">
+          <div class="message-area" data-cy="message-area">
   
   
           </div>
@@ -64,12 +64,12 @@
                 <div class="col-md-10">
                   <div class="form-group">
                     <!-- <textarea class="form-control" placeholder="Enter Message" required autocomplete="off"></textarea> -->
-                    <input id="msg" type="text" class="form-control" placeholder="Enter Message" pattern=".{1,1000}"
+                    <input data-cy="message-input" id="msg" type="text" class="form-control" placeholder="Enter Message" pattern=".{1,1000}"
                       required title="Message must be between 1 and 1000 characters long" autocomplete="off" />
                   </div>
                 </div>
                 <div class="col-md-2">
-                  <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send</button>
+                  <button type="submit" class="btn btn-primary" data-cy="send-button"><i class="fas fa-paper-plane"></i> Send</button>
                 </div>
               </div>
             </form>
