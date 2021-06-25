@@ -19,10 +19,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Functionality to create more options to the dropdown list to accomodate the number of users
 function populateAllMembers (data) {
-  data.recordset.forEach(function ({ username }) {
+  data.recordset.forEach(function ({ username, rating }) {
     const memberName = `${username.trim()}`
     const addedElement = document.createElement('option')
-    addedElement.textContent = memberName
+    addedElement.textContent = `${username.trim()} (${rating})`
     addedElement.value = memberName
 
     selectMembers.appendChild(addedElement)
@@ -34,13 +34,13 @@ const ratingSubmission = document.getElementById('submitButton')
 ratingSubmission.addEventListener('click', (event) => {
   event.preventDefault()
   submitRating()
+  alert('Rating Captured')
 })
 
 // Handles the retrieval of the passed rating so as to update based on an average with the current
 // rating given
 function submitRating () {
   const nameSelected = selectMembers.value.trim()
-  console.log(nameSelected)
   fetch(`/get-current?nameSelected=${nameSelected}`)//  , {
     .then(response => response.json())
     .then(data => {
@@ -48,7 +48,7 @@ function submitRating () {
       let newRating = null
       let newNumRating = null
 
-      if (ratingInfo.rating == null) {
+      if (ratingInfo.length === 0) {
         newRating = getNewRanking()
         newNumRating = 1
       } else {
@@ -73,7 +73,6 @@ function postNewRating (ratingUpdated) {
     },
     body: JSON.stringify(ratingUpdated)
   })
-  window.history.back()
 }
 
 // Retrieves the new entry for the rating form the checkbox

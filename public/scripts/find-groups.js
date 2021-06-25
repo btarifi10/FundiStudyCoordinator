@@ -11,11 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 })
 
+// Enables a user to search using either the group name or the subject associated with the group
 function entireGroupSearch () {
-  const searchTerm = document.getElementById('group-search').value.toLowerCase()
+  const searchTermGroup = document.getElementById('group-search').value.toLowerCase()
 
-  if (searchTerm) {
-    const matchingGroups = groups.filter(g => g.group_name.toLowerCase().includes(searchTerm))
+  if (searchTermGroup || searchTermTag) {
+    const matchingGroups = groups.filter(g => g.group_name.toLowerCase().includes(searchTermGroup || searchTermTag))
     populateAllGroups(matchingGroups)
   } else { populateAllGroups(groups) }
 }

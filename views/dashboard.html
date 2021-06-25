@@ -11,6 +11,16 @@
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="css/sidebar.css" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+  integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+<!-- Bootstrap icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -19,11 +29,12 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
       <div class="sidebar-heading border-bottom bg-light">Study Group Coordinator</div>
       <div class="list-group list-group-flush">
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-my-groups" href="#my-groups">My Groups</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-invites" href="#invites">Invites</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-find-groups" href="#find-groups">Find Groups</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-create-group" href="#create-group">Create Group</a>
-        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-profile" href="#profile">Profile</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-my-groups" href="#my-groups"><i class="fas fa-users"></i> My Groups</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-invites" href="#invites"><i class="fas fa-user-plus"></i> Invites</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-find-groups" href="#find-groups"> <i class="bi bi-search"></i> Find Groups</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-recommended-groups" href="#recommended-groups"><i class="bi bi-binoculars-fill"></i> Recommended Groups</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-create-group" href="#create-group"><i class="bi bi-journal-plus"></i> Create Group</a>
+        <a class="list-group-item list-group-item-action list-group-item-light p-3" id="a-profile" href="#profile"><i class="bi bi-person-circle"></i> Profile</a>
       </div>
     </div>
     <!-- Page content wrapper-->
@@ -40,12 +51,12 @@
               <li class="nav-item" id='li-username'> <a class="nav-link" id="a-profile-user" href="#profile"> </a></li>
               <li class="nav-item">
                 <form method="post" action="/logout" class="inline">
-                <button class="nav-link mx-2" href="" style="
+                <button   class="nav-link mx-2" href="" style="
                 background: none;
                 border: none;
                 cursor: pointer;
                 font-size: 1em;
-              " >Sign out </button>
+              "> Sign out </button>
               </form></li>
             </ul>
           </div>
@@ -64,6 +75,7 @@
   <script src="scripts/sidebar.js"></script>
   <!-- JS Script -->
   <script type="module" src="scripts/dashboard.js"></script>
+  
 </body>
 
 </html>

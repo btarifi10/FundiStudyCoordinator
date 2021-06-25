@@ -29,3 +29,25 @@ function displayError (message) {
   alert.classList.remove('d-none')
   alert.innerText = message
 }
+
+function addAddress () {
+  const addressDiv = document.getElementById('address-section')
+  const addressBtn = document.getElementById('address-button')
+
+  if (addressDiv.classList.contains('d-none')) {
+    addressDiv.classList.remove('d-none')
+    document.getElementById('address-line-1').required = true
+    document.getElementById('city').required = true
+    addressBtn.classList.remove('btn-secondary')
+    addressBtn.classList.add('btn-danger')
+    addressBtn.innerHTML = 'Remove address'
+  } else {
+    addressDiv.classList.add('d-none')
+    document.getElementById('address-line-1').required = false
+    document.getElementById('city').required = false
+
+    addressBtn.classList.add('btn-secondary')
+    addressBtn.classList.remove('btn-danger')
+    addressBtn.innerHTML = 'Add address'
+  }
+}
