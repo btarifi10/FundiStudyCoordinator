@@ -7,6 +7,7 @@ import {
   loadLocation,
   loadPlatform
 } from './load-meetings.js'
+import { formatChatMessage, formatDatabaseMessage, recordMessage } from './group-chat/chat-messages.js'
 
 const { group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -35,14 +36,19 @@ const meetingForm = document.getElementById('meeting-form')
 const addressList = document.getElementById('address-list')
 const meetingChoice = document.getElementById('selection')
 const viewMeetings = document.getElementById('View-btn')
+let meetingType = ''
+const io = window.io
+const socket = io()
 
 // Update which meeting options should be displayed for the user
 meetingChoice.addEventListener('change', (event) => {
   if (event.target.value === 'online') {
     loadPlatform()
+    meetingType = 'online'
   }
   if (event.target.value === 'face-to-face') {
     loadLocation()
+    meetingType = 'face-to-face'
   }
   if (event.target.value === 'none-selected') {
     window.alert('Please select a viable option')
@@ -103,12 +109,36 @@ meetingForm.addEventListener('submit', (event) => {
         <strong>Platform</strong>: ${place} <br>
         <strong>Meeting Link</strong>: <a href="${link}" target="_blank"> HERE </a> `
       }
+
+      // send meeting information to the group chat socket
+      sendMessage(group, currentUser.username, new Date(meeting_time), socket)
+
+      // log the meeting creation
       console.log('LOGGING IN PROCESS')
       addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
     })
 
   // include a statement if the user is not logged in - an alert prompts them to log in.
 })
+
+// Sends the message to the other members in the chat and stores the message in the db
+function sendMessage (group, user, meetingTime, socket) {
+  // Build the chat message object
+  const text = `A ${meetingType} meeting has been scheduled for ${meetingTime} by
+  ${user}`
+
+  const time = moment()
+  const username = group
+  const chatMessage = formatChatMessage(username, text, time)
+  // Send the message to the server
+  socket.emit('notification', { group: group, message: chatMessage })
+
+  // Store the message in the database
+  const databaseMessage = formatDatabaseMessage(group, user, text, time)
+  recordMessage(databaseMessage)
+}
+
+// *********************************************************************************** //
 
 // Set up the inputs to be placed into the database
 function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_online) {
