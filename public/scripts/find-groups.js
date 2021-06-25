@@ -34,7 +34,7 @@ function populateAllGroups (data) {
     tableHtml += `<td id = '${group_id}-group-name'>${group_name}</td>`
     tableHtml += `<td id = '${group_id}-course-code'>${course_code}</td>`
     tableHtml += `<td><button class="btn btn-outline-warning border-0 join-row-btn" style="border-radius:25px;width:60px"
-    id="${group_id}-btn" data-id=${group_id} onclick="joinGroup(this.dataset.id)">
+    id="${group_id}-btn" data-id=${group_id} onclick="joinGroup(this.dataset.id)" data-cy="join-btn">
           <i class="bi bi-plus-square"></i></td>`
     tableHtml += '</tr>'
   })
@@ -56,7 +56,7 @@ function joinGroup (_groupId) {
 
   const gId = groups.findIndex(g => g.group_id === groupId)
 
-  alert(`A Request to join ${groups[gId].group_name.trim()} has been sent`)
+  alert(`A Request to join '${groups[gId].group_name.trim()}' has been sent`)
 
   groups.splice(gId, 1)
 

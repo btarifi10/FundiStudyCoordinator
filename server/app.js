@@ -187,8 +187,6 @@ app.get('/get-users', checkAuthenticated, function (req, res) { // KEEP THIS
     // Send back the result
     .then(result => {
       res.send(result)
-      console.log('FROM SERVER:')
-      console.log(result)
     })
     .catch(err => {
       res.send({
@@ -319,7 +317,8 @@ app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
 
 app.post('/createGroup', checkAuthenticated, function (req, res) { // KEEP THIS
   const { groupName, courseCode, dateCreated } = req.body
-
+  console.log('The group being created by server call to database:')
+  console.log(req.body)
   db.pools
     // Run query
     .then((pool) => {
@@ -344,10 +343,13 @@ app.post('/createGroup', checkAuthenticated, function (req, res) { // KEEP THIS
 
 app.post('/complete-group-creation', checkAuthenticated, function (req, res) { // KEEP THIS
   const { groupName, invitedMembers, dateCreated } = req.body
+  console.log('the member info:')
+  console.log(req.body)
   db.pools
     // Run query
     .then((pool) => {
       invitedMembers.forEach(member => {
+        console.log('The member being added:')
         console.log(member)
         pool.request()
           .input('userId', db.sql.Int, member.user_id)

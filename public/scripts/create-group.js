@@ -118,7 +118,6 @@ function createGroup () {
   }
 
   const dateCreated = moment()
-  console.log('step 1')
   saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
 
   // Record the 'CREATED' and 'INVITE' actions
@@ -127,17 +126,14 @@ function createGroup () {
   invitedMembers.forEach(member => { actionString += member.username + ', ' })
   addAction({ action: 'INVITE', groupName: groupName, timestamp: dateCreated, description: actionString })
 
-  console.log('step 2')
   // Update variables to avoid creating duplicate groups, or going over membership limit (10), or inviting same username
   existingGroups.push(groupName)
   membershipNum += 1
 
-  console.log('CREATE BTN CLICKED')
   alert(`Group '${groupName}' has been created`)
 
   // Clear inputs
   clearInputs()
-  console.log('step 3')
   usersLeft = users
   populateUsersList(users)
 }
@@ -152,6 +148,8 @@ function clearInputs () {
 }
 
 function saveGroup (groupInfo) {
+  console.log('the group info being sent to server')
+  console.log(groupInfo)
   fetch('/createGroup', {
     method: 'POST',
     headers: {
@@ -160,6 +158,8 @@ function saveGroup (groupInfo) {
     body: JSON.stringify(groupInfo)
   })
     .then(result => {
+      console.log('sending to complete-group-creation:')
+      console.log(groupInfo)
       fetch('/complete-group-creation', {
         method: 'POST',
         headers: {

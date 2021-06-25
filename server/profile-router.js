@@ -17,6 +17,8 @@ profileRouter.get('/profile', checkAuthenticated, (req, res) => {
 })
 
 profileRouter.get('/api/getInvites', checkAuthenticated, (req, res) => {
+  console.log('the user invited:')
+  console.log(req.body)
   db.pools
     // Run query
     .then((pool) => {
@@ -33,7 +35,7 @@ profileRouter.get('/api/getInvites', checkAuthenticated, (req, res) => {
     // Send back the result
     .then(result => {
       if (result.recordset) {
-        console.log(result.recordset)
+        //console.log(result.recordset)
         res.send(result.recordset)
       } else {
         res.send(null)
