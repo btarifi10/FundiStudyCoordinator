@@ -249,9 +249,6 @@ describe('User can create a new group with chosen members invited automatically'
 //       .contains('Hall')
 //   })
 
-//   it('Clears the groups (FOR TEST consistency)', () => {
-//     // cy.request('/clear-groups')
-//   })
 // })
 
 describe('User invited to group can view invite', () => {
@@ -263,6 +260,10 @@ describe('User invited to group can view invite', () => {
   it('Shows the invites in the table', () => {
     cy.get('[data-cy=invite-table]')
       .contains('NewGroup1')
+  })
+
+  it('Clear the groups from database (for TEST consistencies)', () => {
+    cy.request('/clear-groups')
   })
 })
 
