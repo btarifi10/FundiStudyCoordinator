@@ -84,6 +84,14 @@ function loadLocation () {
   removePlace(placeDiv)
 
   const createBreak = document.createElement('br')
+
+  const rowDiv = document.createElement('div')
+  rowDiv.setAttribute('class', 'row')
+  const leftColDiv = document.createElement('div')
+  leftColDiv.setAttribute('class', 'col-md-8')
+  const rightColDiv = document.createElement('div')
+  rightColDiv.setAttribute('class', 'col-md-4')
+
   // create label
   const label = document.createElement('label')
   label.setAttribute('for', 'addressInput')
@@ -101,6 +109,54 @@ function loadLocation () {
   input.setAttribute('placeholder', 'Enter address...')
   input.setAttribute('aria-describedby', 'addressHelp')
   input.setAttribute('name', 'place')
+
+  const inputHelp = document.createElement('div')
+  inputHelp.setAttribute('id', 'location-hint')
+  inputHelp.setAttribute('class', 'form-text d-none')
+  inputHelp.innerText = ''
+  leftColDiv.appendChild(input)
+
+  const btnGroup = document.createElement('div')
+  btnGroup.setAttribute('class', 'btn-group')
+
+  const recommendButton = document.createElement('button')
+  recommendButton.type = 'button'
+  recommendButton.setAttribute('class', 'btn btn-success dropdown-toggle')
+  recommendButton.setAttribute('id', 'recommendDropdown')
+  recommendButton.setAttribute('data-toggle', 'dropdown')
+  recommendButton.setAttribute('aria-haspopup', 'true')
+  recommendButton.setAttribute('aria-expanded', 'false')
+  recommendButton.innerText = 'Recommend Locations'
+  btnGroup.appendChild(recommendButton)
+
+  const popupDiv = document.createElement('div')
+  popupDiv.setAttribute('class', 'dropdown-menu')
+  popupDiv.setAttribute('aria-labelledby', 'recommendDropdown')
+  // Most central recommendation
+  const btn1 = document.createElement('button')
+  btn1.type = 'button'
+  btn1.setAttribute('class', 'dropdown-item')
+  btn1.setAttribute('onclick', 'recommendCentralLocation()')
+  btn1.innerText = 'Most central member\'s address'
+  // Current user address
+  const btn2 = document.createElement('button')
+  btn2.type = 'button'
+  btn2.setAttribute('class', 'dropdown-item')
+  btn2.setAttribute('onclick', 'recommendUserLocation()')
+  btn2.innerText = 'Your address'
+  // University address
+  const btn3 = document.createElement('button')
+  btn3.type = 'button'
+  btn3.setAttribute('class', 'dropdown-item')
+  btn3.setAttribute('onclick', 'recommendUniLocation()')
+  btn3.innerText = 'Wits'
+  popupDiv.appendChild(btn1)
+  popupDiv.appendChild(btn2)
+  popupDiv.appendChild(btn3)
+  btnGroup.appendChild(popupDiv)
+  rightColDiv.appendChild(btnGroup)
+  rowDiv.appendChild(leftColDiv)
+  rowDiv.appendChild(rightColDiv)
 
   // create the map explanation
   const map_div = document.createElement('div')
@@ -120,7 +176,9 @@ function loadLocation () {
   map_frame.setAttribute('allowfullscreen', 'allowfullscreen')
 
   placeDiv.appendChild(label)
-  placeDiv.appendChild(input)
+  placeDiv.appendChild(rowDiv)
+  placeDiv.appendChild(inputHelp)
+  placeDiv.appendChild(createBreak)
   placeDiv.appendChild(map_div)
   placeDiv.appendChild(map_frame)
   placeDiv.appendChild(createBreak)

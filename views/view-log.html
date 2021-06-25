@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+  <!-- Bootstrap icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+  <title>Group Log</title>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="group-header text-center pt-4">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <h1 class="page-header"><i class="fas fa-book"></i> Activity Log<span id="group-name"></span></h1>
+      </div>
+      <div class="col-md-2">
+        <a href="/chat" class="btn btn-secondary" id="back-button"><i class="fa fa-arrow-left"></i> Back </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- FILTER OPTIONS -->
+  <div class="container my-4">
+    <div class="row align-items-center">
+
+      <!-- ACTION FILTER -->
+      <div class="col-md-2">
+        <div class="form-floating">
+          <select class="form-select" id="action-filter" aria-label="Action Filter">
+            <option value="All Actions" selected>All Actions</option>
+          </select>
+          <label for="action-filter">Action</label>
+        </div>
+      </div>
+
+      <!-- TIMESTAMP FILTER -->
+      <div class="col-md-2">
+        <div class="form-floating">
+          <select class="form-select" id="timestamp-filter" aria-label="Timestamp Filter">
+            <option value="Newest" selected>Newest</option>
+            <option value="Oldest">Oldest</option>
+          </select>
+          <label for="timestamp-filter">Timestamp</label>
+        </div>
+      </div>
+
+      <!-- MEMBER FILTER -->
+      <div class="col-md-3">
+        <div class="form-floating">
+          <select class="form-select" id="member-filter" aria-label="Member Filter">
+            <option value="All Members" selected>All Members</option>
+          </select>
+          <label for="member-filter">Member</label>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION SEARCH BAR -->
+      <div class="col-md-5">
+        <input class="form-control mt-2" type="text" id="description-search" aria-describedby="description-help"
+          placeholder="Search by description...">
+        <div id="description-help" class="form-text">Expand the log entry to view its description</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRY TITLES -->
+  <div class="container">
+    <table class="table table-hover align-middle" id="find-groups-table">
+      <thead class="text-center">
+        <th>Action</th>
+        <th>Time</th>
+        <th>Date</th>
+        <th>Member</th>
+      </thead>
+      <tbody id="log-table">
+        <!-- Note that the log entries are not populated here, this table is used for the column titles and displaying a message
+        when the filtering options produce no valid results -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LOG ENTRIES -->
+  <div class="container h-100">
+    <div class="accordion accordion-flush" id="log-entries"></div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+    crossorigin="anonymous"></script>
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+    integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Query String Parser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"
+    integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Main Script -->
+  <script src="scripts/view-log.js"></script>
+
+</body>
+
+</html>

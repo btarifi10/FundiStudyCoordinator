@@ -10,7 +10,7 @@ const selectMembers = document.getElementById('memberSelection')
 
 // Populates the dropdown list with the names of the members for this specific group
 document.addEventListener('DOMContentLoaded', function () {
-  fetch(`/get-members?group=${group}`)//  , {
+  fetch(`/get-members?group=${group}&username=${username}`)//  , {
     .then(response => response.json())
     .then(data => {
       populateAllMembers(data)
@@ -19,10 +19,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Functionality to create more options to the dropdown list to accomodate the number of users
 function populateAllMembers (data) {
-  data.recordset.forEach(function ({ username }) {
+  data.recordset.forEach(function ({ username, rating }) {
     const memberName = `${username.trim()}`
     const addedElement = document.createElement('option')
-    addedElement.textContent = memberName
+    addedElement.textContent = `${username.trim()} (${rating})`
     addedElement.value = memberName
 
     selectMembers.appendChild(addedElement)
@@ -47,8 +47,9 @@ function submitRating () {
       const ratingInfo = data.recordset[0]
       let newRating = null
       let newNumRating = null
+      console.log(ratingInfo)
 
-      if (ratingInfo.rating == null) {
+      if (ratingInfo.length === 0) {
         newRating = getNewRanking()
         newNumRating = 1
       } else {
@@ -73,7 +74,7 @@ function postNewRating (ratingUpdated) {
     },
     body: JSON.stringify(ratingUpdated)
   })
-  window.history.back()
+  // window.history.back()
 }
 
 // Retrieves the new entry for the rating form the checkbox

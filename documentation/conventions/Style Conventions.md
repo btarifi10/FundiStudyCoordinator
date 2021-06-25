@@ -30,7 +30,7 @@ A vertical ruler can be inserted into VSCode by adding the following property to
 
 #### Functions
 
-Functions should be used to modularize your code, making it easier to read and alter. They should be short and fullfil a single purpose.  
+Functions should be used to modularize your code, making it easier to read and alter. They should be short and fullfil a single purpose.
 
 #### Comments
 
@@ -39,6 +39,12 @@ Comments should be used to make the code easier to read and understand. However,
 ### SQL
 
 The best practices and conventions for SQL followed throughout this project can be found [here](https://data36.com/sql-best-practices-data-analysts/).
+
+### Testing
+
+Indivudual functions that execute low-level business logic should be tested using [Jest](https://jestjs.io/) unit tests while following the best practices given [here](https://yonigoldberg.medium.com/yoni-goldberg-javascript-nodejs-testing-best-practices-2b98924c9347).
+
+The testing of [CRUD](https://www.codecademy.com/articles/what-is-crud) (Create, Read, Update and Delete) functionality should be done using End-to-End [Cypress](https://www.cypress.io/) tests. To avoid polluting the production database, tests should be run on a seperate database (see README). The best practices that should be followed to avoid flakey tests can be found [here](https://docs.cypress.io/guides/references/best-practices).
 
 ### Architecture Design Records (ADR)
 

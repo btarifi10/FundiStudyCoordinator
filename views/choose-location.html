@@ -32,11 +32,11 @@
 
         <!-- meeting date input -->
         <form id="meeting-form" class="mx-3">
-          <div class="mb-3" id='meeting-date'> 
+          <div class="mb-3" id='meeting-date'>
             <label for="date" class="form-label">When will your meeting occur?</label>
             <input class="form-control" type="datetime-local" name="meeting_time" id="date" required>
           </div>
-          
+
           <!-- meeting location choice - online/face-to-face -->
           <div class="mb-3">
             <label for="selection" class="form-label">Where will your meeting occur?</label>
@@ -44,7 +44,7 @@
               <option>none-selected</option>
               <option>online</option>
               <option>face-to-face</option>
-          </select>
+            </select>
           </div>
 
           <!-- placeholder which is populated when selecting the meeting type -->
@@ -59,12 +59,25 @@
   </div>
 
 
+  <!-- Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"
-  integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
   <!-- Script containing code for map search functionality -->
   <script defer type="module" src="scripts/meetings/choose-location.js"></script>
   <script defer type="module" src="scripts/meetings/load-meetings.js"></script>
+  <script defer type="module" src="scripts/choose-location.js"></script>
+
+
 </body>
 
 </html>

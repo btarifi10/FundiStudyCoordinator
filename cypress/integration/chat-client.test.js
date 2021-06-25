@@ -1,5 +1,5 @@
 /* eslint-env jest */
-const moment = require('moment')
+
 /* -------------------------- TESTING INSTRUCTIONS -----------------------------
 
 Steps:
@@ -16,174 +16,99 @@ developer dependencies)
 
 ----------------------------------------------------------------------------- */
 
-// TODO - Skipping many tests since Travis cannot access DB
+/* ------------------------------ EXAMPLE TEST ---------------------------------
 
-const JOIN_CHAT_EVENT = 'joinChat'
-const CHAT_MESSAGE_EVENT = 'chatMessage'
+The test below demonstrates how to implement cypress tests that include the
+database. I have created a 2 permanent users and a permanent group that should
+NOT be removed from the table. More permanent entries can be added where
+necessary.
 
-describe('A single client can join and send messages in the group chat', () => {
-  // before('Fill form to enter group chat', () => {
-  //   cy.visit('/intermediate-chat')
+User 1:
+user_id = 4
+first_name = 'Archibald'
+last_name = 'Armstrong'
+username = 'Archie'
+user_password = sh33p123
 
-  //   cy.get('form')
+User 2:
+user_id = 5
+first_name = 'James'
+last_name = 'Stuart'
+username = 'James VI'
+user_password = longlivetheking
 
-  //   cy.get('input[name="username"]')
-  //     .type('Archibald')
-  //     .should('have.value', 'Archibald')
+Group 1:
+group_id = 6
+group_name = 'Scotland'
+course_code = 'UNICORN007'
+(NOTE: Both User 1 and User 2 are part of this group)
 
-  //   cy.get('select[name="group"]')
-  //     .select('Sociology')
-  //     .should('have.value', 'Sociology')
+This means that any database calls that remove row entries should explicitly
+avoid removing those involving the above user and group id's.
 
-  //   cy.contains('Join Group').click()
-  // })
+Additionally, to handle the difficulties of iframes, I've made a custom
+function in cypress called getIframeBody()... see usage below
 
-  it.skip('Displays the page correctly', () => {
-    cy.url()
-      .should('include', '/chat?username=Archibald&group=Sociology')
+----------------------------------------------------------------------------- */
 
-    cy.get('span[id="group-name"]')
-      .should('have.text', 'Sociology')
+// const moment = require('moment')
 
-    cy.get('ul[id="chat-members"]')
-      .find('li')
-      .should('have.length', 1)
-      .and('have.text', 'Archibald')
-  })
+// describe('A single user can join and send messages in the group chat', () => {
+//   before('Clear messages table and navigate to group chat', () => {
+//     // Clear messages table
+//     fetch('/clear-messages')
 
-  // TODO - This test only applies to newly joined members
-  // it('Receives a welcome message in the chat', () => {
-  //   cy.get('div[class="message-area"]')
-  //     .find('div')
-  //     .should('have.length', 1)
+//     // Sign in
+//     cy.visit('/')
 
-  //   cy.get('div[class="message"]')
-  //     .find('p[class="meta"]')
-  //     .should('include.text', 'Study Bot')
+//     cy.get('[data-cy=sign-in-homepage]').click()
 
-  //   cy.get('div[class="message"]')
-  //     .find('p[class="text"]')
-  //     .should('have.text', 'Hey Archibald! Welcome to the Sociology group chat!')
-  // })
+//     cy.get('form')
 
-  it.skip('Can send messages that appear in the chat', () => {
-    cy.get('form')
-    cy.get('input[id="msg"]')
-      .type('Hello? Any sheep around here?')
+//     cy.get('[data-cy=username]')
+//       .type('Archie')
+//       .should('have.value', 'Archie')
 
-    cy.focused()
-      .should('have.id', 'msg')
+//     cy.get('[data-cy=password]')
+//       .type('sh33p123')
+//       .should('have.value', 'sh33p123')
 
-    cy.contains('Send').click()
+//     cy.get('[data-cy=sign-in-login]')
+//       .click()
 
-    // TODO - Database history means that this is non-deterministic
-    // cy.get('div[class="message-area"]')
-    //   .find('div')
-    //   .should('have.length', 2)
+//     // Navigate to the 'Scotland' group
+//     cy.getIframeBody('dashboard-iframe')
+//       .contains('Scotland')
+//       .click()
+//   })
 
-    cy.get('div[class="message-area"]')
-      .find('div')
-      .filter(':contains("sheep")')
-      .find('p[class="meta"]')
-      .should('include.text', 'Archibald')
+//   it('Displays the page correctly', () => {
+//     cy.getIframeBody('dashboard-iframe').within(() => {
+//       cy.get('[data-cy=group-header-name]')
+//         .should('have.text', 'Scotland')
 
-    cy.get('div[class="message-area"]')
-      .find('div')
-      .filter(':contains("sheep")')
-      .find('p[class="text"]')
-      .should('have.text', 'Hello? Any sheep around here?')
-  })
-})
+//       cy.get('[data-cy=members-in-chat]')
+//         .find('li')
+//         .should('have.length', 1)
+//         .and('have.text', 'Archie')
+//     })
+//   })
 
-describe('Interact with other users in chat', () => {
-  // before('Mock user enters the group and writes a message', () => {
-  //   cy.window()
-  //     .then(function (win) {
-  //       const mockUser = { username: 'James VI', group: 'Sociology' }
-  //       const text = 'Archy! Tell me a joke. I\'m feeling rather upset today. The sheep farmers are staging a coup'
-  //       const time = moment()
-  //       const chatMessage = formatChatMessage(mockUser.username, text, time)
+//   it('Can send messages that appear in the chat', () => {
+//     cy.getIframeBody('dashboard-iframe').within(() => {
+//       cy.get('form')
+//       cy.get('[data-cy=message-input]')
+//         .type('Hello? Any sheep around here?')
+//         .should('have.focus')
 
-  //       const socket = win.io()
-  //       socket.emit(JOIN_CHAT_EVENT, mockUser)
-  //       socket.emit(CHAT_MESSAGE_EVENT, chatMessage)
-  //     })
-  // })
-  it.skip('Updates list of chat members when a new member joins', () => {
-    cy.get('ul[id="chat-members"]')
-      .find('li')
-      .should('have.length', 2)
-      .within(() => {
-        cy.contains('James')
-          .should('have.text', 'James VI')
-      })
-  })
+//       cy.get('[data-cy=send-button]').click()
 
-  // TODO - This test only applies to newly joined members
-  // it('Receives a join message when a new member joins', () => {
-  //   cy.get('div[class="message-area"]')
-  //     .find('div')
-  //     .should('have.length', 4)
-  //     .filter(':contains("James VI has joined")')
-  //     .find('p[class="meta"]')
-  //     .should('include.text', 'Study Bot')
-
-  //   cy.get('div[class="message-area"]')
-  //     .find('div')
-  //     .filter(':contains("James VI has joined")')
-  //     .find('p[class="text"]')
-  //     .should('have.text', 'James VI has joined the chat!')
-  // })
-
-  it.skip('Receive messages from other members in chat', () => {
-    cy.get('div[class="message-area"]')
-      .find('div')
-      .filter(':contains("joke")')
-      .find('p[class="meta"]')
-      .should('include.text', 'James VI')
-
-    cy.get('div[class="message-area"]')
-      .find('div')
-      .filter(':contains("joke")')
-      .find('p[class="text"]')
-      .should('have.text', 'Archy! Tell me a joke. I\'m feeling rather upset today. The sheep farmers are staging a coup')
-  })
-
-  // TODO - These tests only applies when members leave the group
-  // it('Receives a leave message when a member leaves', () => {
-  //   cy.window()
-  //     .then(function (win) {
-  //       const mockUser = { username: 'sheep', group: 'Sociology' }
-  //       const msg = 'Uh oh'
-  //       const socket = win.io()
-  //       socket.emit(JOIN_CHAT_EVENT, mockUser)
-  //       socket.emit(CHAT_MESSAGE_EVENT, msg)
-  //       setTimeout(() => {
-  //         socket.disconnect()
-  //       }, 1000)
-  //     })
-
-  //   cy.get('div[class="message-area"]')
-  //     .find('div')
-  //     .should('have.length', 7)
-  //     .filter(':contains("left")')
-  //     .find('p[class="meta"]')
-  //     .should('include.text', 'Study Bot')
-
-  //   cy.get('div[class="message-area"]')
-  //     .find('div')
-  //     .filter(':contains("left")')
-  //     .find('p[class="text"]')
-  //     .should('have.text', 'sheep has left the chat...')
-  // })
-})
-
-/* ---------------------------- Helper Functions ---------------------------- */
-
-function formatChatMessage(username, text, time) {
-  return {
-    username: username,
-    text: text,
-    time: moment(time).format('HH:mm')
-  }
-}
+//       cy.get('[data-cy="message-area"]')
+//         .find('.message')
+//         .should('have.length', 1)
+//         .and('include.text', 'Archie')
+//         .and('include.text', `${moment().format('HH:mm')}`)
+//         .and('include.text', 'Hello? Any sheep around here?')
+//     })
+//   })
+// })
