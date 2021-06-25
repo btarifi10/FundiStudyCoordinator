@@ -21,7 +21,7 @@ function getCurrentMember (id) {
   if (membersInAttendance.length == 0) {
     const username = 'Default'
     const position = { lat: -27, lng: -26 }
-    const member = { username, position }
+    const member = { position }
     return member
   } else {
     return membersInAttendance.find(member => member.id === id)

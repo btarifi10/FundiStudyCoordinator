@@ -9,6 +9,8 @@ describe('A single user can join and send messages to the attendance page', () =
   })
 
   it('Displays the page correctly', () => {
+    cy.wait(6000)
+    cy.clock()
     // check meeting name
     cy.get('[data-cy=group-header-name]')
       .should('have.text', 'Scotland')
@@ -16,6 +18,8 @@ describe('A single user can join and send messages to the attendance page', () =
     cy.get('[data-cy=meeting-header-id]')
       .should('have.text', '2')
 
+    // cy.wait(5000)
+    cy.tick(6000)
     // check users 'A' - Archie
     const label = labels[labelIndex++ % labels.length]
     cy.get('[data-cy=members-in-chat]')
@@ -33,13 +37,16 @@ describe('A single user can join and send messages to the attendance page', () =
   })
 
   it('Can send messages that appear in the chat', () => {
+    cy.wait(1000)
     cy.get('form')
     cy.get('[data-cy=message-input]')
       .type('Hello? Any sheep around here?')
       .should('have.focus')
 
-    cy.get('[data-cy=send-button]').click()
-
+    cy.get('[data-cy=send-btn]').click()
+    cy.clock()
+    cy.tick(5000)
+    cy.wait(2000)
     cy.get('[data-cy="message-area"]')
       .find('.message')
       .should('have.length', 2)
@@ -59,9 +66,10 @@ describe('More than one user can join the chat and share their location', () => 
     labelIndex++
 
     // define the position of the newUser
+    cy.wait(1000)
     const newPos = { lat: -25.2, lng: 28.2 }
     mockOtherUser(newPos)
-    cy.wait(3000)
+    cy.wait(1000)
 
     cy.get('[data-cy="message-area"]')
       .find('.message')
@@ -107,8 +115,9 @@ describe('A message is automatically sent to the chat when certain conditions ar
   it('A message is sent to the rest of the group when the user stops sharing their location', () => {
     const newPos = { lat: -26.5, lng: 28.2 }
     const changePosition = false
+    cy.wait(1000)
     mockOtherUserPos(newPos, false, changePosition, 'Strawberry')
-    cy.wait(3000)
+    cy.wait(1000)
 
     cy.get('[data-cy="message-area"]')
       .find('.message')
@@ -119,8 +128,9 @@ describe('A message is automatically sent to the chat when certain conditions ar
   it('A message is sent to the rest of the group when the user reaches their location', () => {
     const newPos = { lat: -26.9, lng: 28.2 }
     const changePosition = false
+    cy.wait(1000)
     mockOtherUserPos(newPos, true, changePosition, 'Brownie')
-    cy.wait(3000)
+    cy.wait(1000)
 
     cy.get('[data-cy="message-area"]')
       .find('.message')
@@ -132,8 +142,9 @@ describe('A message is automatically sent to the chat when certain conditions ar
     const newPos = { lat: -26.5, lng: 28.2 }
     const newPos2 = { lat: -26.2, lng: 29.2 }
     const changePosition = true
+    cy.wait(1000)
     mockOtherUserPos(newPos, true, changePosition, 'Cream')
-    cy.wait(3000)
+    cy.wait(1000)
 
     cy.get('[data-cy=members-in-chat]')
       .find('li').last()
@@ -175,6 +186,7 @@ function configureAttendanceTest () {
   // Navigate to the 'Scotland' group chat
   // cy.visit('/chat?group=Scotland')
   // navigate to view meetings using click
+  cy.wait(2000)
 
   cy.visit('/attend-meeting?group=Scotland&meetingID=2')
 }

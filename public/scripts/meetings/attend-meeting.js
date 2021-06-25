@@ -236,6 +236,7 @@ function removeMarkers () {
 function loadMemberLink (member) {
   // create list element
   const li = document.createElement('li')
+  li.setAttribute('data-cy', 'member-list')
   // create anchor element
   const a = document.createElement('a')
   a.innerHTML = `'${member.label}' - ${member.username}`
