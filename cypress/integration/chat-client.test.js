@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 /* ----------------------- LOCAL TESTING INSTRUCTIONS --------------------------
+
 Steps:
 1) Open a terminal in the project's root directory
 2) Run 'npm run dev' (this starts a local server at localhost:3000)
