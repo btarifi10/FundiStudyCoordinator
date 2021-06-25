@@ -143,7 +143,7 @@ describe('User can successfully create an online meeting', () => {
       .should('have.length', 1)
       .and('include.text', 'Archie')
       .and('include.text', `${moment().format('HH:mm')}`)
-      .and('include.text', 'A online meeting has been scheduled for Sun Mar 13 2022 16:20:00 GMT+0200 (South Africa Standard Time) by Archie')
+      .and('include.text', 'A online meeting has been scheduled for Sun, 13 Mar 2022 at 16:20 by Archie')
   })
 })
 
@@ -187,7 +187,7 @@ describe('User can successfully create a face-to-face meeting', () => {
       .should('have.length', 1)
       .and('include.text', 'Archie')
       .and('include.text', `${moment().format('HH:mm')}`)
-      .and('include.text', 'A face-to-face meeting has been scheduled for Sun Mar 13 2022 16:20:00 GMT+0200 (South Africa Standard Time) by Archie')
+      .and('include.text', 'A face-to-face meeting has been scheduled for Sun, 13 Mar 2022 at 16:20 by Archie')
   })
 })
 
