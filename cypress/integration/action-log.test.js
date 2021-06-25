@@ -39,6 +39,8 @@ group_name = 'Scotland'
 course_code = 'UNICORN007'
 (NOTE: Both User 1 and User 2 are part of this group)
 */
+const moment = require('moment')
+
 describe('Group creation is logged', () => {
   before('Navigate to Create Group Page', () => {
     cy.request('/clear-groups')
@@ -118,17 +120,42 @@ describe('barry invited to group can view invite', () => {
   })
 })
 
-describe('Entering and Leaving a group chat is logged', () => {
-  before('Navigate to Create Group Page', () => {
+describe('Create events to be logged in a group chat', () => {
+  before('Enter a Group chat', () => {
     loginAsArchie()
     cy.visit('/chat?group=Scotland')
   })
-  it('Allows user to enter group chat', () => {
+  it('Type a message in a group chat', () => {
+    cy.get('form')
+    cy.get('[data-cy=message-input]')
+      .type('My first message')
+      .should('have.focus')
 
+    cy.get('[data-cy=send-button]').click()
+
+    cy.get('[data-cy="message-area"]')
+      .find('.message')
+      .should('have.length', 1)
+      .and('include.text', 'Archie')
+      .and('include.text', `${moment().format('HH:mm')}`)
+      .and('include.text', 'My first message')
   })
+  it('Allows user to leave the group chat', () => {
+    cy.visit('/my-groups')
+  })
+  // it('Allows user to create a poll', () => {
+
+  // })
+  // it('Allows user to create a meeting', () => {
+
+  // })
 })
 
-describe('Messages sent in a group chat are logged', () => {})
+describe('Activity log of a group shows activities', () => {
+
+})
+
+// describe('Messages sent in a group chat are logged', () => {})
 
 describe('COVID screening results are logged', () => {})
 
