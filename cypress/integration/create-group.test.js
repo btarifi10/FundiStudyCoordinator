@@ -262,9 +262,9 @@ describe('User invited to group can view invite', () => {
       .contains('NewGroup1')
   })
 
-  it('Clear the groups from database (for TEST consistencies)', () => {
-    cy.request('/clear-groups')
-  })
+  // it('Clear the groups from database (for TEST consistencies)', () => {
+  //   cy.request('/clear-groups')
+  // })
 })
 
 /* ---------------------------- Helper Functions ---------------------------- */

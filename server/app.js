@@ -341,7 +341,7 @@ app.post('/createGroup', function (req, res) { // KEEP THIS
     })
 })
 
-app.post('/complete-group-creation', function (req, res) { // KEEP THIS
+app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests work without checkAuthenticated)
   const { groupName, invitedMembers, dateCreated } = req.body
   console.log('the member info:')
   console.log(req.body)
@@ -374,12 +374,12 @@ app.post('/complete-group-creation', function (req, res) { // KEEP THIS
     .then(result => {
       res.send(result)
     })
-    //.then(result => {
-      //res.redirect('/dashboard')
-      // if (result.rowsAffected[0] === 1) {
-      //   res.sendStatus(200)
-      // }
-   // })
+    // .then(result => {
+  // res.redirect('/dashboard')
+  // if (result.rowsAffected[0] === 1) {
+  //   res.sendStatus(200)
+  // }
+  // })
     // If there's an error, return that with some description
     .catch(err => {
       res.send({
@@ -497,7 +497,6 @@ app.post('/logAction', checkAuthenticated, function (req, res) {
   console.log(userId)
   logAction(reqObj, userId)
 })
-
 
 /* ----------------------------- Tarryn's Code ----------------------------- */
 app.get('/profileViews/:id', (req, res) => {
