@@ -1,51 +1,12 @@
  { "GROUPS": [
      {
-        "group_id": "1",
-        "group_name": "Phantom Menace",
+        "group_id": "6",
+        "group_name": "Scotland",
+        "course_code": "UNICORN007",
         "date_joined": "1999",
         "group_num": "6",
         "group_url": "PM.html",
         "group_online": "4"      
-    },
-    {
-      "group_id": "2",
-      "group_name": "Attack of the Clones",
-      "date_joined": "2002",
-      "group_num": "6",
-      "group_url": "AC.html",
-      "group_online": "4"
-    },
-    {
-      "group_id": "3",
-      "group_name": "Revenge of the Sith",
-      "date_joined": "2005",
-      "group_num": "6",
-      "group_url": "RS.html",
-      "group_online": "4"
-    },
-    {
-      "group_id": "4",
-      "group_name": "A New Hope",
-      "date_joined": "1977",
-      "group_num": "6",
-      "group_url": "ANH.html",
-      "group_online": "4"
-    },
-    {
-      "group_id": "5",
-      "group_name": "The Empire Strikes Back",
-      "date_joined": "1980",
-      "group_num": "6",
-      "group_url": "ESB.html",
-      "group_online": "4"
-    },
-    {
-      "group_id": "6",
-      "group_name": "Return of the Jedi",
-      "date_joined": "1983",
-      "group_num": "6",
-      "group_url": "RJ.html",
-      "group_online": "4"
     }
 ],
  "GROUPS2": [
