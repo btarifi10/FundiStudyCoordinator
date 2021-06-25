@@ -31,7 +31,8 @@ These are the permanent entries in the test database that should not be altered.
 |:-------:|:--------:|:---------------:|:----------------------------------:|:---------:|:------:|:--------------:|:-----------------:|:------------------:|:------------------:|:-----------:|
 |    4    |  Archie  |     sh33p123    |              Archibald             | Armstrong |    5   |        1       | 4 Kentucky Circle | Saddlebrook Estate |    Johannesburg    |     1684    |
 |    5    | James VI | longlivetheking | 2021-06-25 10:37:16.0110000 +02:00 |   James   |  NULL  |      NULL      |  6 Shelley Street |      Ridgeway      | Johannesburg South |     2091    |
-|    28   |   barry  |       ???       |                Barry               |   Allen   |   3.5  |        2       |   6 North Avenue  |       Riviera      |    Johannesburg    |     2193    |
+|    28   |   barry  |      flash      |                Barry               |   Allen   |   3.5  |        2       |   6 North Avenue  |       Riviera      |    Johannesburg    |     2193    |
+|    32   |   Sheep  |      wool      |                Shaun                |  Shababi  |  NULL  |      NULL      |  Montecasino Blvd |      Fourways      |    Johannesburg    |     2055    |
 
 > \* The passwords are shown in unhashed form
 
