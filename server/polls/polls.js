@@ -170,8 +170,11 @@ function createPoll (pollDetails) {
 
   currentPolls.push(pollDetails)
 
-  const msDuration = pollDetails.duration * 60 * 60 * 1000
+  let msDuration = pollDetails.duration * 60 * 60 * 1000
 
+  if (process.env.DEPLOYMENT === 'TEST') {
+    msDuration = 15 * 1000
+  }
   // Record the start of the poll
   const actionObj = formatAction({
     action: 'POLL',
@@ -430,9 +433,16 @@ function removeUserFromGroup (userId, groupName) {
     })
 }
 
+function clearPolls () {
+  if (process.env.DEPLOYMENT === 'TEST') {
+    currentPolls.splice(0, currentPolls.length)
+  }
+}
+
 module.exports = {
   getCurrentPolls,
   currentPolls,
+  clearPolls,
   createCustomPoll,
   createGroupRequestsPoll,
   createBanningPoll,

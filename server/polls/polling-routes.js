@@ -174,7 +174,7 @@ pollingRouter.post('/api/start-banning-poll', (req, res) => {
 
   createBanningPoll(details)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 function deleteGroupRequest (reqId) {
