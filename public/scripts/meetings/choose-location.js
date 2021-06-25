@@ -124,8 +124,7 @@ meetingForm.addEventListener('submit', (event) => {
 // Sends the message to the other members in the chat and stores the message in the db
 function sendMessage (group, user, meetingTime, socket) {
   // Build the chat message object
-  const text = `A ${meetingType} meeting has been scheduled for ${meetingTime} by
-  ${user}`
+  const text = `A ${meetingType} meeting has been scheduled for ${meetingTime} by ${user}`
 
   const time = moment()
   const username = group
