@@ -12,6 +12,10 @@ document.getElementById('a-my-groups').addEventListener('click', () => {
   iFrame.src = '/my-groups'
 })
 
+document.getElementById('a-recommended-groups').addEventListener('click', () => {
+  iFrame.src = '/recommended-groups'
+})
+
 document.getElementById('a-invites').addEventListener('click', () => {
   iFrame.src = '/invites'
 })

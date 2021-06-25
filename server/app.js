@@ -85,8 +85,24 @@ app.get('/get-other-groups', function (req, res) { // KEEP THIS
     })
 })
 
-// Retrieves the members of a group to populate the ratings list, exclusing the
-// current member
+// Retrieves all the tags for selection when creating a new group
+app.get('/get-tags', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query('SELECT * from tags;')
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Retrieves the members of a group to populate the ratings list
 app.get('/get-members', function (req, res) {
   db.pools
     .then((pool) => {
@@ -129,8 +145,28 @@ app.get('/get-current', function (req, res) {
     })
 })
 
-// Logs a screening event to the database based on the userId, whether the user has passed given
-// the criteria described by Wits's COVID-screening and the date the last COVID-screening was completed.
+// Updates the ratings of the newly rated individual
+app.post('/update-ranking', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('ranking', db.sql.Float, req.body.newRating)
+        .input('number_ranking', db.sql.Int, req.body.newNumberRanking)
+        .input('username', db.sql.Char, req.body.userName)
+        .query(`UPDATE users set rating = @ranking, number_ratings = @number_ranking
+          where username= @username;`)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Posts the results of the screening to the database
 app.post('/create-screening', function (req, res) {
   const newScreen = req.body
   db.pools
@@ -146,6 +182,74 @@ app.post('/create-screening', function (req, res) {
     })
     .then(result => {
       res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Retrieves the recommended groups with the same tag that the user is already a part of
+app.get('/get-recommendation', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`WITH tag1 AS 
+        (SELECT tag 
+        FROM groups AS g 
+        INNER JOIN memberships AS m
+        ON g.group_id = m.group_id
+        INNER JOIN users AS u
+        ON m.user_id = u.user_id
+        WHERE u.user_id IN (
+        SELECT user_id 
+        FROM users
+        WHERE user_id = @userId ))
+        SELECT DISTINCT group_id, group_name, course_code 
+        from groups as Gr
+        Inner join tag1  as t
+        on Gr.tag = t.tag
+        AND group_id NOT IN (
+        SELECT group_id FROM group_requests WHERE user_id=@userId)
+        AND group_id NOT IN (
+        SELECT group_id FROM memberships WHERE user_id=@userId);`
+        )
+    })
+    .then(result => {
+      res.send(result.recordset)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Retrieves the tags from the groups the user is currently a part of
+app.get('/get-tag-values', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('userId', db.sql.Int, req.user.userId)
+        .query(`select Distinct tag 
+        from tags as t
+        inner join (SELECT tag  as tag_id
+        FROM groups AS g 
+        INNER JOIN memberships AS m
+        ON g.group_id = m.group_id
+        INNER JOIN users AS u
+        ON m.user_id = u.user_id
+        WHERE u.user_id IN (
+        SELECT user_id 
+        FROM users
+        WHERE user_id = @userId )) as w
+        on t.tag_id= w.tag_id;`
+        )
+    })
+    .then(result => {
+      res.send(result.recordset)
     })
     .catch(err => {
       res.send({
@@ -252,86 +356,92 @@ app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
     })
 })
 
-// app.get('/getUsersGroups', checkAuthenticated, function (req, res) {
-//   // console.log(req.query)
-//   db.pools
-//     // Run query
-//     .then((pool) => {
-//       return pool.request()
-//         .input('username', db.sql.Char, req.query.username)
-//         .query(`
-//           SELECT group_name
-//           FROM groups AS g
-//             INNER JOIN memberships AS m
-//                 ON g.group_id = m.group_id
-//             INNER JOIN users AS u
-//                 ON m.user_id = u.user_id
-//           WHERE u.user_id IN (
-//             SELECT user_id
-//             FROM users
-//             WHERE username = (@username)
-//             )
-//         `)
-//     })
-//     // Send back the result
-//     .then(result => {
-//       res.send(result)
-//       // console.log(result)
-//     })
-//     // If there's an error, return that with some description
-//     .catch(err => {
-//       res.send({
-//         Error: err
-//       })
-//     })
-// })
-
-// app.get('/getRequests', checkAuthenticated, function (req, res) {
-//   db.pools
-//     // Run query
-//     .then((pool) => {
-//       return pool.request()
-//         .input('userId', db.sql.Char, req.user.userId)
-//         .query(`
-//           SELECT group_name
-//           FROM groups AS g
-//             INNER JOIN group_requests AS r
-//                 ON g.group_id = r.group_id
-//             INNER JOIN users AS u
-//                 ON r.user_id = u.user_id
-//           WHERE u.user_id = (@userId)
-//         `)
-//     })
-//     // Send back the result
-//     .then(result => {
-//       res.send(result)
-//       // console.log(result)
-//     })
-//     // If there's an error, return that with some description
-//     .catch(err => {
-//       res.send({
-//         Error: err
-//       })
-//     })
-// })
-
-app.post('/createGroup', checkAuthenticated, function (req, res) { // KEEP THIS
-  const { groupName, courseCode, dateCreated } = req.body
-
+app.get('/getUsersGroups', function (req, res) {
+  // console.log(req.query)
   db.pools
     // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, req.query.username)
+        .query(`
+          SELECT group_name
+          FROM groups AS g 
+            INNER JOIN memberships AS m
+                ON g.group_id = m.group_id
+            INNER JOIN users AS u
+                ON m.user_id = u.user_id
+          WHERE u.user_id IN (
+            SELECT user_id 
+            FROM users
+            WHERE username = (@username)
+            )   
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      // console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.get('/getRequests', function (req, res) {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('username', db.sql.Char, req.query.username)
+        .query(`
+          SELECT group_name
+          FROM groups AS g 
+            INNER JOIN group_requests AS r
+                ON g.group_id = r.group_id
+            INNER JOIN users AS u
+                ON r.user_id = u.user_id
+          WHERE u.user_id IN (
+            SELECT user_id 
+            FROM users
+            WHERE username = (@username)
+            )   
+        `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      // console.log(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.post('/createGroup', checkAuthenticated, function (req, res) {
+  const { groupName, courseCode, dateCreated, tagValue } = req.body
+
+  db.pools
     .then((pool) => {
       return pool.request()
         .input('group_name', db.sql.Char, groupName)
         .input('course_code', db.sql.Char, courseCode)
         .input('date_created', db.sql.DateTimeOffset, dateCreated)
+        .input('tag_value', db.sql.Char, tagValue)
         .query(`
-          INSERT INTO groups (group_name, course_code, date_created)
-          VALUES ((@group_name),(@course_code),(@date_created));
+          INSERT INTO groups (group_name, course_code, date_created, tag)
+          VALUES (@group_name,@course_code,@date_created,(select tag_id from
+            tags where tag = @tag_value));
         `)
     })
     .then(result => {
       res.send(result)
+      console.log(result)
     })
     .catch(err => {
       res.send({
@@ -340,10 +450,9 @@ app.post('/createGroup', checkAuthenticated, function (req, res) { // KEEP THIS
     })
 })
 
-app.post('/complete-group-creation', checkAuthenticated, function (req, res) { // KEEP THIS
+app.post('/complete-group-creation', checkAuthenticated, function (req, res) {
   const { groupName, invitedMembers, dateCreated } = req.body
   db.pools
-    // Run query
     .then((pool) => {
       invitedMembers.forEach(member => {
         console.log(member)
@@ -365,12 +474,74 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) { /
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name = @groupName), @dateCreated);
           `)
     })
-    // Send back the result
     .then(result => {
       res.redirect('/dashboard')
-      // if (result.rowsAffected[0] === 1) {
-      //   res.sendStatus(200)
-      // }
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.post('/createMembership', function (req, res) {
+  const membershipInfo = req.body
+  db.pools
+    // Run query
+    .then((pool) => {
+      membershipInfo.members.forEach(member => {
+        console.log(member)
+        console.log(membershipInfo.group_name.trim())
+        console.log(membershipInfo.date_created)
+        return pool.request()
+          .input('username', db.sql.Char, member)
+          .input('group_name', db.sql.Char, membershipInfo.group_name.trim())
+          .input('date_created', db.sql.DateTimeOffset, membershipInfo.date_created)
+          .query(`
+            INSERT INTO memberships (user_id, group_id, date_joined)
+            SELECT user_id, group_id, (@date_created)
+            FROM users AS u, groups AS g
+            WHERE u.username = (@username)
+            AND g.group_name = (@group_name);
+          `)
+      })
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+app.post('/sendInvites', function (req, res) {
+  const inviteObj = req.body
+  console.log(inviteObj)
+  // console.log(inviteList)
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      inviteObj.invited_members.forEach(member => {
+        return pool.request()
+          .input('username', db.sql.Char, member)
+          .input('group_name', db.sql.Char, inviteObj.group_name)
+          .input('time_sent', db.sql.DateTimeOffset, inviteObj.time_sent)
+          .query(`
+            INSERT INTO invites (receiver_id, group_id, time_sent)
+            SELECT user_id, group_id, (@time_sent)
+            FROM users AS u, groups AS g
+            WHERE u.username = (@username)
+            AND g.group_name = (@group_name);
+          `)
+      })
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      // console.log('Invites have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -380,80 +551,7 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) { /
     })
 })
 
-// app.post('/createMembership', checkAuthenticated, function (req, res) {
-//   const membershipInfo = req.body
-//   // Make a query to the database
-//   db.pools
-//     // Run query
-//     .then((pool) => {
-//       // console.log('INSIDE server-createMembership carrying: ')
-//       // console.log(membershipInfo)
-//       membershipInfo.members.forEach(member => {
-//         console.log(member)
-//         console.log(membershipInfo.group_name.trim())
-//         console.log(membershipInfo.date_created)
-//         return pool.request()
-//           .input('username', db.sql.Char, member)
-//           .input('group_name', db.sql.Char, membershipInfo.group_name.trim())
-//           .input('date_created', db.sql.DateTimeOffset, membershipInfo.date_created)
-//           .query(`
-//             INSERT INTO memberships (user_id, group_id, date_joined)
-//             SELECT user_id, group_id, (@date_created)
-//             FROM users AS u, groups AS g
-//             WHERE u.username = (@username)
-//             AND g.group_name = (@group_name);
-//           `)
-//       })
-//     })
-//     // Send back the result
-//     .then(result => {
-//       res.send(result)
-//       // console.log('done with createMembership')
-//     })
-//     // If there's an error, return that with some description
-//     .catch(err => {
-//       res.send({
-//         Error: err
-//       })
-//     })
-// })
-
-// app.post('/sendInvites', checkAuthenticated, function (req, res) {
-//   const inviteObj = req.body
-//   console.log(inviteObj)
-//   // console.log(inviteList)
-//   // Make a query to the database
-//   db.pools
-//     // Run query
-//     .then((pool) => {
-//       inviteObj.invited_members.forEach(member => {
-//         return pool.request()
-//           .input('username', db.sql.Char, member)
-//           .input('group_name', db.sql.Char, inviteObj.group_name)
-//           .input('time_sent', db.sql.DateTimeOffset, inviteObj.time_sent)
-//           .query(`
-//             INSERT INTO invites (receiver_id, group_id, time_sent)
-//             SELECT user_id, group_id, (@time_sent)
-//             FROM users AS u, groups AS g
-//             WHERE u.username = (@username)
-//             AND g.group_name = (@group_name);
-//           `)
-//       })
-//     })
-//     // Send back the result
-//     .then(result => {
-//       res.send(result)
-//       // console.log('Invites have been sent')
-//     })
-//     // If there's an error, return that with some description
-//     .catch(err => {
-//       res.send({
-//         Error: err
-//       })
-//     })
-// })
-
-app.post('/sendRequest', checkAuthenticated, function (req, res) { // KEEP THIS
+app.post('/sendRequest', checkAuthenticated, function (req, res) {
   const reqObj = req.body
   // console.log(inviteList)
   // Make a query to the database
@@ -645,11 +743,7 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
-<<<<<<< HEAD
 const handleMeetingMember = require('./meetings/attendance-server')
-=======
-// const { checkAuthenticated } = require('./authentication')
->>>>>>> main
 app.use(pollingRouter)
 
 /* ------------------------------ Tests ------------------------------------- */

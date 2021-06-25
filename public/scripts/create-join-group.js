@@ -164,6 +164,7 @@ function updateGroupList () {
   const inviteList = document.getElementById('inviteList')
   const userinput = document.getElementById('groupName').value.trim()
   const courseCode = document.getElementById('courseCode').value.trim()
+
   const duplicate = database.find(group => group.group_name.normalize().trim() === userinput.normalize())
   let invitedMembers = []
   invitedMembers = selectedMembers(inviteList)
