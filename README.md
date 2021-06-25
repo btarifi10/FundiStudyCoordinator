@@ -32,7 +32,7 @@ These are the permanent entries in the test database that should not be altered.
 |    4    |  Archie  |     sh33p123    |              Archibald             | Armstrong |    5   |        1       | 4 Kentucky Circle | Saddlebrook Estate |    Johannesburg    |     1684    |
 |    5    | James VI | longlivetheking | 2021-06-25 10:37:16.0110000 +02:00 |   James   |  NULL  |      NULL      |  6 Shelley Street |      Ridgeway      | Johannesburg South |     2091    |
 |    28   |   barry  |      flash      |                Barry               |   Allen   |   3.5  |        2       |   6 North Avenue  |       Riviera      |    Johannesburg    |     2193    |
-|    32   |   Sheep  |      wool      |                Shaun                |  Shababi  |  NULL  |      NULL      |  Montecasino Blvd |      Fourways      |    Johannesburg    |     2055    |
+|    34   |   Sheep  |      wool      |                Shaun                |  Shababi  |  NULL  |      NULL      |  Montecasino Blvd |      Fourways      |    Johannesburg    |     2055    |
 
 > \* The passwords are shown in unhashed form
 
@@ -49,6 +49,7 @@ These are the permanent entries in the test database that should not be altered.
 |       3       |    4    |     6    | 2021-06-24 07:34:05.0000000 +02:00 |
 |       26      |    28   |    29    | 2021-06-25 10:37:16.0110000 +02:00 |
 |       27      |    4    |    29    | 2021-06-25 10:37:46.0000000 +02:00 |
+|       47      |    34   |     6    | 2021-06-25 22:03:55.0000000 +02:00 |
 
 
 ### Table: meetings
