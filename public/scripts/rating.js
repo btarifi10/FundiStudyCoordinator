@@ -34,6 +34,7 @@ const ratingSubmission = document.getElementById('submitButton')
 ratingSubmission.addEventListener('click', (event) => {
   event.preventDefault()
   submitRating()
+  location.href = '/chat'
 })
 
 // Handles the retrieval of the passed rating so as to update based on an average with the current
@@ -47,7 +48,6 @@ function submitRating () {
       const ratingInfo = data.recordset[0]
       let newRating = null
       let newNumRating = null
-      console.log(ratingInfo)
 
       if (ratingInfo.length === 0) {
         newRating = getNewRanking()
@@ -65,6 +65,10 @@ function submitRating () {
     })
 }
 
+
+
+
+
 // Sends back the updated rating to be posted to the database
 function postNewRating (ratingUpdated) {
   fetch('/update-ranking', {
@@ -74,7 +78,6 @@ function postNewRating (ratingUpdated) {
     },
     body: JSON.stringify(ratingUpdated)
   })
-  // window.history.back()
 }
 
 // Retrieves the new entry for the rating form the checkbox
