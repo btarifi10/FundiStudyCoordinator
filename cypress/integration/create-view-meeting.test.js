@@ -100,6 +100,23 @@ describe('Dynamically generated form elements load correctly', () => {
       })
     })
   })
+  it('Cannot submit form with meeting date in the past', () => {
+    cy.reload()
+
+    cy.get('[data-cy=meeting-form]').within(() => {
+      cy.get('[data-cy=date-input]')
+        .type('2020-03-13T16:20')
+
+      cy.get('[data-cy=method-input]')
+        .select('face-to-face')
+
+      cy.get('[data-cy=create-meeting]').click()
+
+      cy.on('window:alert', (message) => {
+        expect(message).to.contains('Please select a viable meeting time in the future')
+      })
+    })
+  })
 })
 
 /* -------------------------------------------------------------------------- */
