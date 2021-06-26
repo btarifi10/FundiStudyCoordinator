@@ -36,6 +36,7 @@ function loadPlatform () {
   inputPlatform.setAttribute('title', 'Platform name must consist of alphanumeric characters')
   inputPlatform.setAttribute('placeholder', 'Enter platform name...')
   inputPlatform.setAttribute('aria-describedby', 'platformHelp')
+  inputPlatform.setAttribute('data-cy', 'platform-input')
 
   // append
   platform_div.appendChild(label)
@@ -70,6 +71,7 @@ function loadPlatform () {
   inputLink.setAttribute('placeholder', 'Enter the link to the meeting...')
   inputLink.setAttribute('aria-describedby', 'linkHelp')
   inputLink.setAttribute('name', 'link')
+  inputLink.setAttribute('data-cy', 'link-input')
 
   linkDiv.appendChild(linkLabel)
   linkDiv.appendChild(linkExp)
@@ -109,6 +111,7 @@ function loadLocation () {
   input.setAttribute('placeholder', 'Enter address...')
   input.setAttribute('aria-describedby', 'addressHelp')
   input.setAttribute('name', 'place')
+  input.setAttribute('data-cy', 'address-input')
 
   const inputHelp = document.createElement('div')
   inputHelp.setAttribute('id', 'location-hint')
@@ -126,6 +129,7 @@ function loadLocation () {
   recommendButton.setAttribute('data-toggle', 'dropdown')
   recommendButton.setAttribute('aria-haspopup', 'true')
   recommendButton.setAttribute('aria-expanded', 'false')
+  recommendButton.setAttribute('data-cy', 'recommend-btn')
   recommendButton.innerText = 'Recommend Locations'
   btnGroup.appendChild(recommendButton)
 
@@ -137,18 +141,21 @@ function loadLocation () {
   btn1.type = 'button'
   btn1.setAttribute('class', 'dropdown-item')
   btn1.setAttribute('onclick', 'recommendCentralLocation()')
+  btn1.setAttribute('data-cy', 'central-location-btn')
   btn1.innerText = 'Most central member\'s address'
   // Current user address
   const btn2 = document.createElement('button')
   btn2.type = 'button'
   btn2.setAttribute('class', 'dropdown-item')
   btn2.setAttribute('onclick', 'recommendUserLocation()')
+  btn2.setAttribute('data-cy', 'user-location-btn')
   btn2.innerText = 'Your address'
   // University address
   const btn3 = document.createElement('button')
   btn3.type = 'button'
   btn3.setAttribute('class', 'dropdown-item')
   btn3.setAttribute('onclick', 'recommendUniLocation()')
+  btn3.setAttribute('data-cy', 'uni-location-btn')
   btn3.innerText = 'Wits'
   popupDiv.appendChild(btn1)
   popupDiv.appendChild(btn2)
@@ -174,6 +181,7 @@ function loadLocation () {
   map_frame.setAttribute('style', 'border:0')
   map_frame.setAttribute('src', 'https://www.google.com/maps/embed/v1/place?key=AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU&q=%20&zoom=13')
   map_frame.setAttribute('allowfullscreen', 'allowfullscreen')
+  map_frame.setAttribute('data-cy', 'map')
 
   placeDiv.appendChild(label)
   placeDiv.appendChild(rowDiv)
@@ -192,6 +200,8 @@ function loadButtons (meeting) {
   a.appendChild(text)
   a.setAttribute('class', 'btn btn-primary')
   a.setAttribute('data-id', 'onlineMeet')
+  a.setAttribute('id', 'onlineMeet')
+  a.setAttribute('data-cy', 'onlineMeetingView')
   a.setAttribute('type', 'submit')
 
   const i = document.createElement('i')
@@ -204,6 +214,7 @@ function loadButtons (meeting) {
   a2.appendChild(text2)
   a2.setAttribute('class', 'btn btn-primary')
   a2.setAttribute('data-id', 'faceMeet')
+  a2.setAttribute('data-cy', 'face2faceMeetingView')
   a2.setAttribute('type', 'submit')
   const i2 = document.createElement('i')
   i2.setAttribute('class', 'fa fa-map-marker')
@@ -246,15 +257,15 @@ function loadHTMLTable (data, option) {
     }
 
     tableHtml += '<tr>'
-    tableHtml += `<td id='${meeting_id}-meeting-id'>${meeting_id}</td>`
-    tableHtml += `<td id='${meeting_id}-meeting-group-name'>${group_name}</td>`
-    tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
-    tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
-    tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
+    tableHtml += `<td data-cy='meeting-id-${meeting_id}' id='${meeting_id}-meeting-id'>${meeting_id}</td>`
+    tableHtml += `<td data-cy='meeting-group-${meeting_id}' id='${meeting_id}-meeting-group-name'>${group_name.trim()}</td>`
+    tableHtml += `<td data-cy='creator-id-${meeting_id}' id='${meeting_id}-creator-id'>${creator_id}</td>`
+    tableHtml += `<td data-cy='meeting-time-${meeting_id}' id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
+    tableHtml += `<td data-cy='meeting-place-${meeting_id}' id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
     if (option == 0) {
       tableHtml += `<td id = '${meeting_id}-time-diff'>
       ${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds
-      <br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-id='attend-${meeting_id}-btn' 
+      <br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-cy='attend-meeting-${meeting_id}-btn' data-id='attend-${meeting_id}-btn' 
       onclick="move(${meeting_id})"> Attend</button></td>`
     } else {
       tableHtml += `<td id = '${meeting_id}-time-diff'>

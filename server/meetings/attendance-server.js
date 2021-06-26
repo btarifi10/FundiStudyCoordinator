@@ -1,7 +1,7 @@
 'use strict'
 
 /* ------------------------------ Requirements ------------------------------ */
-
+const moment = require('moment')
 const {
   addMember,
   getCurrentMember,
@@ -114,7 +114,8 @@ function handleDisconnect (io, socket) {
   if (!member) { return }
 
   const leavingText = `${member.username} has left the meeting...`
-  const leavingMessage = formatMessage(BOT_NAME, leavingText)
+  const time = moment()
+  const leavingMessage = formatMessage(BOT_NAME, leavingText, time)
   io.to(member.group).emit(SERVER_MESSAGE, leavingMessage)
 
   // Send the updated list of chat members to be rendered on the client
@@ -125,10 +126,11 @@ function handleDisconnect (io, socket) {
 }
 
 // Returns a message object containing the member's username, text and timestamp
-function formatMessage (username, text) {
+function formatMessage (username, text, time) {
   return {
     username: username,
-    text: text
+    text: text,
+    time: moment(time).format('HH:mm')
   }
 }
 

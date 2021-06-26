@@ -19,6 +19,7 @@ function addMember (id, username, group, meetingID, position, label) {
 // Gets the member in attendance based on their id
 function getCurrentMember (id) {
   if (membersInAttendance.length == 0) {
+    const username = 'Default'
     const position = { lat: -27, lng: -26 }
     const member = { position }
     return member

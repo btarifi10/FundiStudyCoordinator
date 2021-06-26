@@ -28,7 +28,7 @@ function loadHTMLTable (data) {
 
   data.forEach(function ({ membership_id, group_id, group_name, course_code, date_joined }) { // group_num, group_online, group_url }) {
     tableHtml += '<tr>'
-    tableHtml += `<td id = '${group_id}-group-name'><a href='/chat?group=${group_name}'>${group_name}</a></td>`
+    tableHtml += `<td id = '${group_id}-group-name'><a href='/chat?group=${group_name.trim()}'>${group_name}</a></td>`
     tableHtml += `<td id = '${group_id}-course-code'>${course_code}</td>`
     tableHtml += `<td id = '${group_id}-date-joined'>${moment(date_joined).format('ddd, DD MMM YYYY')}</td>`
     tableHtml += `<td><button class="btn btn-outline-danger border-0 delete-row-btn" style="border-radius:25px;width:60px" id="${membership_id}-btn" data-id=${membership_id} onclick="leaveGroup(this.dataset.id)">
