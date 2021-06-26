@@ -71,7 +71,7 @@ describe('User cannot join groups they are a member of', () => {
   it('Does not display any groups the user is a member of', () => {
     cy.get('[data-cy=group-search]')
       .clear()
-      
+
     cy.get('[data-cy="groups-table"]')
       .find('tr')
       .should('have.length', 2) // The titles and Scotland found in previous 'it'
@@ -92,22 +92,4 @@ describe('User can join groups that they are not members of', () => {
 
     cy.request('/clear-requests')
   })
-
-  // it('Allows user to join groups they are not members of', () => {
-  //   cy.get('table[id="table"]')
-  //     .contains('td', 'LYFE')
-  //     .siblings()
-  //     .contains('Yasser,The boys')
-
-  //   cy.get('button[id="LYFE"]')
-  //     .click()
-
-  //   cy.get('table[id="table"]')
-  //     .contains('td', 'LYFE')
-  //     .siblings()
-  //     .contains('Yasser,The boys,Joe')
-
-  //   cy.get('button[class="join-row-btn"]')
-  //     .should('have.length', 3)
-  // })
 })
