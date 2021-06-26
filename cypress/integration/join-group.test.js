@@ -15,27 +15,16 @@ developer dependencies)
 const moment = require('moment')
 
 describe('The correct page is displayed to the user when entering the Join-group page', () => {
-  before('Navigate to Join-Group page', () => {
-    // Sign in
-    cy.visit('/')
-
-    cy.get('[data-cy=sign-in-homepage]')
-      .click()
-
-    cy.get('form')
-
-    cy.get('[data-cy=username]')
-      .type('barry')
-      .should('have.value', 'barry')
-
-    cy.get('[data-cy=password]')
-      .type('flash')
-      .should('have.value', 'flash')
-
-    cy.get('[data-cy=sign-in-login]')
-      .click()
-
+  before('Navigate to Find-Groups page', () => {
+    cy.request('/clear-requests')
+    cy.request('/clear-groups')
+    cy.wait(10000)
+    loginAsBarry()
     cy.visit('/find-groups')
+    cy.wait(3000)
+  })
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
   })
 
   it('Displays the join-group page', () => {
@@ -91,5 +80,28 @@ describe('User can join groups that they are not members of', () => {
       .contains('No Matching Groups')
 
     cy.request('/clear-requests')
+    cy.request('/clear-groups')
   })
 })
+
+/* ---------------------------- Helper Functions ---------------------------- */
+
+function loginAsBarry () {
+  cy.visit('/')
+
+  cy.get('[data-cy=sign-in-homepage]').click()
+
+  cy.get('form')
+
+  cy.get('[data-cy=username]')
+    .type('barry')
+    .should('have.value', 'barry')
+
+  cy.get('[data-cy=password]')
+    .type('flash')
+    .should('have.value', 'flash')
+
+  cy.get('[data-cy=sign-in-login]')
+    .click()
+  cy.wait(3000)
+}

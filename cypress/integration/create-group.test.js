@@ -66,11 +66,6 @@ describe('The correct page is displayed to the user when entering the create-gro
 })
 
 describe('Users cannot input invalid group information for group creation', () => {
-  before('Navigate to Create-Group page', () => {
-    // loginAsArchie()
-    //cy.visit('/create-group')
-    //cy.wait(3000)
-  })
   it('Does not allow user to create group without inviting a member', () => {
     cy.get('input[data-cy=group-name]')
       .type('NewGroup1')
@@ -247,8 +242,9 @@ describe('James invited to group can view invite', () => {
       .contains('NewGroup1')
   })
 
-  it('Clears database from any NewGroup1 (for test consistency)', () => {
+  it('Cleans database for tests', () => {
     cy.request('/clear-groups')
+    cy.wait(10000)
   })
 })
 
@@ -290,4 +286,5 @@ function loginAsJames () {
 
   cy.get('[data-cy=sign-in-login]')
     .click()
+  cy.wait(3000)
 }
