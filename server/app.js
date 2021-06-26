@@ -147,7 +147,7 @@ app.get('/get-current', function (req, res) {
 
 // Updates the ratings of the newly rated individual
 app.post('/update-ranking', function (req, res) {
-  console.log(req)
+  // console.log(req)
   db.pools
     .then((pool) => {
       return pool.request()
@@ -442,7 +442,6 @@ app.post('/createGroup', checkAuthenticated, function (req, res) {
     })
     .then(result => {
       res.send(result)
-      console.log(result)
     })
     .catch(err => {
       res.send({
@@ -453,13 +452,10 @@ app.post('/createGroup', checkAuthenticated, function (req, res) {
 
 app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests work without checkAuthenticated)
   const { groupName, invitedMembers, dateCreated } = req.body
-  console.log('the member info:')
-  console.log(req.body)
+
   db.pools
     .then((pool) => {
       invitedMembers.forEach(member => {
-        console.log('The member being invited:')
-        console.log(member)
         pool.request()
           .input('userId', db.sql.Int, member.user_id)
           .input('groupName', db.sql.Char, groupName)
@@ -469,7 +465,6 @@ app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests w
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name = @groupName), @dateCreated);
           `)
       })
-      console.log('THE MEMBERSHIP')
       return pool.request()
         .input('userId', db.sql.Int, req.user.userId)
         .input('groupName', db.sql.Char, groupName)
@@ -502,9 +497,6 @@ app.post('/createMembership', function (req, res) {
     // Run query
     .then((pool) => {
       membershipInfo.members.forEach(member => {
-        console.log(member)
-        console.log(membershipInfo.group_name.trim())
-        console.log(membershipInfo.date_created)
         return pool.request()
           .input('username', db.sql.Char, member)
           .input('group_name', db.sql.Char, membershipInfo.group_name.trim())
@@ -530,8 +522,6 @@ app.post('/createMembership', function (req, res) {
 
 app.post('/sendInvites', function (req, res) {
   const inviteObj = req.body
-  console.log(inviteObj)
-  // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
@@ -553,7 +543,6 @@ app.post('/sendInvites', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('Invites have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -595,8 +584,6 @@ app.post('/sendRequest', checkAuthenticated, function (req, res) {
 app.post('/logAction', checkAuthenticated, function (req, res) {
   const reqObj = req.body // {group_name, timestamp, description}
   const userId = req.user.userId
-  console.log('The userID is:')
-  console.log(userId)
   logAction(reqObj, userId)
 })
 

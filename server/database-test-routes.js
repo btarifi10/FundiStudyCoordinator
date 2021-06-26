@@ -120,7 +120,6 @@ testRouter.get('/reset-ratings', function (req, res) {
 /* -------------------------------------------------------------------------- */
 
 testRouter.get('/clear-groups', function (req, res) {
-  console.log('HELLOO THERE, I am clearing the database from any NewGroup1')
   // Make a query to the database
   db.pools
     // Run query
