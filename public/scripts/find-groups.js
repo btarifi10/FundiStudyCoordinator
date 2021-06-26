@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
 function entireGroupSearch () {
   const searchTermGroup = document.getElementById('group-search').value.toLowerCase()
 
-  if (searchTermGroup || searchTermTag) {
-    const matchingGroups = groups.filter(g => g.group_name.toLowerCase().includes(searchTermGroup || searchTermTag))
+  if (searchTermGroup) {
+    const matchingGroups = groups.filter(g => g.group_name.toLowerCase().includes(searchTermGroup))
     populateAllGroups(matchingGroups)
   } else { populateAllGroups(groups) }
 }
