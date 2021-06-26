@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
   userService.getCurrentUser().then(u => {
     user = u
     socket.emit('voterConnection', group)
+    return getGroupMembers(group)
+    // Get all group members and display the data
+  }).then(data => {
+    groupMembers = data.filter(mem => mem.user_id !== user.id)
+    // console.log(groupMembers)
+    updateMembersTable(groupMembers)
   })
 
   getPollHistory(group)
@@ -46,13 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
       usersToInvite = data
       updateUserInvitesTable([], '')
     })
-
-  // Get all group members and display the data
-  getGroupMembers(group)
-    .then(data => {
-      groupMembers = data.filter(mem => mem.user_id !== user.id)
-      updateMembersTable(groupMembers)
-    })
 })
 
 // Create the client socket
@@ -63,7 +62,8 @@ const socket = io()
 
 // Update all the polls while filtering polls specific to banning the user
 socket.on('updateCurrentPolls', (polls) => {
-  console.log('updatemsg')
+  // console.log('updatemsg')
+  // console.log(polls)
   const myPolls = polls.filter(poll => (poll.type !== 'Ban' || poll.userId !== user.id))
   displayCurrentPolls(myPolls)
 })
@@ -122,7 +122,7 @@ function formatPollHTML (poll, pollId) {
       pollFormHtml += `
     <div class="form-check poll-option">
         <input class="form-check-input" type="radio" name="poll-${pollId}-option"
-        value="${numOptions}" id="poll-${pollId}-option${numOptions}">
+        value="${numOptions}" id="poll-${pollId}-option${numOptions}" data-cy="opt-${numOptions}">
         <label class="form-check-label" for="poll-${pollId}-option${numOptions}">${opt.option}</label>
     </div>
       `
@@ -144,7 +144,7 @@ function formatPollHTML (poll, pollId) {
   div.classList.add('card')
   div.classList.add('text-start')
   div.innerHTML =
-      `<div class="card-header poll-title"> ${poll.title} <span class="badge bg-secondary"> ${poll.type.toUpperCase()} </span> </div>
+      `<div class="card-header poll-title"> ${poll.title.trim()} <span class="badge bg-secondary"> ${poll.type.toUpperCase()} </span> </div>
        <div class="card-body">
        <div class="row">
        ${pollFormHtml}
@@ -211,7 +211,6 @@ function formatOldPollHTML (poll, oldId) {
   div.classList.add('poll')
   div.classList.add('card')
   div.classList.add('text-start')
-  console.log(poll.date)
   div.innerHTML =
       `<div class="card-header poll-title"> ${poll.title} <span class="badge bg-secondary"> ${poll.type.toUpperCase()} </span> </div>
        <div class="card-body">
@@ -287,7 +286,7 @@ function updateRequestsTable (requestList) {
       tableHTML += '<tr>'
       tableHTML += `<td>${username}</td>`
       tableHTML += `<td>${time_sent.toLocaleString()}</td>`
-      tableHTML += `<td><button class="btn btn-secondary" id="${requests_id}-request" onClick="startRequestsPoll(this.id)"> Start Poll </td>`
+      tableHTML += `<td><button class="btn btn-secondary" id="${requests_id}-request" onClick="startRequestsPoll(this.id)" data-cy="accept-${username.trim()}-btn"> Start Poll </td>`
 
       tableHTML += '</tr>'
     })
@@ -348,7 +347,7 @@ function updateMembersTable (members) {
     members.forEach(function ({ user_id, username }) {
       tableHTML += '<tr>'
       tableHTML += `<td>${username}</td>`
-      tableHTML += `<td><button class="btn btn-secondary" id="${user_id}-member" onClick="startBanPoll(this.id)"> Ban</td>`
+      tableHTML += `<td><button class="btn btn-secondary" id="${user_id}-member" onClick="startBanPoll(this.id)" data-cy="ban-${username.trim()}-btn"> Ban</td>`
       tableHTML += '</tr>'
     })
     table.innerHTML = tableHTML
@@ -379,7 +378,7 @@ function startBanPoll (id) {
   }).then(response => {
     if (response.ok) {
       socket.emit('pollCreated', group)
-      window.alert(`The poll to ban ${member.username.trim()} been successfully created.`)
+      window.alert(`The poll to ban ${member.username.trim()} has been successfully created.`)
     }
   })
 }
@@ -395,7 +394,6 @@ function getUsersToInvite (group) {
 window.userSearch = userSearch
 function userSearch () {
   const searchTerm = document.getElementById('user-search').value.toLowerCase()
-
   if (searchTerm) {
     const matchingUsers = usersToInvite.filter(u => u.username.toLowerCase().includes(searchTerm))
     updateUserInvitesTable(matchingUsers)
@@ -416,7 +414,7 @@ function updateUserInvitesTable (users, searchTerm) {
     users.forEach(function ({ user_id, username }) {
       tableHTML += '<tr>'
       tableHTML += `<td>${username}</td>`
-      tableHTML += `<td><button class="btn btn-success" id="${user_id}-member" onClick="startInvitesPoll(this.id)"> Invite </td>`
+      tableHTML += `<td><button class="btn btn-success" id="${user_id}-member" onClick="startInvitesPoll(this.id)" data-cy="invite-${username.trim()}-btn"> Invite </td>`
       tableHTML += '</tr>'
     })
     table.innerHTML = tableHTML
@@ -471,7 +469,7 @@ function addOptionFields () {
     div.classList.add('mb-3')
     div.classList.add('poll-option')
     div.innerHTML = `
-    <input type="text" class="form-control" id="poll-option-${i}" placeholder="Option ${i + 1}...">
+    <input type="text" class="form-control" id="poll-option-${i}" data-cy="new-option-${i}" placeholder="Option ${i + 1}..." required>
     `
     optionsDiv.appendChild(div)
   }
@@ -479,14 +477,36 @@ function addOptionFields () {
 
 window.createCustomPoll = createCustomPoll
 function createCustomPoll () {
+  const pollTitle = document.getElementById('new-poll-title').value
+  const duration = document.getElementById('new-poll-duration').value
+
+  if (!pollTitle || !pollTitle.replace(/\s/g, '').length) {
+    window.alert('Please give the poll a valid title.')
+    return
+  }
+
+  if (!duration || duration <= 0) {
+    window.alert('Please give the poll a valid duration.')
+    return
+  }
+
+  let optInvalid = false
   const pollOptions = []
   for (let i = 0; i < numOptions; i = i + 1) {
-    pollOptions.push(document.getElementById(`poll-option-${i}`).value)
+    const opt = document.getElementById(`poll-option-${i}`).value
+    if (!opt || !opt.replace(/\s/g, '').length) { optInvalid = true }
+    pollOptions.push(opt)
+  }
+
+  if (optInvalid || !numOptions) {
+    window.alert('Please fill in all option fields.')
+    return
   }
 
   const pollDetails = {
     title: document.getElementById('new-poll-title').value,
     group: group,
+    //   userId: user.userId,
     date: new Date(),
     duration: document.getElementById('new-poll-duration').value,
     options: pollOptions
