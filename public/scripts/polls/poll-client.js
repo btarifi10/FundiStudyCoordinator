@@ -122,7 +122,7 @@ function formatPollHTML (poll, pollId) {
       pollFormHtml += `
     <div class="form-check poll-option">
         <input class="form-check-input" type="radio" name="poll-${pollId}-option"
-        value="${numOptions}" id="poll-${pollId}-option${numOptions}" data-cy="opt-${opt.option}">
+        value="${numOptions}" id="poll-${pollId}-option${numOptions}" data-cy="opt-${numOptions}">
         <label class="form-check-label" for="poll-${pollId}-option${numOptions}">${opt.option}</label>
     </div>
       `
@@ -469,7 +469,7 @@ function addOptionFields () {
     div.classList.add('mb-3')
     div.classList.add('poll-option')
     div.innerHTML = `
-    <input type="text" class="form-control" id="poll-option-${i}" placeholder="Option ${i + 1}...">
+    <input type="text" class="form-control" id="poll-option-${i}" data-cy="new-option-${i}" placeholder="Option ${i + 1}..." required>
     `
     optionsDiv.appendChild(div)
   }
@@ -477,14 +477,36 @@ function addOptionFields () {
 
 window.createCustomPoll = createCustomPoll
 function createCustomPoll () {
+  const pollTitle = document.getElementById('new-poll-title').value
+  const duration = document.getElementById('new-poll-duration').value
+
+  if (!pollTitle || !pollTitle.replace(/\s/g, '').length) {
+    window.alert('Please give the poll a valid title.')
+    return
+  }
+
+  if (!duration || duration <= 0) {
+    window.alert('Please give the poll a valid duration.')
+    return
+  }
+
+  let optInvalid = false
   const pollOptions = []
   for (let i = 0; i < numOptions; i = i + 1) {
-    pollOptions.push(document.getElementById(`poll-option-${i}`).value)
+    const opt = document.getElementById(`poll-option-${i}`).value
+    if (!opt || !opt.replace(/\s/g, '').length) { optInvalid = true }
+    pollOptions.push(opt)
+  }
+
+  if (optInvalid || !numOptions) {
+    window.alert('Please fill in all option fields.')
+    return
   }
 
   const pollDetails = {
     title: document.getElementById('new-poll-title').value,
     group: group,
+    //   userId: user.userId,
     date: new Date(),
     duration: document.getElementById('new-poll-duration').value,
     options: pollOptions

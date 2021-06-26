@@ -168,15 +168,20 @@
                                 <div class="form"> 
                                     <div class="mb-3">
                                         <label for="new-poll-title" class="form-label">Poll title</label>
-                                        <input type="text" class="form-control" id="new-poll-title" placeholder="A descriptive title" data-cy="custom-title">
+                                        <input type="text" class="form-control" id="new-poll-title" placeholder="A descriptive title" data-cy="custom-title" required>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label for="new-poll-num-options" class="form-label">Number of options</label>
-                                        <input type="number" class="form-control" id="new-poll-num-options" min=2 value="2" data-cy="custom-options">
-                                        <button class="btn btn-success" onclick="addOptionFields()" data-cy="add-options-btn"> Start adding options </button>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <input type="number" class="form-control" id="new-poll-num-options" min=2 value="2" data-cy="custom-options" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button class="btn btn-success" onclick="addOptionFields()" data-cy="add-options-btn"> Start adding options </button>
+                                            </div>
+                                        </div>                                        
                                     </div>
-                                    
     
                                     <div class="mb-3" id="new-poll-options">
     
@@ -184,11 +189,11 @@
     
                                     <div class="mb-3">
                                         <label for="new-poll-duration" class="form-label">Poll duration (hours)</label>
-                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1" value="1">
+                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1" value="1" required data-cy="new-duration">
                                     </div>
     
                                     <div class="col-auto">
-                                        <button type="submit" class="btn btn-primary mb-3" onclick="createCustomPoll()" data-cy="create-poll-btn"> Create Poll </button>
+                                        <button type="button" class="btn btn-primary mb-3" onclick="createCustomPoll()" data-cy="create-poll-btn"> Create Poll </button>
                                     </div>
                                                             
                                 </div>

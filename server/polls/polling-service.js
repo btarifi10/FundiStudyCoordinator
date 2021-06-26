@@ -49,12 +49,6 @@ function getGroupActivePolls (group) {
   return groupPolls
 }
 
-// TODO: Update this to retrieve completed polls from the database
-function getGroupPollHistory (groupId) {
-  // Make Database call
-  return null
-}
-
 // Exports
 module.exports = {
   handleVoting

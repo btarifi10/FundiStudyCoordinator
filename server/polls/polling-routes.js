@@ -165,7 +165,7 @@ pollingRouter.post('/api/start-custom-poll', (req, res) => {
   const userId = req.user.userId
   createCustomPoll(details, userId)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 // API call to start banning poll

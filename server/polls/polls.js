@@ -175,12 +175,13 @@ function createPoll (pollDetails) {
   if (process.env.DEPLOYMENT === 'TEST') {
     msDuration = 15 * 1000
   }
+
   // Record the start of the poll
   const actionObj = formatAction({
     action: 'POLL',
     groupName: pollDetails.group,
     timestamp: pollDetails.date,
-    description: `${pollDetails.type} poll has started - "${pollDetails.title}", Available for ${pollDetails.duration.toFixed(2)} hours `
+    description: `${pollDetails.type} poll has started - "${pollDetails.title}", Available for ${parseFloat(pollDetails.duration).toFixed(2)} hours `
   })
   logAction(actionObj, pollDetails.userId) // this is the id of the user who is being voted on
 
