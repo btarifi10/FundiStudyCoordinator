@@ -33,7 +33,6 @@ const ADDR_REGEX = /[^A-z0-9À-ž'.,\s+-º]+/g
 /* ------------------------------ DOM Elements ------------------------------ */
 
 const meetingForm = document.getElementById('meeting-form')
-const addressList = document.getElementById('address-list')
 const meetingChoice = document.getElementById('selection')
 const viewMeetings = document.getElementById('View-btn')
 let meetingType = ''
@@ -94,6 +93,11 @@ meetingForm.addEventListener('submit', (event) => {
       const group_name = group
       const creator_id = currentUser.id
       const meeting_time = document.getElementById('date').value
+      const now = moment()
+      if (moment(meeting_time).isBefore(now)) {
+        window.alert('Please select a viable meeting time in the future')
+        return
+      }
       const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
       recordMeeting(meetingBody)
 
@@ -191,18 +195,6 @@ function createDirectionLink () {
   const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${address}`
   const encodedURL = encodeURI(URL)
 
-  // // Create an anchor element with the URL
-  // const a = document.createElement('a')
-  // const text = document.createTextNode(`${address}`)
-  // a.appendChild(text)
-  // a.href = encodedURL
-  // a.target = '_blank'
-
-  // // Add it to the list
-  // const li = document.createElement('li')
-  // li.classList.add('list-group-item')
-  // li.appendChild(a)
-  // addressList.appendChild(li)
   return encodedURL
 }
 
