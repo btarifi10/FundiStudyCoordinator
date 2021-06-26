@@ -16,7 +16,7 @@ const moment = require('moment')
 
 describe('The correct page is displayed to the user when entering the Join-group page', () => {
   before('Navigate to Find-Groups page', () => {
-    cy.request('/clear-requests')
+    cy.request('/clear-new-group-requests')
     cy.request('/clear-groups')
     cy.wait(10000)
     loginAsBarry()
@@ -79,7 +79,7 @@ describe('User can join groups that they are not members of', () => {
     cy.get('[data-cy="groups-table"]')
       .contains('No Matching Groups')
 
-    cy.request('/clear-requests')
+    cy.request('/clear-new-group-requests')
     cy.request('/clear-groups')
   })
 })
