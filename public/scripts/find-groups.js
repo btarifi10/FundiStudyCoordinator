@@ -2,7 +2,9 @@
 let groups = []
 let taggedGroups = []
 let tags = []
-let tempValue = []
+const table = document.querySelector('table tbody')
+const tagSearchEvent = document.getElementById('group-search-tag')
+const searchGroup = document.getElementById('group-search')
 
 document.addEventListener('DOMContentLoaded', function () {
   fetch('/get-other-groups')
@@ -15,6 +17,22 @@ document.addEventListener('DOMContentLoaded', function () {
   getTags()
 })
 
+function clearFieldGroup () {
+  searchGroup.value = ''
+}
+
+function clearFieldTag () {
+  tagSearchEvent.value = ''
+}
+
+tagSearchEvent.addEventListener('keyup', function (event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    event.preventDefault()
+    tagSearch()
+  }
+})
+
 // Function to get all the tags of the users current groups
 function getTags () {
   fetch('/get-tags')
@@ -24,50 +42,47 @@ function getTags () {
     })
 }
 
-// ?nameSelected=${nameSelected}
-
 function getTagGroups (tag) {
-  fetch(`/get-matched-terms?tag=${tag}`)
+  console.log('Into Function')
+
+  fetch(`/get-matched-terms?tag=${tag[0].tag}`)
     .then(response => response.json())
     .then(data => {
-      tempValue = data
+      taggedGroups = data.recordset
+      populateAllGroups(taggedGroups)
     })
-
-  taggedGroups.push(tempValue)
 }
 
 // Enables a user to search using either the group name or the subject associated with the group
 function entireGroupSearch () {
+  clearFieldTag()
   const searchTermGroup = document.getElementById('group-search').value.toLowerCase()
 
   if (searchTermGroup) {
-    // Search via current groups names
     const matchingGroups = groups.filter(g => g.group_name.toLowerCase().includes(searchTermGroup))
-    // const tagValue = tags.filter(t => t.tag.toLowerCase().includes(searchTermGroup))
-    // if (tagValue.length === 0) {
-    //   taggedGroups = []
-    // } else {
-    //   tagValue.forEach(t => getTagGroups(t.tag))
-    }
-    // tagValue.forEach(t => getTagGroups(t)
-    // console.log(t))
-
-    // const overallGroups = matchingGroups.concat(matchingGroups)
-    // console.log(overallGroups)
-
-    // const displayGroups = []
-    // overallGroups.forEach((c) => {
-    //   if (!displayGroups.includes(c)) {
-    //     displayGroups.push(c)
-    //   }
-    // })
-    // console.log(displayGroups)
     populateAllGroups(matchingGroups)
   } else { populateAllGroups(groups) }
 }
 
+// Enables a user to search using either the group name or the subject associated with the group
+function tagSearch () {
+  clearFieldGroup()
+  const searchTermGroup = document.getElementById('group-search-tag').value.toLowerCase()
+
+  if (searchTermGroup) {
+    const tagValue = tags.filter(t => t.tag.toLowerCase().includes(searchTermGroup))
+
+    if (tagValue.length === 0) {
+      table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
+    } else {
+      getTagGroups(tagValue)
+    }
+  } else {
+    table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
+  }
+}
+
 function populateAllGroups (data) {
-  const table = document.querySelector('table tbody')
   if (data.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
     return

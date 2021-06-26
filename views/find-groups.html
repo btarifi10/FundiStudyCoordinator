@@ -30,7 +30,11 @@
                 <div class="form">
                     <div class="mb-3">
                         <input class="form-control" type="text" id="group-search"
-                        placeholder="Search for groups by name or subject..." onkeyup="entireGroupSearch()" data-cy='group-search'>
+                        placeholder="Search for groups by name. Will filter automatically." onkeyup="entireGroupSearch()"  data-cy='group-search'>
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="text" id="group-search-tag"
+                        placeholder="Search for groups by subject. Hit Enter to Search"  data-cy='group-search-tag'>
                     </div>
                 </div>
                 <div class="card text-center bg-light m-1 p-1">

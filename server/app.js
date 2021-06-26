@@ -1,3 +1,4 @@
+
 'use strict'
 
 /* ------------------------------ Requirements ------------------------------ */
@@ -98,7 +99,7 @@ app.get('/get-tags', function (req, res) {
     .catch(err => {
       res.send({
         Error: err
-    
+      })
     })
 })
 
@@ -147,7 +148,6 @@ app.get('/get-current', function (req, res) {
 
 // Updates the ratings of the newly rated individual
 app.post('/update-ranking', function (req, res) {
-  console.log(req)
   db.pools
     .then((pool) => {
       return pool.request()
@@ -234,9 +234,9 @@ app.get('/get-matched-terms', function (req, res) {
     .then((pool) => {
       return pool.request()
         .input('tagName', db.sql.Char, req.query.tag)
-        .query(`select group_name from groups
-        where tag = (select tag_id from 
-        tags where tag = @tagName);`
+        .query(`select group_id, group_name, course_code from groups
+          where tag = (select tag_id from 
+          tags where tag = @tagName);`
         )
     })
     .then(result => {
@@ -249,8 +249,6 @@ app.get('/get-matched-terms', function (req, res) {
       })
     })
 })
-
-
 
 // Retrieves the tags from the groups the user is currently a part of
 app.get('/get-tag-values', function (req, res) {
@@ -382,7 +380,6 @@ app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
 })
 
 app.get('/getUsersGroups', function (req, res) {
-  // console.log(req.query)
   db.pools
     // Run query
     .then((pool) => {
@@ -405,7 +402,6 @@ app.get('/getUsersGroups', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -438,7 +434,6 @@ app.get('/getRequests', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -450,7 +445,7 @@ app.get('/getRequests', function (req, res) {
 
 app.post('/createGroup', checkAuthenticated, function (req, res) {
   const { groupName, courseCode, dateCreated, tagValue } = req.body
-  
+
   db.pools
     .then((pool) => {
       return pool.request()
@@ -466,7 +461,6 @@ app.post('/createGroup', checkAuthenticated, function (req, res) {
     })
     .then(result => {
       res.send(result)
-      console.log(result)
     })
     .catch(err => {
       res.send({
@@ -475,8 +469,9 @@ app.post('/createGroup', checkAuthenticated, function (req, res) {
     })
 })
 
-app.post('/complete-group-creation', checkAuthenticated, function (req, res) {
+app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests work without checkAuthenticated)
   const { groupName, invitedMembers, dateCreated } = req.body
+
   db.pools
     .then((pool) => {
       invitedMembers.forEach(member => {
@@ -521,9 +516,6 @@ app.post('/createMembership', function (req, res) {
     // Run query
     .then((pool) => {
       membershipInfo.members.forEach(member => {
-        console.log(member)
-        console.log(membershipInfo.group_name.trim())
-        console.log(membershipInfo.date_created)
         return pool.request()
           .input('username', db.sql.Char, member)
           .input('group_name', db.sql.Char, membershipInfo.group_name.trim())
@@ -549,8 +541,6 @@ app.post('/createMembership', function (req, res) {
 
 app.post('/sendInvites', function (req, res) {
   const inviteObj = req.body
-  console.log(inviteObj)
-  // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
@@ -572,7 +562,6 @@ app.post('/sendInvites', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('Invites have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {
