@@ -1,13 +1,13 @@
 'use strict'
 /* ------------------------------ Functionality ------------------------------ */
-import { addAction } from './action-log.js'
-import { UserService } from './user-service.js'
-import { getMinimimumDestination, getUserDestination, getUniDestination } from './recommend-locations.js'
+import { addAction } from '../action-log.js'
+import { UserService } from '../user-service.js'
+import { getMinimimumDestination, getUserDestination, getUniDestination } from '../recommend-locations.js'
 import {
   loadLocation,
-  loadPlatform,
-  loadHTMLTable
+  loadPlatform
 } from './load-meetings.js'
+import { formatChatMessage, formatDatabaseMessage, recordMessage } from '../group-chat/chat-messages.js'
 
 const { group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -33,17 +33,21 @@ const ADDR_REGEX = /[^A-z0-9À-ž'.,\s+-º]+/g
 /* ------------------------------ DOM Elements ------------------------------ */
 
 const meetingForm = document.getElementById('meeting-form')
-const addressList = document.getElementById('address-list')
 const meetingChoice = document.getElementById('selection')
 const viewMeetings = document.getElementById('View-btn')
+let meetingType = ''
+const io = window.io
+const socket = io()
 
 // Update which meeting options should be displayed for the user
 meetingChoice.addEventListener('change', (event) => {
   if (event.target.value === 'online') {
     loadPlatform()
+    meetingType = 'online'
   }
   if (event.target.value === 'face-to-face') {
     loadLocation()
+    meetingType = 'face-to-face'
   }
   if (event.target.value === 'none-selected') {
     window.alert('Please select a viable option')
@@ -66,12 +70,14 @@ document.querySelector('#place').addEventListener('input', function (event) {
 // Send the form input to be added to the Database
 meetingForm.addEventListener('submit', (event) => {
   event.preventDefault()
+  // initialise the variables
   let link = null
   let is_online = true
   let place = null
   // retrieve inputs from the different areas
   if (meetingChoice.value == 'none-selected') {
     window.alert('Please select a viable meeting option')
+    return
   } else if (meetingChoice.value == 'online') {
     link = document.getElementById('linkInput').value
     place = document.getElementById('platformInput').value
@@ -87,6 +93,11 @@ meetingForm.addEventListener('submit', (event) => {
       const group_name = group
       const creator_id = currentUser.id
       const meeting_time = document.getElementById('date').value
+      const now = moment()
+      if (moment(meeting_time).isBefore(now)) {
+        window.alert('Please select a viable meeting time in the future')
+        return
+      }
       const meetingBody = setUPMeeting(group_name, creator_id, meeting_time, place, link, is_online)
       recordMeeting(meetingBody)
 
@@ -102,12 +113,35 @@ meetingForm.addEventListener('submit', (event) => {
         <strong>Platform</strong>: ${place} <br>
         <strong>Meeting Link</strong>: <a href="${link}" target="_blank"> HERE </a> `
       }
+
+      // send meeting information to the group chat socket
+      sendMessage(group, currentUser.username, meeting_time, socket)
+
+      // log the meeting creation
       console.log('LOGGING IN PROCESS')
       addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
     })
 
   // include a statement if the user is not logged in - an alert prompts them to log in.
 })
+
+// Sends the message to the other members in the chat and stores the message in the db
+function sendMessage (group, user, meetingTime, socket) {
+  // Build the chat message object
+  const text = `A ${meetingType} meeting has been scheduled for ${moment(meetingTime).format('ddd, DD MMM YYYY')} at ${moment(meetingTime).format('HH:mm')} by ${user}`
+
+  const time = moment()
+  const username = group
+  const chatMessage = formatChatMessage(username, text, time)
+  // Send the message to the server
+  socket.emit('notification', { group: group, message: chatMessage })
+
+  // Store the message in the database
+  const databaseMessage = formatDatabaseMessage(group, user, text, time)
+  recordMessage(databaseMessage)
+}
+
+// *********************************************************************************** //
 
 // Set up the inputs to be placed into the database
 function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_online) {
@@ -160,18 +194,6 @@ function createDirectionLink () {
   const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${address}`
   const encodedURL = encodeURI(URL)
 
-  // // Create an anchor element with the URL
-  // const a = document.createElement('a')
-  // const text = document.createTextNode(`${address}`)
-  // a.appendChild(text)
-  // a.href = encodedURL
-  // a.target = '_blank'
-
-  // // Add it to the list
-  // const li = document.createElement('li')
-  // li.classList.add('list-group-item')
-  // li.appendChild(a)
-  // addressList.appendChild(li)
   return encodedURL
 }
 

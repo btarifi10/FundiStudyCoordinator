@@ -1,40 +1,29 @@
+const { checkAuthenticated } = require('./authentication.js')
 'use strict'
 
+/* ------------------------------ Requirements ------------------------------ */
 const express = require('express')
 const path = require('path')
 const db = require('./database-service')
 const fetch = require('node-fetch')
 
+/* ----------------------------- Initial Setup ----------------------------- */
 const meetingRouter = express.Router()
 meetingRouter.use(express.json())
 
-meetingRouter.get('/meetings', function (req, res) {
+/* ----------------------------- Routes ----------------------------- */
+
+meetingRouter.get('/meetings', checkAuthenticated, function (req, res) {
   res.sendFile(path.join(__dirname, '..', 'views', 'meetings.html'))
 })
 
-meetingRouter.get('/meetingViews/:group', function (req, res) {
-  const { group } = req.params
-  // Make a query to the database
-  db.pools
-  // Run query
-    .then((pool) => {
-      return pool.request()
-        .input('group', db.sql.VarChar, group)
-        .query('SELECT meeting_id, group_name, creator_id, meeting_time, place, link, is_online FROM groups INNER JOIN meetings ON meetings.group_id=groups.group_id WHERE (@group) = groups.group_name')
-    })
-  // Send back the result
-    .then(result => {
-      res.send(result)
-    })
-  // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
-    })
+meetingRouter.get('/attend-meeting', checkAuthenticated, function (req, res) {
+  res.sendFile(path.join(__dirname, '..', 'views', 'attend-meeting.html'))
 })
 
-meetingRouter.get('/getMeetings', function (req, res) {
+/* ----------------------------- Database calls ----------------------------- */
+
+meetingRouter.get('/getMeetings', checkAuthenticated, function (req, res) {
   const group = req.query.group
   const option = req.query.option
   // Make a query to the database
@@ -49,6 +38,7 @@ meetingRouter.get('/getMeetings', function (req, res) {
         ON meetings.group_id=groups.group_id
         WHERE (${option}) = meetings.is_online 
         AND (@group) = groups.group_name 
+        AND meetings.meeting_time > DATEADD(day,-1,GETDATE())
                `)
     })
   // Send back the result
@@ -64,7 +54,7 @@ meetingRouter.get('/getMeetings', function (req, res) {
     })
 })
 
-meetingRouter.get('/faceMeetings', function (req, res) {
+meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
   const group_name = req.query.group_name
   const user_id = req.query.user_id
   const online = false
@@ -76,16 +66,17 @@ meetingRouter.get('/faceMeetings', function (req, res) {
         .input('group_name', db.sql.VarChar, group_name)
         .input('user_id', db.sql.Int, user_id)
         .input('online', db.sql.Bit, online)
-        .query(`SELECT passed 
+        .query(`SELECT passed, date_screened 
         FROM screening 
         WHERE (@user_id) = screening.user_id
-        AND 
-        screening.passed = 1
+        AND date_screened > DATEADD(hour, -72, GETDATE())
+        ORDER BY date_screened DESC
         `)
     })
   // Send back the result
     .then(result => {
       res.send(result)
+      console.log(result)
     })
   // If there's an error, return that with some description
     .catch(err => {
@@ -95,7 +86,7 @@ meetingRouter.get('/faceMeetings', function (req, res) {
     })
 })
 
-meetingRouter.post('/record-meeting', function (req, res) {
+meetingRouter.post('/record-meeting', checkAuthenticated, function (req, res) {
   // Retrieve the message data
   const meeting = req.body
   console.log(meeting)
@@ -118,7 +109,7 @@ meetingRouter.post('/record-meeting', function (req, res) {
     })
   // Send back the result
     .then(result => {
-      console.log(result)
+      // console.log(result)
       res.send(result)
     })
   // If there's an error, return that with some description

@@ -33,9 +33,92 @@ testRouter.get('/clear-messages', function (req, res) {
     })
 })
 
+/* ---------------------------- Meeting Routes ---------------------------- */
+
+// Clear all the non-permanent entries in the meetings table
+testRouter.get('/clear-meetings', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query('DELETE FROM meetings WHERE meeting_id NOT IN (2, 3);')
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+/* ---------------------------- Screening Test Routes ---------------------------- */
+
+// Clear all screening entries
+testRouter.get('/delete-screening', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query('DELETE FROM screening WHERE screening_id NOT IN (161, 162)')
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+// Determines that the correct value was entered into the screening table
+testRouter.get('/screening', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query(`select passed from screening
+                where user_id = 4;`)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 /* -------------------------------------------------------------------------- */
 
-// delete the groups added except for group_id = 6
+// Resets the ratings to the agreed start values
+testRouter.get('/reset-ratings', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .query(`UPDATE users SET rating = CASE user_id
+                      WHEN 4 THEN 5
+                      WHEN 28 THEN 3.5
+                      ELSE NULL 
+                    END, 
+                      number_ratings = CASE user_id
+                      WHEN 4 THEN 1 
+                      WHEN 28 THEN 2 
+                      ELSE NULL
+                  END; `)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 
 // delete the users except for user_id=4 and user_id=5
 testRouter.get('/clear-users', function (req, res) {

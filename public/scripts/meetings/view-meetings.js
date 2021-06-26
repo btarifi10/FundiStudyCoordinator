@@ -1,6 +1,6 @@
 /* ------------------------------ Functionality ------------------------------ */
 
-import { UserService } from './user-service.js'
+import { UserService } from '../user-service.js'
 import {
   loadButtons,
   loadHTMLTable
@@ -55,10 +55,7 @@ function retrieveMeetings (option) {
       loadHTMLTable(data, option)
     })
 }
-// Naive implementation to sort meeting records, only display the record
-// if the user has passed the covid screen
-// NOTE: this needs to be updated to include a time frame for the screening date
-// and the meeting time
+
 function retrieveFaceMeetings () {
   // include a statement if the user is not logged in - an alert prompts them to log in.
   userService.getCurrentUser().then(
@@ -76,13 +73,13 @@ function retrieveFaceMeetings () {
 function viewFaceMeetings (data) {
   if (data.recordset.length === 0) {
     const table = document.querySelector('table tbody')
-    table.innerHTML = "<tr><td class='no-data' colspan='5'>Please complete the covid screening to view the face to face meetings</td></tr>"
+    table.innerHTML = "<tr><td class='no-data' data-cy='empty-table-text' colspan='5'>Please complete the covid screening to view the face to face meetings</td></tr>"
     return
   }
   // currently grabbing the first result - this is the most recent result ordered by the query
   if (data.recordset[0].passed == false) {
     const table = document.querySelector('table tbody')
-    table.innerHTML = "<tr><td class='no-data' colspan='5'>In the last 72hours you have failed your most recent covid screening</td></tr>"
+    table.innerHTML = "<tr><td class='no-data' data-cy='empty-table-text' colspan='5'>In the last 72hours you have failed your most recent covid screening</td></tr>"
     return
   }
   // currently grabbing the first result
@@ -91,10 +88,3 @@ function viewFaceMeetings (data) {
     retrieveMeetings(0)
   }
 }
-// populate face to face meetings table without location/link
-// when you click a button to 'view locations' it only shows the meeting
-// locations that are set to occur within 72hours? and only if screening
-// was passed?
-// where to stop the checks?
-// start by not showing any meetings when not passed
-// start by only displaying the locations that occur in the next 72hours

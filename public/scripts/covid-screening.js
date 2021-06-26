@@ -12,6 +12,8 @@ const submissionButton = document.getElementById('submission')
 submissionButton.addEventListener('click', (event) => {
   event.preventDefault()
   updateScreening()
+  alert('Screening results captured')
+  location.href = '/chat'
 })
 
 // Determines whether the person has passed the screening or not based on logic
@@ -36,7 +38,6 @@ function getAllSelectedAnswers () {
 }
 
 // Updates screening result in correct form for posting to database
-
 function updateScreening () {
   userService.getCurrentUser().then(
     user => {
@@ -58,7 +59,6 @@ function updateScreening () {
 }
 
 // Posts results to the database
-
 function addScreeningResult (newScreening) {
   fetch('/create-screening', {
     method: 'POST',
@@ -67,5 +67,4 @@ function addScreeningResult (newScreening) {
     },
     body: JSON.stringify(newScreening)
   })
-  // window.history.back()
 }
