@@ -44,6 +44,7 @@ const moment = require('moment')
 describe('The correct page is displayed to the user when entering the create-group page', () => {
   before('Navigate to Create-Group page', () => {
     cy.request('/clear-groups')
+    cy.wait(15000)
     loginAsArchie()
     cy.visit('/create-group')
   })
@@ -67,10 +68,11 @@ describe('The correct page is displayed to the user when entering the create-gro
 describe('Users cannot input invalid group information for group creation', () => {
   before('Navigate to Create-Group page', () => {
     // loginAsArchie()
-    cy.visit('/create-group')
+    //cy.visit('/create-group')
+    //cy.wait(3000)
   })
   it('Does not allow user to create group without inviting a member', () => {
-    cy.get('input[data-cy="group-name"]')
+    cy.get('input[data-cy=group-name]')
       .type('NewGroup1')
       .should('have.value', 'NewGroup1')
 
@@ -89,7 +91,8 @@ describe('Users cannot input invalid group information for group creation', () =
   it('Filters through the user list upon user input', () => {
     cy.get('input[data-cy="user-search"]')
       .clear()
-      .type('Barr')
+      .type('B')
+    cy.wait(4000)
 
     cy.get('select[data-cy="user-list"]')
       .find('option')
@@ -167,10 +170,6 @@ describe('Users cannot input invalid group information for group creation', () =
 })
 
 describe('User can create a new group with chosen members invited automatically', () => {
-  before('Navigate to Create-Group page', () => {
-    // loginAsArchie()
-    // cy.visit('/create-group')
-  })
   it('Allows user to input Group information and add member to invite to create a new group', () => {
     cy.get('input[data-cy="group-name"]')
       .clear()
@@ -181,15 +180,6 @@ describe('User can create a new group with chosen members invited automatically'
       .clear()
       .type('TEST123')
       .should('have.value', 'TEST123')
-
-    // cy.get('input[data-cy="user-search"]')
-    //   .clear()
-
-    // cy.get('select[data-cy="user-list"]')
-    //   .select('James VI')
-
-    // cy.get('[data-cy=add-btn]')
-    //   .click()
 
     cy.get('[data-cy=added-users]')
       .find('li')
@@ -249,11 +239,16 @@ describe('James invited to group can view invite', () => {
   before('Navigate to Invites page', () => {
     loginAsJames()
     cy.visit('/invites')
+    cy.wait(1000)
   })
 
   it('Shows the invites in the table', () => {
     cy.get('[data-cy=invite-table]')
       .contains('NewGroup1')
+  })
+
+  it('Clears database from any NewGroup1 (for test consistency)', () => {
+    cy.request('/clear-groups')
   })
 })
 
