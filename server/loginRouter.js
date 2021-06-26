@@ -1,25 +1,29 @@
 'use strict'
+let users = []
 
-module.exports = function (app, passport) {
-  // Import dependencies.
-  const router = require('express').Router()
-  const express = require('express')
-  router.use(express.json())
-  const path = require('path')
-  const bcrypt = require('bcrypt')
-  const { UserService } = require('./user-service')
-  const userService = UserService.getUserServiceInstance()
-  const db = require('./database-service')
+const { UserService } = require('./user-service')
+const userService = UserService.getUserServiceInstance()
+const express = require('express')
+const path = require('path')
+const bcrypt = require('bcrypt')
+const db = require('./database-service')
 
-  let users = []
+function updateUsers () {
+  userService.getAllUsers().then(
+    data => { users = data }
+  )
+}
 
-  function updateUsers () {
-    userService.getAllUsers().then(
-      data => {
-        users = data
-      }
-    )
+function resetUsers () {
+  if (process.env.DEPLOYMENT === 'TEST') {
+    updateUsers()
   }
+}
+
+function loginRouter (app, passport) {
+  // Import dependencies.
+  const router = express.Router()
+  router.use(express.json())
 
   updateUsers()
 
@@ -172,4 +176,9 @@ module.exports = function (app, passport) {
   }
   // Export router.
   return router
+}
+
+module.exports = {
+  loginRouter,
+  resetUsers
 }

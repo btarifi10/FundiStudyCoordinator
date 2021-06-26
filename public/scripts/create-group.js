@@ -18,9 +18,30 @@ let membershipNum = null // to limit user to membership of 10 groups
 
 document.addEventListener('DOMContentLoaded', function () {
   loadUsersList()
+  // For tag selection
+  loadTagOptions()
   loadExistingGroups()
   loadMembershipNum()
 })
+
+function loadTagOptions () {
+  fetch('/get-tags')
+    .then(response => response.json())
+    .then(data => data.recordset)
+    .then(populateTagsList)
+}
+
+const tagList = document.getElementById('tag-1')
+
+function populateTagsList (tags) {
+  tagList.innerHTML = ''
+  tags.forEach(element => {
+    const option = document.createElement('option')
+    option.text = element.tag
+    option.value = element.tag
+    tagList.add(option)
+  })
+}
 
 function loadUsersList () {
   return fetch('/get-users')
@@ -101,6 +122,7 @@ document.getElementById('createGroup').addEventListener('click', createGroup)
 function createGroup () {
   const groupName = document.getElementById('group-name').value.trim()
   const courseCode = document.getElementById('course-code').value.trim()
+  const tagValue = document.getElementById('tag-1').value
 
   if ((groupName === null) || (groupName.match(/^ *$/) !== null) || (groupName.length > 40)) {
     alert('Please enter a valid group name')
@@ -123,7 +145,7 @@ function createGroup () {
   }
 
   const dateCreated = moment()
-  saveGroup({ groupName, courseCode, invitedMembers, dateCreated })
+  saveGroup({ groupName, courseCode, invitedMembers, dateCreated, tagValue })
 
   // Update variables to avoid creating duplicate groups, or going over membership limit (10), or inviting same username
   existingGroups.push(groupName)

@@ -9,7 +9,6 @@
     "start": "node server/app.js",
     "e2e": "cypress open",
     "dev": "nodemon server/app.js",
-    "T-dog": "nodemon -L server/app.js",
     "cy:verify": "cypress verify",
     "cy:run": "cypress run",
     "cy:setup": "npm run start & wait-on http://localhost:3000"

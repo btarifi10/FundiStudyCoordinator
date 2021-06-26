@@ -65,11 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('view-log-tab').href = `view-log?group=${group}`
 })
 
-function loadRatingLink(rating) {
+function loadRatingLink (rating) {
   const a = document.createElement('a')
   const text = document.createTextNode('Rate Members')
   a.appendChild(text)
   a.setAttribute('class', 'btn')
+  a.setAttribute('data-cy', 'rating-option')
 
   const username = currentUser.username
   a.href = `/rating?group=${group}&username=${username}`
@@ -79,7 +80,7 @@ function loadRatingLink(rating) {
 
 // this may be altered to include an option for
 
-function loadMeetingLink(meeting) {
+function loadMeetingLink (meeting) {
   const a = document.createElement('a')
   const text = document.createTextNode('Create Meetings')
   a.appendChild(text)
@@ -92,6 +93,7 @@ function loadMeetingLink(meeting) {
   const text2 = document.createTextNode('Meetings')
   a2.appendChild(text2)
   a2.setAttribute('class', 'btn')
+  a2.setAttribute('data-cy', 'ViewMeetings')
   a2.href = `/meetings?group=${group}`
   // a.target = '_blank' // changes whether or not a new window is created
   meeting.insertBefore(a2, meeting.childNodes[0])

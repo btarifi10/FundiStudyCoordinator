@@ -30,26 +30,26 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="members-poll-tab" data-bs-toggle="tab"
                                 data-bs-target="#members-poll" type="button" role="tab" aria-controls="home"
-                                aria-selected="true">
+                                aria-selected="true" data-cy="member-tab">
                                 Member admin
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="new-poll-tab" data-bs-toggle="tab" data-bs-target="#new-poll"
-                                type="button" role="tab" aria-controls="home" aria-selected="false">
+                                type="button" role="tab" aria-controls="home" aria-selected="false" data-cy="new-poll-tab">
                                 Create new poll
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
                                 data-bs-target="#active-polls" type="button" role="tab" aria-controls="profile"
-                                aria-selected="false">
+                                aria-selected="false" data-cy="active-poll-tab">
                                 Active Polls
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#old-polls"
-                                type="button" role="tab" aria-controls="contact" aria-selected="false">
+                                type="button" role="tab" aria-controls="contact" aria-selected="false" data-cy="old-poll-tab">
                                 Completed polls
                             </button>
                         </li>
@@ -76,7 +76,7 @@
                                         <h2 class="accordion-header" id="headingOne">
                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                                 data-bs-target="#collapse-group-invites" aria-expanded="false"
-                                                aria-controls="collapse-group-invites">
+                                                aria-controls="collapse-group-invites" data-cy="invite-box">
                                                 Invite new member to group
                                             </button>
                                         </h2>
@@ -87,12 +87,12 @@
                                                 <div class="form">
                                                     <div class="mb-3">
                                                         <input class="form-control" type="text" id="user-search"
-                                                        placeholder="Search for Users..." onkeyup="userSearch()">
+                                                        placeholder="Search for Users..." onkeypress="userSearch()" data-cy="user-search">
                                                     </div>
                                                 </div>
 
                                                 <!-- Invite User Table -->
-                                                <table class="table" id="users-table">
+                                                <table class="table" id="users-table" data-cy="invite-user-tbl">
                                                     <thead>
                                                         <th>Name</th>
                                                         <th>Start Poll</th> 
@@ -108,7 +108,7 @@
                                         <h2 class="accordion-header" id="headingTwo">
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#collapse-group-requests"
-                                                aria-expanded="false" aria-controls="collapse-group-requests">
+                                                aria-expanded="false" aria-controls="collapse-group-requests" data-cy="requests-box">
                                                 View group requests
                                             </button>
                                         </h2>
@@ -117,7 +117,7 @@
                                             <div class="accordion-body">
 
                                                 <!-- Group reqs table -->
-                                                <table class="table" id="group-requests-table">
+                                                <table class="table" id="group-requests-table" data-cy="group-req-tbl">
                                                     <thead>
                                                         <th>Name</th>
                                                         <th>Time</th>
@@ -134,7 +134,7 @@
                                         <h2 class="accordion-header" id="headingThree">
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#collapse-group-ban"
-                                                aria-expanded="false" aria-controls="collapse-group-ban">
+                                                aria-expanded="false" aria-controls="collapse-group-ban" data-cy="ban-box">
                                                 Ban member from group
                                             </button>
                                         </h2>
@@ -142,7 +142,7 @@
                                             aria-labelledby="headingThree" data-bs-parent="#member-admin-options">
                                             <div class="accordion-body">
                                                 <!-- Group members table -->
-                                                <table class="table" id="group-members-table">
+                                                <table class="table" id="group-members-table" data-cy="ban-user-tbl">
                                                     <thead>
                                                         <th>Name</th>
                                                         <th>Start Poll</th> 
@@ -168,13 +168,19 @@
                                 <div class="form"> 
                                     <div class="mb-3">
                                         <label for="new-poll-title" class="form-label">Poll title</label>
-                                        <input type="text" class="form-control" id="new-poll-title" placeholder="A descriptive title">
+                                        <input type="text" class="form-control" id="new-poll-title" placeholder="A descriptive title" data-cy="custom-title" required>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label for="new-poll-num-options" class="form-label">Number of options</label>
-                                        <input type="number" class="form-control" id="new-poll-num-options" min=2 value="2">
-                                        <button class="btn btn-success" onclick="addOptionFields()"> Start adding options </button>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <input type="number" class="form-control" id="new-poll-num-options" min=2 value="2" data-cy="custom-options" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button class="btn btn-success" onclick="addOptionFields()" data-cy="add-options-btn"> Start adding options </button>
+                                            </div>
+                                        </div>                                        
                                     </div>
     
                                     <div class="mb-3" id="new-poll-options">
@@ -183,11 +189,11 @@
     
                                     <div class="mb-3">
                                         <label for="new-poll-duration" class="form-label">Poll duration (hours)</label>
-                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1" value="1">
+                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1" value="1" required data-cy="new-duration">
                                     </div>
     
                                     <div class="col-auto">
-                                        <button type="submit" class="btn btn-primary mb-3" onclick="createCustomPoll()"> Create Poll </button>
+                                        <button type="button" class="btn btn-primary mb-3" onclick="createCustomPoll()" data-cy="create-poll-btn"> Create Poll </button>
                                     </div>
                                                             
                                 </div>

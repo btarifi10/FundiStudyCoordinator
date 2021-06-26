@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Core Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- Custom CSS for this page-->
+    <link rel="stylesheet" href="css/attendance.css">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+    <title>Attend Meeting</title>
+    <style> #map{
+      height:400px;
+      width:100%;
+    }</style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- HEADER -->
+    <header class="group-header">
+        <h1 class="page-header"><i class="fas fa-handshake"></i>  <span id="group-name" data-cy="group-header-name"></span></h1>
+        <a href="/" class="btn btn-primary"><i class="fas fa-home"></i> Home </a>
+      </header>
+      <h2>Meeting ID: <span id="meeting-id" data-cy="meeting-header-id"></span></h2>
+      <button class = "btn btn-secondary" id='send-location' data-cy='location-sharing-btn'>Stop Sharing</button>
+      <hr>
+      <div class="row">
+  
+        <!-- LEFT SIDEBAR -->
+        <div class="col-md-2 bg-light">
+          <br>
+          <h5 class="text-center"><i class="fas fa-comments"></i> Members in Attendance </h5>
+          <hr>
+          <ul id="chat-members" class="list-unstyled text-center" data-cy="members-in-chat"> </ul>
+        </div>
+  
+        <!-- CHAT AREA (MIDDLE) -->
+        <div class="col-md-7">
+          <!-- MAP AREA -->
+        <div class="map-area">
+
+        </div>
+        <div id='map'></div>
+  
+          <!-- Area that gets populated with messages -->
+          <div class="message-area" data-cy="message-area">
+  
+  
+          </div>
+  
+          <!-- Form for receiving message input -->
+          <div class="container bg-light">
+            <br>
+            <form id="chat-form">
+              <div class="row align-items-center">
+                <div class="col-md-10">
+                  <div class="form-group">
+                    <!-- <textarea class="form-control" placeholder="Enter Message" required autocomplete="off"></textarea> -->
+                    <input data-cy="message-input" id="msg" type="text" class="form-control" placeholder="Enter Message" pattern=".{1,1000}"
+                      required title="Message must be between 1 and 1000 characters long" autocomplete="off" />
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary" data-cy="send-btn"><i class="fas fa-paper-plane"></i> Send</button>
+                </div>
+              </div>
+            </form>
+            <br>
+          </div>
+  
+        </div>  
+      </div>
+    </div>
+    <hr>
+    </div>
+    
+</script>
+<!-- Query String Parser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"
+  integrity="sha512-aTKlYRb1QfU1jlF3k+aS4AqTpnTXci4R79mkdie/bp6Xm51O5O3ESAYhvg6zoicj/PD6VYY0XrYwsWLcvGiKZQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Socket IO -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+    integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+  <script defer type="module" src="scripts/meetings/attend-meeting.js"></script>
+</body>
+</html>
