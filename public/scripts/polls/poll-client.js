@@ -132,7 +132,8 @@ function formatPollHTML (poll, pollId) {
     pollFormHtml += `
         <hr>
         <div>
-        <button class="btn btn-primary" style="border-radius:20px" id="${pollId}-btn" onclick="vote(this.id)"> Vote </button>
+        <button class="btn btn-primary" style="border-radius:25px;width:100px" id="${pollId}-btn" onclick="vote(this.id)">
+        <i class="far fa-check-circle"></i> Vote </button>
         <span class="text-end small"> Ends ${moment(poll.date).add(poll.duration * 3600, 's').format('ddd DD MMM YYYY, H:mm')}</span>
         </div>
         `
@@ -285,8 +286,9 @@ function updateRequestsTable (requestList) {
     requestList.forEach(function ({ requests_id, user_id, username, time_sent }) {
       tableHTML += '<tr>'
       tableHTML += `<td>${username}</td>`
-      tableHTML += `<td>${time_sent.toLocaleString()}</td>`
-      tableHTML += `<td><button class="btn btn-secondary" id="${requests_id}-request" onClick="startRequestsPoll(this.id)" data-cy="accept-${username.trim()}-btn"> Start Poll </td>`
+      tableHTML += `<td>${moment(time_sent).format('ddd, DD MMM YYYY')}</td>`
+      tableHTML += `<td><button class="btn btn-secondary" style="border-radius:25px;width:100px" id="${requests_id}-request"
+      onClick="startRequestsPoll(this.id)" data-cy="accept-${username.trim()}-btn"> <i class="fas fa-user-check"></i> Accept </td>`
 
       tableHTML += '</tr>'
     })
@@ -347,7 +349,8 @@ function updateMembersTable (members) {
     members.forEach(function ({ user_id, username }) {
       tableHTML += '<tr>'
       tableHTML += `<td>${username}</td>`
-      tableHTML += `<td><button class="btn btn-secondary" id="${user_id}-member" onClick="startBanPoll(this.id)" data-cy="ban-${username.trim()}-btn"> Ban</td>`
+      tableHTML += `<td><button class="btn btn-secondary" style="border-radius:25px;width:100px" id="${user_id}-member"
+      onClick="startBanPoll(this.id)" data-cy="ban-${username.trim()}-btn"> <i class="fas fa-user-minus"></i> Ban </td>`
       tableHTML += '</tr>'
     })
     table.innerHTML = tableHTML
@@ -414,7 +417,8 @@ function updateUserInvitesTable (users, searchTerm) {
     users.forEach(function ({ user_id, username }) {
       tableHTML += '<tr>'
       tableHTML += `<td>${username}</td>`
-      tableHTML += `<td><button class="btn btn-success" id="${user_id}-member" onClick="startInvitesPoll(this.id)" data-cy="invite-${username.trim()}-btn"> Invite </td>`
+      tableHTML += `<td><button class="btn btn-success" id="${user_id}-member" style="border-radius:25px;width:100px"
+      onClick="startInvitesPoll(this.id)" data-cy="invite-${username.trim()}-btn"> <i class="fas fa-user-plus"></i> Invite </td>`
       tableHTML += '</tr>'
     })
     table.innerHTML = tableHTML
