@@ -93,8 +93,8 @@ meetingForm.addEventListener('submit', (event) => {
       const group_name = group
       const creator_id = currentUser.id
       const meeting_time = document.getElementById('date').value
-      const now = new Date(moment())
-      if (new Date(meeting_time) < now) {
+      const now = moment()
+      if (moment(meeting_time).isBefore(now)) {
         window.alert('Please select a viable meeting time in the future')
         return
       }
