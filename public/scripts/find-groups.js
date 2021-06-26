@@ -1,6 +1,8 @@
 'use strict'
-
 let groups = []
+let taggedGroups = []
+let tags = []
+let tempValue = []
 
 document.addEventListener('DOMContentLoaded', function () {
   fetch('/get-other-groups')
@@ -9,14 +11,57 @@ document.addEventListener('DOMContentLoaded', function () {
       groups = data
       populateAllGroups(groups)
     })
+
+  getTags()
 })
+
+// Function to get all the tags of the users current groups
+function getTags () {
+  fetch('/get-tags')
+    .then(response => response.json())
+    .then(data => {
+      tags = data.recordset
+    })
+}
+
+// ?nameSelected=${nameSelected}
+
+function getTagGroups (tag) {
+  fetch(`/get-matched-terms?tag=${tag}`)
+    .then(response => response.json())
+    .then(data => {
+      tempValue = data
+    })
+
+  taggedGroups.push(tempValue)
+}
 
 // Enables a user to search using either the group name or the subject associated with the group
 function entireGroupSearch () {
   const searchTermGroup = document.getElementById('group-search').value.toLowerCase()
 
   if (searchTermGroup) {
+    // Search via current groups names
     const matchingGroups = groups.filter(g => g.group_name.toLowerCase().includes(searchTermGroup))
+    // const tagValue = tags.filter(t => t.tag.toLowerCase().includes(searchTermGroup))
+    // if (tagValue.length === 0) {
+    //   taggedGroups = []
+    // } else {
+    //   tagValue.forEach(t => getTagGroups(t.tag))
+    }
+    // tagValue.forEach(t => getTagGroups(t)
+    // console.log(t))
+
+    // const overallGroups = matchingGroups.concat(matchingGroups)
+    // console.log(overallGroups)
+
+    // const displayGroups = []
+    // overallGroups.forEach((c) => {
+    //   if (!displayGroups.includes(c)) {
+    //     displayGroups.push(c)
+    //   }
+    // })
+    // console.log(displayGroups)
     populateAllGroups(matchingGroups)
   } else { populateAllGroups(groups) }
 }
