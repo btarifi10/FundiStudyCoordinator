@@ -57,3 +57,9 @@ These are the permanent entries in the test database that should not be altered.
 |:----------:|:--------:|:----------:|:----------------------------------:|:-------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:---------:|
 |      2     |     6    |      4     | 2021-07-05 12:00:00.0000000 +02:00 | 1 Jan Smuts Ave, Braamfontein, Johannesburg, 2000 |                                        https://www.google.com/maps/dir/?api=1&destination=1%20Jan%20Smuts%20Ave,%20Braamfontein,%20Johannesburg,%202000                                       |     0     |
 |      3     |     6    |      4     | 2021-07-05 12:00:00.0000000 +02:00 |                  Microsoft Teams                  | https://teams.microsoft.com/l/channel/19%3ac28be551715948bd9a244317273785af%40thread.tacv2/General?groupId=2bd99e7b-f2c6-4379-9d52-0bce78942072&tenantId=4b1b908c-5582-4377-ba07-a36d65e34934 |     1     |
+
+### Table: screening
+| screening_id | user_id | passed |            date_screened           |
+|:------------:|:-------:|:------:|:----------------------------------:|
+|      171     |    4    |    1   | 2021-07-26 20:00:00.0000000 +00:00 |
+|      172     |    5    |    0   | 2021-07-26 20:00:00.0000000 +00:00 |
