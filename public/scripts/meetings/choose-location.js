@@ -115,7 +115,7 @@ meetingForm.addEventListener('submit', (event) => {
       }
 
       // send meeting information to the group chat socket
-      sendMessage(group, currentUser.username, new Date(meeting_time), socket)
+      sendMessage(group, currentUser.username, meeting_time, socket)
 
       // log the meeting creation
       console.log('LOGGING IN PROCESS')
@@ -128,8 +128,7 @@ meetingForm.addEventListener('submit', (event) => {
 // Sends the message to the other members in the chat and stores the message in the db
 function sendMessage (group, user, meetingTime, socket) {
   // Build the chat message object
-  const text = `A ${meetingType} meeting has been scheduled for ${meetingTime} by
-  ${user}`
+  const text = `A ${meetingType} meeting has been scheduled for ${moment(meetingTime).format('ddd, DD MMM YYYY')} at ${moment(meetingTime).format('HH:mm')} by ${user}`
 
   const time = moment()
   const username = group
