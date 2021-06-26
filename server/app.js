@@ -39,8 +39,8 @@ const io = socketio(server)
 /* ----------------------------- Login Functonality ----------------------------- */
 
 // Use the loginRouter for the login and register functionality.
-const loginRouter = require('./loginRouter.js')(app, passport)
-app.use('/', loginRouter)
+const { loginRouter } = require('./loginRouter.js')
+app.use('/', loginRouter(app, passport))
 
 /* ----------------------------- Taliya's Code ----------------------------- */
 
@@ -422,7 +422,7 @@ app.get('/getRequests', function (req, res) {
 
 app.post('/createGroup', checkAuthenticated, function (req, res) {
   const { groupName, courseCode, dateCreated, tagValue } = req.body
-
+  
   db.pools
     .then((pool) => {
       return pool.request()
@@ -734,6 +734,8 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
+const { authenticate } = require('passport')
+// const { checkAuthenticated } = require('./authentication')
 const handleMeetingMember = require('./meetings/attendance-server')
 app.use(pollingRouter)
 

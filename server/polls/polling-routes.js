@@ -82,7 +82,7 @@ pollingRouter.get('/api/get-group-members', (req, res) => {
     })
 })
 
-pollingRouter.get('/api/get-users-to-invite', (req, res) => {
+pollingRouter.get('/api/get-users-to-invite', checkAuthenticated, (req, res) => {
   const group = req.query.group
 
   db.pools
@@ -115,7 +115,7 @@ pollingRouter.get('/api/get-users-to-invite', (req, res) => {
     })
 })
 
-pollingRouter.get('/api/get-poll-history', (req, res) => {
+pollingRouter.get('/api/get-poll-history', checkAuthenticated, (req, res) => {
   const group = req.query.group
   getGroupHistory(group)
     .then(polls => {
@@ -126,7 +126,7 @@ pollingRouter.get('/api/get-poll-history', (req, res) => {
 /* --------------------- API calls to start Polls ----------------------- */
 
 // API call to start group request poll
-pollingRouter.post('/api/start-requests-poll', (req, res) => {
+pollingRouter.post('/api/start-requests-poll', checkAuthenticated, (req, res) => {
   const details = req.body
 
   /*
@@ -140,7 +140,7 @@ pollingRouter.post('/api/start-requests-poll', (req, res) => {
 })
 
 // API call to start group request poll
-pollingRouter.post('/api/start-invites-poll', (req, res) => {
+pollingRouter.post('/api/start-invites-poll', checkAuthenticated, (req, res) => {
   const details = req.body
   /*
     details = { userId, username, group, duration }
@@ -150,7 +150,7 @@ pollingRouter.post('/api/start-invites-poll', (req, res) => {
   res.sendStatus(200)
 })
 
-pollingRouter.post('/api/start-custom-poll', (req, res) => {
+pollingRouter.post('/api/start-custom-poll', checkAuthenticated, (req, res) => {
   const details = req.body
   /*
     details = {
@@ -165,16 +165,16 @@ pollingRouter.post('/api/start-custom-poll', (req, res) => {
   const userId = req.user.userId
   createCustomPoll(details, userId)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 // API call to start banning poll
-pollingRouter.post('/api/start-banning-poll', (req, res) => {
+pollingRouter.post('/api/start-banning-poll', checkAuthenticated, (req, res) => {
   const details = req.body
 
   createBanningPoll(details)
 
-  res.send(200)
+  res.sendStatus(200)
 })
 
 function deleteGroupRequest (reqId) {
