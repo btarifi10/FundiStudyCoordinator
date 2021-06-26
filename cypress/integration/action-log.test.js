@@ -142,10 +142,6 @@ describe('Create activities to be logged', () => {
     })
     cy.wait(2000)
   })
-
-  // it('Allows user to create a poll', () => {
-
-  // })
 })
 
 describe('Activity log of a group shows activities', () => {
@@ -181,18 +177,6 @@ describe('Activity log of a group shows activities', () => {
   })
 })
 
-// describe('Creator of group is member of group created', () => {
-//   before('Navigate to Create Group Page', () => {
-//     //loginAsArchie()
-//     cy.visit('/my-groups')
-//   })
-//   it('Shows the group in the action log of the group', () => {
-//     // acces the group created, and click on activity log to view 'group created'
-//     cy.get('[data-cy=groups-table]')
-//       .contains('NewGroup1')
-//   })
-// })
-
 describe('James invited to group can view invite', () => {
   before('Navigate to Invites page', () => {
     loginAsJames()
@@ -215,8 +199,11 @@ describe('barry invited to group can view invite', () => {
     cy.get('[data-cy=invite-table]')
       .contains('NewGroup1')
   })
-})
 
+  it('Remove any creations in database (for test consistency)', () => {
+    cy.request('/clear-groups')
+  })
+})
 
 /* ---------------------------- Helper Functions ---------------------------- */
 
