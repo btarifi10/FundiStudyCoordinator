@@ -4,17 +4,14 @@ _Author: Yasser Karam (1624228)_
 ## Date: 
 17 June 2021
 
-
 ## Status: 
 Accepted
 
 ## Context: 
-The action and action log relational tables are required for the storage of the passive monitoring of the users' activities. The key consideration used when making the database design decisions are:
+The action and action log tables are required for the storage of the passive monitoring of the users' activities. The key consideration used when making the database design decisions are:
 
 * The list of actions may be adjusted in the future, and so the database must be able to handle the expansion of the list to other possible actions
 * Each group chat will have the ability to view the activities carried out by other members in the same group.
-
-
 
 ## Decision:
 Given the current functionality, we have decided to log the following actions:
@@ -33,7 +30,7 @@ The **actions** table will have the following attributes:
 1. action_id - an integer identity primary key
 2. action - the actions listed above would each be a separate record/entry in the table
 
-The **action_log** table will have the following attributes:
+The **action_log** relational table will have the following attributes:
 1. log_id - an integer identity primary key
 2. action_id - a foreign key to the `action` table
 3. group_id - a foreign key to the [groups](ADR%205-%20Groups%20Database%20Design.md) table. This is the group in which the action occured.
@@ -47,8 +44,9 @@ The time, action and descriptions can be used for filtering upon display to the 
 
 ## Consequences:
 1. The action_log table is designed in [3rd normal form](https://www.educba.com/third-normal-form/) covering one business concept thus allowing for the elimination of redundant data. This improves the data quality, and enables anomily free updates, inserts, and deletions.
-2. The separation of the action from the action_log table allows for future additions to be made, and finer adjustments to better conform to the business interest.
-3. The logging of actions amongst several users at the same time may cause delays in the performance of the database and server 
+3. The action table is designed in 2nd normal form
+4. The separation of the action from the action_log table allows for future additions to be made, and finer adjustments to better conform to the business interest.
+5. The logging of actions amongst several users at the same time may cause delays in the performance of the database and server 
 
 
 
