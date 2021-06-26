@@ -48,7 +48,7 @@ describe('Covid Screening Can Be Loaded Correctly ', () => {
 describe('Options can be correctly selected ', () => {
   beforeEach(() => {
     getToChatPage()
-    fetch('/delete-screening')
+    // fetch('/delete-screening')
     cy.get('[data-cy = covid-screening-option]').click()
   })
 
@@ -64,7 +64,6 @@ describe('Options can be correctly selected ', () => {
 
     cy.get('[data-cy=ContactQ2]').select('yes')
       .should('have.value', 'yes')
-
   })
 })
 
