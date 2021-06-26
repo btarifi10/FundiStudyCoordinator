@@ -247,9 +247,6 @@ describe('James invited to group can view invite', () => {
       .contains('NewGroup1')
   })
 
-  it('Clears database from any NewGroup1 (for test consistency)', () => {
-    cy.request('/clear-groups')
-  })
 })
 
 /* ---------------------------- Helper Functions ---------------------------- */
