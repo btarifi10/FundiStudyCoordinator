@@ -17,6 +17,8 @@ profileRouter.get('/profile', checkAuthenticated, (req, res) => {
 })
 
 profileRouter.get('/api/getInvites', checkAuthenticated, (req, res) => {
+  console.log('the user invited:')
+  console.log(req.body)
   db.pools
     // Run query
     .then((pool) => {

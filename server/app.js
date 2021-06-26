@@ -426,7 +426,7 @@ app.get('/getRequests', function (req, res) {
 
 app.post('/createGroup', checkAuthenticated, function (req, res) {
   const { groupName, courseCode, dateCreated, tagValue } = req.body
-
+  
   db.pools
     .then((pool) => {
       return pool.request()
@@ -456,7 +456,6 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) {
   db.pools
     .then((pool) => {
       invitedMembers.forEach(member => {
-        console.log(member)
         pool.request()
           .input('userId', db.sql.Int, member.user_id)
           .input('groupName', db.sql.Char, groupName)
@@ -476,8 +475,15 @@ app.post('/complete-group-creation', checkAuthenticated, function (req, res) {
           `)
     })
     .then(result => {
-      res.redirect('/dashboard')
+      res.send(result)
     })
+    // .then(result => {
+  // res.redirect('/dashboard')
+  // if (result.rowsAffected[0] === 1) {
+  //   res.sendStatus(200)
+  // }
+  // })
+    // If there's an error, return that with some description
     .catch(err => {
       res.send({
         Error: err
@@ -554,7 +560,6 @@ app.post('/sendInvites', function (req, res) {
 
 app.post('/sendRequest', checkAuthenticated, function (req, res) {
   const reqObj = req.body
-  // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
@@ -571,7 +576,6 @@ app.post('/sendRequest', checkAuthenticated, function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('Requests have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -740,6 +744,8 @@ app.use('/', profileRouter)
 
 /* ------------------------------- Polls -------------------------------------- */
 const { pollingRouter } = require('./polls/polling-routes')
+const { authenticate } = require('passport')
+// const { checkAuthenticated } = require('./authentication')
 const handleMeetingMember = require('./meetings/attendance-server')
 app.use(pollingRouter)
 
