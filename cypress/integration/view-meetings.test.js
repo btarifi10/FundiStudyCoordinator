@@ -1,6 +1,7 @@
 const Archie = { username: 'Archie', password: 'sh33p123' }
 const Jamie = { username: 'James VI', password: 'longlivetheking' }
 const Sheep = { username: 'Sheep', password: 'wool' }
+const moment = require('moment')
 // cy.get('[data-cy=]')
 describe('User can navigate between meeting types', () => {
   beforeEach('Log in user', () => {
@@ -23,8 +24,10 @@ describe('User can navigate between meeting types', () => {
       .should('have.text', 'Scotland')
     cy.get('[data-cy=creator-id-3]')
       .should('have.text', '4')
+    const meeting_time = '2021-07-05 12:00:00.0000000 +02:00'
+    const date = moment(meeting_time).format('ddd, DD MMM YYYY HH:mm')
     cy.get('[data-cy=meeting-time-3]')
-      .should('have.text', 'Mon, 05 Jul 2021 12:00')
+      .should('have.text', date)
     cy.get('[data-cy=meeting-place-3]')
       .should('have.text', 'Microsoft Teams')
 
