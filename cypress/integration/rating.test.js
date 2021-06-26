@@ -40,8 +40,10 @@ describe('Routes correctly to the Rating Page ', () => {
   it('Possible members are loaded correctly', () => {
     cy.get('[data-cy = user-selection]')
       .find('option')
-      .should('have.length', 1)
-      .and('have.text', 'James VI (null)')
+      .first()
+      .should('have.text', 'James VI (null)')
+      .next()
+      .should('have.text', 'Sheep (null)')
   })
 })
 
@@ -66,7 +68,7 @@ describe('Rating Functionality Works As Expected ', () => {
     fetch('/reset-ratings')
     cy.visit('/chat?group=Scotland')
     cy.get('[data-cy = rating-option]').click()
-    cy.get('[data-cy = user-selection]').select('James VI').should('have.value', 'James VI').and('have.text', 'James VI (null)')
+    cy.get('[data-cy = user-selection]').select('James VI').should('have.value', 'James VI')
     cy.get('[type="radio"]').check('2').should('have.value', '2')
     cy.get('[data-cy = Submit]').click()
     cy.wait(1000)
@@ -76,7 +78,7 @@ describe('Rating Functionality Works As Expected ', () => {
   it('Rating given for previously null user is displayed correctly when page has been reloaded ', () => {
     cy.get('[data-cy = user-selection]')
       .select('James VI')
-      .should('have.text', 'James VI (2)')
+      .should('include.text', 'James VI (2)')
   })
 
   it('Rating a member gives the correct result for a user with a previous rating ', () => {
