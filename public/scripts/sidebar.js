@@ -7,6 +7,8 @@
 // Scripts
 //
 
+let open = true
+
 window.addEventListener('DOMContentLoaded', event => {
   // Toggle the side navigation
   const sidebarToggle = document.body.querySelector('#sidebarToggle')
@@ -19,6 +21,13 @@ window.addEventListener('DOMContentLoaded', event => {
       event.preventDefault()
       document.body.classList.toggle('sb-sidenav-toggled')
       localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'))
+      if (open) {
+        sidebarToggle.innerHTML = '<i class="fas fa-chevron-right"></i> Menu'
+        open = false
+      } else {
+        sidebarToggle.innerHTML = '<i class="fas fa-chevron-left"></i>'
+        open = true
+      }
     })
   }
 })

@@ -11,6 +11,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
     <!-- Custom CSS for this page-->
     <link rel="stylesheet" href="css/polls.css">
 
@@ -21,9 +25,20 @@
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-md-10 m-5 p-5">
-                <div class="text-center">
-                    <h1> Polling Station </h1>
-                </div>
+                <!-- Header -->
+                <header class="group-header text-center pt-4">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <h1 class="page-header"><i class="fas fa-poll" aria-hidden="true"></i>
+                                </i> Polling Station <span id="group-name"></span></h1>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="/chat" class="btn btn-secondary" id="back-button" data-cy="back-button"><i
+                                    class="fa fa-arrow-left"></i> Back </a>
+                        </div>
+                    </div>
+                </header>
                 <div class="card text-center m-3 p-3">
                     <!-- Navigation tabs -->
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -36,7 +51,8 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="new-poll-tab" data-bs-toggle="tab" data-bs-target="#new-poll"
-                                type="button" role="tab" aria-controls="home" aria-selected="false" data-cy="new-poll-tab">
+                                type="button" role="tab" aria-controls="home" aria-selected="false"
+                                data-cy="new-poll-tab">
                                 Create new poll
                             </button>
                         </li>
@@ -49,7 +65,8 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#old-polls"
-                                type="button" role="tab" aria-controls="contact" aria-selected="false" data-cy="old-poll-tab">
+                                type="button" role="tab" aria-controls="contact" aria-selected="false"
+                                data-cy="old-poll-tab">
                                 Completed polls
                             </button>
                         </li>
@@ -62,7 +79,8 @@
                             aria-labelledby="members-poll-tab">
 
                             <br>
-                            <p> Start a poll to invite a new member, to accept group requests or to ban an existing member form
+                            <p> Start a poll to invite a new member, to accept group requests or to ban an existing
+                                member form
                                 the group below.
                             </p>
                             <br>
@@ -74,20 +92,22 @@
                                     <!-- Group Invites-->
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="headingOne">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapse-group-invites" aria-expanded="false"
-                                                aria-controls="collapse-group-invites" data-cy="invite-box">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapse-group-invites"
+                                                aria-expanded="false" aria-controls="collapse-group-invites"
+                                                data-cy="invite-box">
                                                 Invite new member to group
                                             </button>
                                         </h2>
                                         <div id="collapse-group-invites" class="accordion-collapse collapse"
                                             aria-labelledby="headingOne" data-bs-parent="#member-admin-options">
                                             <div class="accordion-body">
-                                                
+
                                                 <div class="form">
                                                     <div class="mb-3">
                                                         <input class="form-control" type="text" id="user-search"
-                                                        placeholder="Search for Users..." onkeypress="userSearch()" data-cy="user-search">
+                                                            placeholder="Search for Users..." onkeyup="userSearch()"
+                                                            data-cy="user-search">
                                                     </div>
                                                 </div>
 
@@ -95,7 +115,7 @@
                                                 <table class="table" id="users-table" data-cy="invite-user-tbl">
                                                     <thead>
                                                         <th>Name</th>
-                                                        <th>Start Poll</th> 
+                                                        <th>Start Poll</th>
                                                     </thead>
                                                     <tbody></tbody>
                                                 </table>
@@ -108,7 +128,8 @@
                                         <h2 class="accordion-header" id="headingTwo">
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#collapse-group-requests"
-                                                aria-expanded="false" aria-controls="collapse-group-requests" data-cy="requests-box">
+                                                aria-expanded="false" aria-controls="collapse-group-requests"
+                                                data-cy="requests-box">
                                                 View group requests
                                             </button>
                                         </h2>
@@ -121,7 +142,7 @@
                                                     <thead>
                                                         <th>Name</th>
                                                         <th>Time</th>
-                                                        <th>Start Poll</th> 
+                                                        <th>Start Poll</th>
                                                     </thead>
                                                     <tbody></tbody>
                                                 </table>
@@ -134,7 +155,8 @@
                                         <h2 class="accordion-header" id="headingThree">
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#collapse-group-ban"
-                                                aria-expanded="false" aria-controls="collapse-group-ban" data-cy="ban-box">
+                                                aria-expanded="false" aria-controls="collapse-group-ban"
+                                                data-cy="ban-box">
                                                 Ban member from group
                                             </button>
                                         </h2>
@@ -145,7 +167,7 @@
                                                 <table class="table" id="group-members-table" data-cy="ban-user-tbl">
                                                     <thead>
                                                         <th>Name</th>
-                                                        <th>Start Poll</th> 
+                                                        <th>Start Poll</th>
                                                     </thead>
                                                     <tbody></tbody>
                                                 </table>
@@ -161,41 +183,45 @@
                         </div>
 
                         <!-- New Custom poll window -->
-                        <div class="tab-pane fade show" id="new-poll" role="tabpanel"
-                            aria-labelledby="new-poll-tab">
-                            
+                        <div class="tab-pane fade show" id="new-poll" role="tabpanel" aria-labelledby="new-poll-tab">
+
                             <div class="p-2 text-start flex">
-                                <div class="form"> 
+                                <div class="form">
                                     <div class="mb-3">
                                         <label for="new-poll-title" class="form-label">Poll title</label>
-                                        <input type="text" class="form-control" id="new-poll-title" placeholder="A descriptive title" data-cy="custom-title" required>
+                                        <input type="text" class="form-control" id="new-poll-title"
+                                            placeholder="A descriptive title" data-cy="custom-title" required>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="new-poll-num-options" class="form-label">Number of options</label>
                                         <div class="row">
-                                            <div class="col-md-8">
-                                                <input type="number" class="form-control" id="new-poll-num-options" min=2 value="2" data-cy="custom-options" required>
+                                            <div class="col-md-9">
+                                                <input type="number" class="form-control" id="new-poll-num-options"
+                                                    min=2 value="2" data-cy="custom-options" required>
                                             </div>
-                                            <div class="col-md-4">
-                                                <button class="btn btn-success" onclick="addOptionFields()" data-cy="add-options-btn"> Start adding options </button>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-success" onclick="addOptionFields()" style="border-radius:25px"
+                                                    data-cy="add-options-btn"> <i class="fas fa-plus"></i>  Add options </button>
                                             </div>
-                                        </div>                                        
+                                        </div>
                                     </div>
-    
+
                                     <div class="mb-3" id="new-poll-options">
-    
+
                                     </div>
-    
+
                                     <div class="mb-3">
                                         <label for="new-poll-duration" class="form-label">Poll duration (hours)</label>
-                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1" value="1" required data-cy="new-duration">
+                                        <input type="number" class="form-control" id="new-poll-duration" placeholder="1"
+                                            value="1" required data-cy="new-duration">
                                     </div>
-    
+
                                     <div class="col-auto">
-                                        <button type="button" class="btn btn-primary mb-3" onclick="createCustomPoll()" data-cy="create-poll-btn"> Create Poll </button>
+                                        <button type="button" class="btn btn-primary mb-3" onclick="createCustomPoll()"
+                                            data-cy="create-poll-btn" style="border-radius:25px"> <i class="fas fa-stopwatch"></i>  Start Poll </button>
                                     </div>
-                                                            
+
                                 </div>
                             </div>
 
