@@ -30,6 +30,28 @@ testRouter.get('/clear-messages', function (req, res) {
     })
 })
 
+/* ---------------------------- Meeting Routes ---------------------------- */
+
+// Clear all the non-permanent entries in the meetings table
+testRouter.get('/clear-meetings', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query('DELETE FROM meetings WHERE meeting_id NOT IN (2, 3);')
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
 /* ---------------------------- Screening Test Routes ---------------------------- */
 
 // Clear all screening entries
