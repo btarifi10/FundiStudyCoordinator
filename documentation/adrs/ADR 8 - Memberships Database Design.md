@@ -12,7 +12,7 @@ Accepted
 The memberships database relational table is used to record which users are members of which groups of the web application. The key considerations used for making the database design decisions are:
 
 * Team members being largely inexperienced with database design
-* The prefernce for relational design principles which incorporate normalised relations whereby relations are well-formed and encompass [only 1 business concept each](https://www.youtube.com/watch?v=kyGVhx5LwXw&list=PL1LIXLIF50uXWJ9alDSXClzNCMynac38g&index=4&ab_channel=Dr.DanielSoper)
+* The preference for relational design principles which incorporate normalised relations whereby relations are well-formed and encompass [only 1 business concept each](https://www.youtube.com/watch?v=kyGVhx5LwXw&list=PL1LIXLIF50uXWJ9alDSXClzNCMynac38g&index=4&ab_channel=Dr.DanielSoper)
 * The memberships database table needing to capture the base properties associated with becoming a member of a specific group. 
 
 
@@ -30,7 +30,7 @@ We will set user_id to be a foreign key which references the [users table](https
 We will set group_id to be a foreign key which references the [groups table](https://github.com/witseie-elen4010/2021-008-project/blob/main/documentation/adrs/ADR%205-%20Groups%20Database%20Design.md) to assist with the relational database concept of having one table describing one business relationship.
 
 ## Consequences:
-1. The table is designed in 3rd normal form covering one business concept thus thus enabling the elimination of redundant data , improves data quality and enables anomoly elimination for update,insert and delete.
+1. The table is designed in 3rd normal form covering one business concept thus enabling the elimination of redundant data , improves data quality and enables anomoly elimination for update,insert and delete.
 2. Reduced redundant data [improves overall performance.](https://www.educba.com/third-normal-form/)
 3. Increased complexity in database calls to determine if the current user is a member of a specific group. 
 
