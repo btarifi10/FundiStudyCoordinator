@@ -47,6 +47,9 @@ describe('The correct page is displayed to the user when entering the create-gro
     loginAsArchie()
     cy.visit('/create-group')
   })
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
+  })
 
   it('Displays the create-group page', () => {
     cy.get('[data-cy=group-name]')
@@ -63,7 +66,7 @@ describe('The correct page is displayed to the user when entering the create-gro
 
 describe('Users cannot input invalid group information for group creation', () => {
   before('Navigate to Create-Group page', () => {
-    loginAsArchie()
+    // loginAsArchie()
     cy.visit('/create-group')
   })
   it('Does not allow user to create group without inviting a member', () => {
@@ -129,7 +132,7 @@ describe('Users cannot input invalid group information for group creation', () =
       .should('have.length', 1)
       .and('have.text', '')
   })
-  /// //////////////////////////////////////////////////////////////////////////////////////////////////////
+
   it('Does not allow user to input empty group name', () => {
     cy.get('input[data-cy="group-name"]')
       .clear()
@@ -161,13 +164,12 @@ describe('Users cannot input invalid group information for group creation', () =
       .type('abcd5678901')
       .should('have.value', 'abcd567890')
   })
-  /// //////////////////////////////////////////////////////////////////////////////////////////////////////
 })
 
 describe('User can create a new group with chosen members invited automatically', () => {
   before('Navigate to Create-Group page', () => {
-    loginAsArchie()
-    cy.visit('/create-group')
+    // loginAsArchie()
+    // cy.visit('/create-group')
   })
   it('Allows user to input Group information and add member to invite to create a new group', () => {
     cy.get('input[data-cy="group-name"]')
@@ -180,11 +182,14 @@ describe('User can create a new group with chosen members invited automatically'
       .type('TEST123')
       .should('have.value', 'TEST123')
 
-    cy.get('select[data-cy="user-list"]')
-      .select('James VI')
+    // cy.get('input[data-cy="user-search"]')
+    //   .clear()
 
-    cy.get('[data-cy=add-btn]')
-      .click()
+    // cy.get('select[data-cy="user-list"]')
+    //   .select('James VI')
+
+    // cy.get('[data-cy=add-btn]')
+    //   .click()
 
     cy.get('[data-cy=added-users]')
       .find('li')
@@ -236,22 +241,11 @@ describe('User can create a new group with chosen members invited automatically'
     cy.on('window:alert', (txt) => {
       expect(txt).to.contains('This group already exists')
     })
+    cy.wait(1000)
   })
 })
 
-// describe('User can view new group in My Group page', () => {
-//   before('Navigate to My-Groups page', () => {
-//     loginAsArchie()
-//     cy.visit('/my-groups')
-//   })
-//   it('Shows the new group that was created amongst other groups user is a member of', () => {
-//     cy.get('[data-cy=groups-table]')
-//       .contains('Hall')
-//   })
-
-// })
-
-describe('User invited to group can view invite', () => {
+describe('James invited to group can view invite', () => {
   before('Navigate to Invites page', () => {
     loginAsJames()
     cy.visit('/invites')
@@ -261,10 +255,6 @@ describe('User invited to group can view invite', () => {
     cy.get('[data-cy=invite-table]')
       .contains('NewGroup1')
   })
-
-  // it('Clear the groups from database (for TEST consistencies)', () => {
-  //   cy.request('/clear-groups')
-  // })
 })
 
 /* ---------------------------- Helper Functions ---------------------------- */
