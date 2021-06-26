@@ -317,8 +317,6 @@ app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
 
 app.post('/createGroup', function (req, res) { // KEEP THIS
   const { groupName, courseCode, dateCreated } = req.body
-  console.log('The group being created on server side:')
-  console.log(req.body)
   db.pools
     // Run query
     .then((pool) => {
@@ -343,14 +341,10 @@ app.post('/createGroup', function (req, res) { // KEEP THIS
 
 app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests work without checkAuthenticated)
   const { groupName, invitedMembers, dateCreated } = req.body
-  console.log('the member info:')
-  console.log(req.body)
   db.pools
     // Run query
     .then((pool) => {
       invitedMembers.forEach(member => {
-        console.log('The member being invited:')
-        console.log(member)
         pool.request()
           .input('userId', db.sql.Int, member.user_id)
           .input('groupName', db.sql.Char, groupName)
@@ -360,7 +354,6 @@ app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests w
             VALUES (@userId, (SELECT group_id FROM groups WHERE group_name = @groupName), @dateCreated);
           `)
       })
-      console.log('THE MEMBERSHIP')
       return pool.request()
         .input('userId', db.sql.Int, req.user.userId)
         .input('groupName', db.sql.Char, groupName)
@@ -463,7 +456,6 @@ app.post('/complete-group-creation', function (req, res) { // KEEP THIS (tests w
 
 app.post('/sendRequest', function (req, res) { // KEEP THIS
   const reqObj = req.body
-  // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
@@ -480,7 +472,6 @@ app.post('/sendRequest', function (req, res) { // KEEP THIS
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('Requests have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -493,8 +484,6 @@ app.post('/sendRequest', function (req, res) { // KEEP THIS
 app.post('/logAction', checkAuthenticated, function (req, res) {
   const reqObj = req.body // {group_name, timestamp, description}
   const userId = req.user.userId
-  console.log('The userID is:')
-  console.log(userId)
   logAction(reqObj, userId)
 })
 
@@ -514,7 +503,6 @@ app.get('/profileViews/:id', (req, res) => {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -542,7 +530,6 @@ app.get('/membership-views', function (req, res) { // KEEP THIS
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {

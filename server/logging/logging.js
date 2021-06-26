@@ -30,8 +30,6 @@ function logAction (actionObj, userId) {
       .then(result => {
         const groups = result.recordset
 
-        console.log(groups)
-
         groups.forEach(group => {
           db.pools
             .then((pool) => {
