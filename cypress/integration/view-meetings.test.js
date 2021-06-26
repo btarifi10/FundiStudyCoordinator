@@ -1,10 +1,15 @@
 const Archie = { username: 'Archie', password: 'sh33p123' }
 const Jamie = { username: 'James VI', password: 'longlivetheking' }
 const Sheep = { username: 'Sheep', password: 'wool' }
+const moment = require('moment')
+const meeting_time = '2021-07-05 12:00:00.0000000 +02:00'
+const date = moment(meeting_time).format('ddd, DD MMM YYYY HH:mm')
 // cy.get('[data-cy=]')
 describe('User can navigate between meeting types', () => {
   beforeEach('Log in user', () => {
     configureLogin(Archie)
+    addScreeningResult(4, 1) // Archie passes
+    addScreeningResult(5, 0) // James Fails
   })
   it('Displays the meetings options', () => {
     cy.get('[data-cy=onlineMeetingView]')
@@ -23,8 +28,9 @@ describe('User can navigate between meeting types', () => {
       .should('have.text', 'Scotland')
     cy.get('[data-cy=creator-id-3]')
       .should('have.text', '4')
+
     cy.get('[data-cy=meeting-time-3]')
-      .should('have.text', 'Mon Jul 05 2021 12:00:00 GMT+0200 (South Africa Standard Time)')
+      .should('have.text', date)
     cy.get('[data-cy=meeting-place-3]')
       .should('have.text', 'Microsoft Teams')
 
@@ -46,7 +52,7 @@ describe('User can navigate between meeting types', () => {
     cy.get('[data-cy=creator-id-2]')
       .should('have.text', '4')
     cy.get('[data-cy=meeting-time-2]')
-      .should('have.text', 'Mon Jul 05 2021 12:00:00 GMT+0200 (South Africa Standard Time)')
+      .should('have.text', date)
     cy.get('[data-cy=meeting-place-2]')
       .should('have.text', '1 Jan Smuts Ave, Braamfontein, Johannesburg, 2000')
 
@@ -102,4 +108,21 @@ function configureLogin (user) {
   cy.visit('/chat?group=Scotland')
 
   cy.get('[data-cy=ViewMeetings]').click()
+}
+
+// Posts results to the database
+function addScreeningResult (id, passed) {
+  const newScreening = {
+    user_id: id,
+    passed: passed,
+    date: moment()
+  }
+
+  fetch('/create-screening', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newScreening)
+  })
 }

@@ -48,7 +48,7 @@ describe('Covid Screening Can Be Loaded Correctly ', () => {
 describe('Options can be correctly selected ', () => {
   beforeEach(() => {
     getToChatPage()
-    // fetch('/delete-screening')
+    fetch('/delete-screening')
     cy.get('[data-cy = covid-screening-option]').click()
   })
 

@@ -66,6 +66,14 @@ describe('The correct page is displayed to the user when entering the create-gro
 })
 
 describe('Users cannot input invalid group information for group creation', () => {
+  // before('Navigate to Create-Group page', () => {
+  //   loginAsArchie()
+  //   cy.wait(1000)
+  //   cy.visit('/create-group')
+  // })
+  // beforeEach('Stay signed in', () => {
+  //   Cypress.Cookies.preserveOnce('connect.sid')
+  // })
   it('Does not allow user to create group without inviting a member', () => {
     cy.get('input[data-cy=group-name]')
       .type('NewGroup1')
@@ -165,6 +173,14 @@ describe('Users cannot input invalid group information for group creation', () =
 })
 
 describe('User can create a new group with chosen members invited automatically', () => {
+  // before('Navigate to Create-Group page', () => {
+  //   loginAsArchie()
+  //   cy.wait(1000)
+  //   cy.visit('/create-group')
+  // })
+  // beforeEach('Stay signed in', () => {
+  //   Cypress.Cookies.preserveOnce('connect.sid')
+  // })
   it('Allows user to input Group information and add member to invite to create a new group', () => {
     cy.get('input[data-cy="group-name"]')
       .clear()
@@ -236,8 +252,11 @@ describe('James invited to group can view invite', () => {
     cy.visit('/invites')
     cy.wait(1000)
   })
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
+  })
 
-  it('Shows the invites in the table', () => {
+  it.skip('Shows the invites in the table', () => {
     cy.get('[data-cy=invite-table]')
       .contains('NewGroup1')
   })
