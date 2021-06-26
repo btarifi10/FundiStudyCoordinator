@@ -44,7 +44,7 @@ const moment = require('moment')
 describe('Create activities to be logged', () => {
   before('Navigate to Create Group Page', () => {
     cy.request('/clear-groups')
-    cy.wait(6000)
+    cy.wait(16000)
     loginAsArchie()
     cy.visit('/create-group')
     cy.wait(2000)
@@ -98,7 +98,7 @@ describe('Create activities to be logged', () => {
 
     cy.get('[data-cy=Submit]')
       .click()
-    cy.wait(10000)
+    cy.wait(5000)
   })
 
   it('Enters group chat and writes a message', () => {
@@ -156,19 +156,13 @@ describe('Activity log of a group shows activities', () => {
   before('Enter a Group chat', () => {
     // loginAsArchie()
     cy.visit('/chat?group=NewGroup1')
-    cy.wait(2000)
+    cy.wait(3000)
     cy.get('[data-cy=view-log]')
       .click()
 
     cy.wait(2000)
   })
   it('Shows actions created in activity log', () => {
-    // cy.get('[data-cy=log-entries]')
-    //  .contains("'NewGroup1' was created")
-
-    // cy.get('[data-cy=log-entries]')
-    //  .contains("Members invited to join 'NewGroup1': James VI, barry,")
-
     cy.get('[data-cy=log-entries]')
       .contains("Archie entered the 'NewGroup1' chat")
 
@@ -179,40 +173,48 @@ describe('Activity log of a group shows activities', () => {
       .contains('"My first message"')
 
     cy.get('[data-cy=log-entries]')
-      .contains('Archie has failed their COVID screening')
-
-    cy.get('[data-cy=log-entries]')
       .contains("online meeting for 'NewGroup1' has been set")
+
+    cy.wait(10000)
+    cy.request('/clear-groups')
+    cy.wait(10000)
   })
 })
 
-describe('James invited to group can view invite', () => {
-  before('Navigate to Invites page', () => {
-    loginAsJames()
-    cy.visit('/invites')
-  })
+// describe('clear test database', () => {
+//   it('clears database', () => {
+//     cy.request('/clear-groups')
+//   })
+// })
 
-  it('Shows the invites in the table', () => {
-    cy.get('[data-cy=invite-table]')
-      .contains('NewGroup1')
-  })
-})
+// describe('James invited to group can view invite', () => {
+//   before('Navigate to Invites page', () => {
+//     loginAsJames()
+//     cy.visit('/invites')
+//   })
 
-describe('barry invited to group can view invite', () => {
-  before('Navigate to Invites page', () => {
-    loginAsBarry()
-    cy.visit('/invites')
-  })
+//   it('Shows the invites in the table', () => {
+//     cy.get('[data-cy=invite-table]')
+//       .contains('NewGroup1')
+//   })
+// })
 
-  it('Shows the invites in the table', () => {
-    cy.get('[data-cy=invite-table]')
-      .contains('NewGroup1')
-  })
+// describe('barry invited to group can view invite', () => {
+//   before('Navigate to Invites page', () => {
+//     loginAsBarry()
+//     cy.visit('/invites')
+//   })
 
-  it('Remove any creations in database (for test consistency)', () => {
-    // cy.request('/clear-groups')
-  })
-})
+//   it('Shows the invites in the table', () => {
+//     cy.get('[data-cy=invite-table]')
+//       .contains('NewGroup1')
+//   })
+
+//   it('Remove any creations in database (for test consistency)', () => {
+//     cy.request('/clear-groups')
+//     cy.wait(10000)
+//   })
+// })
 
 /* ---------------------------- Helper Functions ---------------------------- */
 
@@ -233,6 +235,7 @@ function loginAsArchie () {
 
   cy.get('[data-cy=sign-in-login]')
     .click()
+  cy.wait(3000)
 }
 
 function loginAsJames () {
@@ -252,6 +255,8 @@ function loginAsJames () {
 
   cy.get('[data-cy=sign-in-login]')
     .click()
+
+  cy.wait(3000)
 }
 
 function loginAsBarry () {
@@ -271,4 +276,6 @@ function loginAsBarry () {
 
   cy.get('[data-cy=sign-in-login]')
     .click()
+
+  cy.wait(3000)
 }

@@ -147,7 +147,6 @@ app.get('/get-current', function (req, res) {
 
 // Updates the ratings of the newly rated individual
 app.post('/update-ranking', function (req, res) {
-  // console.log(req)
   db.pools
     .then((pool) => {
       return pool.request()
@@ -358,7 +357,6 @@ app.get('/get-groups', checkAuthenticated, function (req, res) { // KEEP THIS
 })
 
 app.get('/getUsersGroups', function (req, res) {
-  // console.log(req.query)
   db.pools
     // Run query
     .then((pool) => {
@@ -381,7 +379,6 @@ app.get('/getUsersGroups', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -414,7 +411,6 @@ app.get('/getRequests', function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log(result)
     })
     // If there's an error, return that with some description
     .catch(err => {
@@ -554,7 +550,6 @@ app.post('/sendInvites', function (req, res) {
 
 app.post('/sendRequest', checkAuthenticated, function (req, res) {
   const reqObj = req.body
-  // console.log(inviteList)
   // Make a query to the database
   db.pools
     // Run query
@@ -571,7 +566,6 @@ app.post('/sendRequest', checkAuthenticated, function (req, res) {
     // Send back the result
     .then(result => {
       res.send(result)
-      // console.log('Requests have been sent')
     })
     // If there's an error, return that with some description
     .catch(err => {

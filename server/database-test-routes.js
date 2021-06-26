@@ -128,10 +128,9 @@ testRouter.get('/clear-groups', function (req, res) {
         .query(`
         DELETE FROM invites WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
         DELETE FROM memberships WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
-        DELETE FROM action_log WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
         DELETE FROM messages WHERE group_id IN (SELECT group_id FROM groups WHERE group_name='NewGroup1')
         DELETE FROM meetings WHERE group_id IN (SELECT group_id FROM groups WHERE group_name='NewGroup1')
-        DELETE FROM action_log
+        DELETE FROM action_log;
         DELETE FROM groups WHERE (group_name ='NewGroup1')
         `)
     })
