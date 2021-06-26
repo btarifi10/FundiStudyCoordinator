@@ -1,3 +1,4 @@
+
 'use strict'
 
 /* ------------------------------ Requirements ------------------------------ */
@@ -227,6 +228,28 @@ app.get('/get-recommendation', function (req, res) {
     })
 })
 
+// Retrieves the recommended groups with the same tag that the user is already a part of
+app.get('/get-matched-terms', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('tagName', db.sql.Char, req.query.tag)
+        .query(`select group_id, group_name, course_code from groups
+          where tag = (select tag_id from 
+          tags where tag = @tagName);`
+        )
+    })
+    .then(result => {
+      res.send(result)
+      console.log(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 // Retrieves the tags from the groups the user is currently a part of
 app.get('/get-tag-values', function (req, res) {
   db.pools
@@ -422,7 +445,7 @@ app.get('/getRequests', function (req, res) {
 
 app.post('/createGroup', checkAuthenticated, function (req, res) {
   const { groupName, courseCode, dateCreated, tagValue } = req.body
-  
+
   db.pools
     .then((pool) => {
       return pool.request()

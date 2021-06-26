@@ -1,6 +1,10 @@
 'use strict'
-
 let groups = []
+let taggedGroups = []
+let tags = []
+const table = document.querySelector('table tbody')
+const tagSearchEvent = document.getElementById('group-search-tag')
+const searchGroup = document.getElementById('group-search')
 
 document.addEventListener('DOMContentLoaded', function () {
   fetch('/get-other-groups')
@@ -9,10 +13,49 @@ document.addEventListener('DOMContentLoaded', function () {
       groups = data
       populateAllGroups(groups)
     })
+
+  getTags()
 })
+
+function clearFieldGroup () {
+  searchGroup.value = ''
+}
+
+function clearFieldTag () {
+  tagSearchEvent.value = ''
+}
+
+tagSearchEvent.addEventListener('keyup', function (event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    event.preventDefault()
+    tagSearch()
+  }
+})
+
+// Function to get all the tags of the users current groups
+function getTags () {
+  fetch('/get-tags')
+    .then(response => response.json())
+    .then(data => {
+      tags = data.recordset
+    })
+}
+
+function getTagGroups (tag) {
+  console.log('Into Function')
+
+  fetch(`/get-matched-terms?tag=${tag[0].tag}`)
+    .then(response => response.json())
+    .then(data => {
+      taggedGroups = data.recordset
+      populateAllGroups(taggedGroups)
+    })
+}
 
 // Enables a user to search using either the group name or the subject associated with the group
 function entireGroupSearch () {
+  clearFieldTag()
   const searchTermGroup = document.getElementById('group-search').value.toLowerCase()
 
   if (searchTermGroup) {
@@ -21,8 +64,25 @@ function entireGroupSearch () {
   } else { populateAllGroups(groups) }
 }
 
+// Enables a user to search using either the group name or the subject associated with the group
+function tagSearch () {
+  clearFieldGroup()
+  const searchTermGroup = document.getElementById('group-search-tag').value.toLowerCase()
+
+  if (searchTermGroup) {
+    const tagValue = tags.filter(t => t.tag.toLowerCase().includes(searchTermGroup))
+
+    if (tagValue.length === 0) {
+      table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
+    } else {
+      getTagGroups(tagValue)
+    }
+  } else {
+    table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
+  }
+}
+
 function populateAllGroups (data) {
-  const table = document.querySelector('table tbody')
   if (data.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='4'>No Matching Groups</td></tr>"
     return
