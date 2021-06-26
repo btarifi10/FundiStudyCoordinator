@@ -120,7 +120,6 @@ testRouter.get('/reset-ratings', function (req, res) {
     })
 })
 
-
 /* -------------------------------------------------------------------------- */
 
 testRouter.get('/clear-groups', function (req, res) {
@@ -128,7 +127,7 @@ testRouter.get('/clear-groups', function (req, res) {
     // Run query
     .then((pool) => {
       return pool.request()
-    .query(`
+        .query(`
         DELETE FROM invites WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
         DELETE FROM memberships WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
         DELETE FROM messages WHERE group_id IN (SELECT group_id FROM groups WHERE group_name='NewGroup1')
@@ -136,17 +135,18 @@ testRouter.get('/clear-groups', function (req, res) {
         DELETE FROM action_log
         DELETE FROM groups WHERE (group_name ='NewGroup1')
         `)
-    .then(result => {
-      res.send(result)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
+        .then(result => {
+          res.send(result)
+        })
+      // If there's an error, return that with some description
+        .catch(err => {
+          res.send({
+            Error: err
+          })
+        })
     })
 })
-  // Make a query to the database
+// Make a query to the database
 
 // delete the users except for user_id=4 and user_id=5
 testRouter.get('/clear-users', function (req, res) {
@@ -194,7 +194,7 @@ testRouter.get('/clear-polls', function (req, res) {
     })
 })
 
-  // Yasser's
+// Yasser's
 testRouter.get('/clear-new-group-requests', function (req, res) {
   // Make a query to the database
   db.pools
@@ -202,17 +202,18 @@ testRouter.get('/clear-new-group-requests', function (req, res) {
     .then((pool) => {
       return pool.request()
         .query("DELETE FROM group_requests WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')")
-    .then(result => {
-      res.send(result)
-    })
-    // If there's an error, return that with some description
-    .catch(err => {
-      res.send({
-        Error: err
-      })
+        .then(result => {
+          res.send(result)
+        })
+      // If there's an error, return that with some description
+        .catch(err => {
+          res.send({
+            Error: err
+          })
+        })
     })
 })
- // Basheq's
+// Basheq's
 testRouter.get('/clear-requests', function (req, res) {
   // Make a query to the database
 
@@ -332,7 +333,7 @@ testRouter.get('/clear-invites', function (req, res) {
       })
     })
 })
-  
+
 testRouter.get('/get-user-invites-to-group', (req, res) => {
   db.pools
     // Run query
