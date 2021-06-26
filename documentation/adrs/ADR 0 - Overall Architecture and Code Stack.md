@@ -23,7 +23,7 @@ This presents a wide scope of activities and results in a complex web app requir
 The architecture as well as choice of stack will be discussed here.
 
 ### Architecture
-The overall architecture will consist of a loosely implemented Model View Controller (MVC) pattern to promote separation of concerns and a clean codebase. This pattern promotes modularity and separation of concerns as follows:
+The overall architecture will consist of a loosely implemented Model View Controller ([MVC](https://www.codecademy.com/articles/mvc)) pattern to promote separation of concerns and a clean codebase. This pattern promotes modularity and separation of concerns as follows:
 - The **Model** consists of the logic layer of the code, making changes to data.
 - The **View** consists of what the user sees, rendered on the client side.
 - The **Controller** is what links the two, and alters the model based on client interactions with the view
