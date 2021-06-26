@@ -41,7 +41,7 @@ course_code = 'UNICORN007'
 */
 const moment = require('moment')
 
-describe('Group creation is logged', () => {
+describe('Create group', () => {
   before('Navigate to Create Group Page', () => {
     cy.request('/clear-groups')
     loginAsArchie()
@@ -123,7 +123,7 @@ describe('barry invited to group can view invite', () => {
 describe('Create events to be logged in a group chat', () => {
   before('Enter a Group chat', () => {
     loginAsArchie()
-    cy.visit('/chat?group=Scotland')
+    cy.visit('/chat?group=NewGroup1')
   })
   it('Type a message in a group chat', () => {
     cy.get('form')
@@ -139,10 +139,9 @@ describe('Create events to be logged in a group chat', () => {
       .and('include.text', 'Archie')
       .and('include.text', `${moment().format('HH:mm')}`)
       .and('include.text', 'My first message')
+
   })
-  it('Allows user to leave the group chat', () => {
-    cy.visit('/my-groups')
-  })
+  
   // it('Allows user to create a poll', () => {
 
   // })
@@ -152,7 +151,40 @@ describe('Create events to be logged in a group chat', () => {
 })
 
 describe('Activity log of a group shows activities', () => {
+  before('Enter a Group chat', () => {
+    loginAsArchie()
+    cy.visit('/chat?group=NewGroup1')
+  })
+  it('Shows actions created in activity log', () => {
+    cy.get('[data-cy=view-log]')
+      .click()
 
+    cy.wait(2000)
+
+    cy.get('[data-cy=log-entries]')
+      .contains("'NewGroup1' was created")
+
+    cy.get('[data-cy=log-entries]')
+      .contains("Members invited to join 'NewGroup1': James VI, barry,")
+
+    cy.get('[data-cy=log-entries]')
+      .contains("'NewGroup1' was created")
+
+    cy.get('[data-cy=log-entries]')
+      .contains("Archie entered the 'NewGroup1' chat")
+
+    // cy.get('[data-cy=log-entries]')
+    //   .contains("Archie left the 'NewGroup1' chat")
+
+    cy.get('[data-cy=log-entries]')
+      .contains('"My first message"')
+
+    // cy.get('[data-cy=log-entries]')
+    // .contains("Members Invited")
+
+    // cy.get('[data-cy=log-entries]')
+    // .contains("Meeting")
+  })
 })
 
 // describe('Messages sent in a group chat are logged', () => {})
