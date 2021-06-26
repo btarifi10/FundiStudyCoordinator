@@ -62,7 +62,7 @@ testRouter.get('/delete-screening', function (req, res) {
   db.pools
     .then((pool) => {
       return pool.request()
-        .query('DELETE FROM screening WHERE screening_id NOT IN (161, 162)')
+        .query('DELETE FROM screening WHERE screening_id NOT IN (332, 333)')
     })
     .then(result => {
       res.send(result)
