@@ -131,6 +131,7 @@ testRouter.get('/clear-groups', function (req, res) {
         DELETE FROM memberships WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
         DELETE FROM action_log WHERE group_id IN (SELECT group_id FROM groups WHERE group_name ='NewGroup1')
         DELETE FROM messages WHERE group_id IN (SELECT group_id FROM groups WHERE group_name='NewGroup1')
+        DELETE FROM meetings WHERE group_id IN (SELECT group_id FROM groups WHERE group_name='NewGroup1')
         DELETE FROM action_log
         DELETE FROM groups WHERE (group_name ='NewGroup1')
         `)

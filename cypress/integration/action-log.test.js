@@ -41,13 +41,16 @@ course_code = 'UNICORN007'
 */
 const moment = require('moment')
 
-describe('Create group', () => {
+describe('Create activities to be logged', () => {
   before('Navigate to Create Group Page', () => {
     cy.request('/clear-groups')
     loginAsArchie()
     cy.visit('/create-group')
   })
-  it('Creates the group', () => {
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
+  })
+  it('Creates the group, and invite two members', () => {
     cy.get('input[data-cy="group-name"]')
       .clear()
       .type('NewGroup1')
@@ -82,19 +85,113 @@ describe('Create group', () => {
     })
     cy.wait(1000)
   })
+  it('Allows user to take COVID screening', () => {
+    cy.visit('/chat?group=NewGroup1')
+
+    cy.wait(2000)
+
+    cy.get('[data-cy=covid-screening-option]')
+      .click()
+
+    cy.get('[data-cy=Submit]')
+      .click()
+  })
+
+  it('Enters group chat and writes a message', () => {
+    cy.visit('/chat?group=NewGroup1')
+    cy.get('[data-cy=message-input]')
+      .type('My first message')
+      .should('have.focus')
+
+    cy.get('[data-cy=send-button]').click()
+
+    cy.get('[data-cy="message-area"]')
+      .find('.message')
+      .should('have.length', 1)
+      .and('include.text', 'Archie')
+      .and('include.text', `${moment().format('HH:mm')}`)
+      .and('include.text', 'My first message')
+
+    cy.wait(2000)
+  })
+
+  it('Allows user to create a meeting', () => {
+    cy.visit('/choose-location?group=NewGroup1')
+    cy.get('[data-cy=meeting-form]').within(() => {
+      cy.get('[data-cy=date-input]')
+        .type('2022-03-13T16:20')
+        .should('have.value', '2022-03-13T16:20')
+
+      cy.get('[data-cy=method-input]')
+        .select('online')
+        .should('have.value', 'online')
+
+      cy.get('[data-cy=platform-input]')
+        .type('Discord')
+        .should('have.value', 'Discord')
+
+      cy.get('[data-cy=link-input]')
+        .type('https://discord.com/')
+        .should('have.value', 'https://discord.com/')
+
+      cy.get('[data-cy=create-meeting]').click()
+
+      cy.on('window:alert', (message) => {
+        expect(message).to.contains('You have successfully created a Meeting')
+      })
+    })
+    cy.wait(2000)
+  })
+
+  // it('Allows user to create a poll', () => {
+
+  // })
 })
 
-describe('Creator of group is member of group created', () => {
-  before('Navigate to Create Group Page', () => {
-    loginAsArchie()
-    cy.visit('/my-groups')
+describe('Activity log of a group shows activities', () => {
+  before('Enter a Group chat', () => {
+    // loginAsArchie()
+    cy.visit('/chat?group=NewGroup1')
+    cy.get('[data-cy=view-log]')
+      .click()
+
+    cy.wait(2000)
   })
-  it('Shows the group in the action log of the group', () => {
-    // acces the group created, and click on activity log to view 'group created'
-    cy.get('[data-cy=groups-table]')
-      .contains('NewGroup1')
+  it('Shows actions created in activity log', () => {
+    cy.get('[data-cy=log-entries]')
+      .contains("'NewGroup1' was created")
+
+    cy.get('[data-cy=log-entries]')
+      .contains("Members invited to join 'NewGroup1': James VI, barry,")
+
+    cy.get('[data-cy=log-entries]')
+      .contains("Archie entered the 'NewGroup1' chat")
+
+    cy.get('[data-cy=log-entries]')
+      .contains("Archie left the 'NewGroup1' chat")
+
+    cy.get('[data-cy=log-entries]')
+      .contains('"My first message"')
+
+    cy.get('[data-cy=log-entries]')
+      .contains('Archie has failed their COVID screening')
+
+    cy.get('[data-cy=log-entries]')
+      .contains("online meeting for 'NewGroup1' has been set")
   })
 })
+
+// describe('Creator of group is member of group created', () => {
+//   before('Navigate to Create Group Page', () => {
+//     //loginAsArchie()
+//     cy.visit('/my-groups')
+//   })
+//   it('Shows the group in the action log of the group', () => {
+//     // acces the group created, and click on activity log to view 'group created'
+//     cy.get('[data-cy=groups-table]')
+//       .contains('NewGroup1')
+//   })
+// })
 
 describe('James invited to group can view invite', () => {
   before('Navigate to Invites page', () => {
@@ -120,76 +217,6 @@ describe('barry invited to group can view invite', () => {
   })
 })
 
-describe('Create events to be logged in a group chat', () => {
-  before('Enter a Group chat', () => {
-    loginAsArchie()
-    cy.visit('/chat?group=NewGroup1')
-  })
-  it('Type a message in a group chat', () => {
-    cy.get('form')
-    cy.get('[data-cy=message-input]')
-      .type('My first message')
-      .should('have.focus')
-
-    cy.get('[data-cy=send-button]').click()
-
-    cy.get('[data-cy="message-area"]')
-      .find('.message')
-      .should('have.length', 1)
-      .and('include.text', 'Archie')
-      .and('include.text', `${moment().format('HH:mm')}`)
-      .and('include.text', 'My first message')
-
-  })
-  
-  // it('Allows user to create a poll', () => {
-
-  // })
-  // it('Allows user to create a meeting', () => {
-
-  // })
-})
-
-describe('Activity log of a group shows activities', () => {
-  before('Enter a Group chat', () => {
-    loginAsArchie()
-    cy.visit('/chat?group=NewGroup1')
-  })
-  it('Shows actions created in activity log', () => {
-    cy.get('[data-cy=view-log]')
-      .click()
-
-    cy.wait(2000)
-
-    cy.get('[data-cy=log-entries]')
-      .contains("'NewGroup1' was created")
-
-    cy.get('[data-cy=log-entries]')
-      .contains("Members invited to join 'NewGroup1': James VI, barry,")
-
-    cy.get('[data-cy=log-entries]')
-      .contains("'NewGroup1' was created")
-
-    cy.get('[data-cy=log-entries]')
-      .contains("Archie entered the 'NewGroup1' chat")
-
-    // cy.get('[data-cy=log-entries]')
-    //   .contains("Archie left the 'NewGroup1' chat")
-
-    cy.get('[data-cy=log-entries]')
-      .contains('"My first message"')
-
-    // cy.get('[data-cy=log-entries]')
-    // .contains("Members Invited")
-
-    // cy.get('[data-cy=log-entries]')
-    // .contains("Meeting")
-  })
-})
-
-// describe('Messages sent in a group chat are logged', () => {})
-
-describe('COVID screening results are logged', () => {})
 
 /* ---------------------------- Helper Functions ---------------------------- */
 
