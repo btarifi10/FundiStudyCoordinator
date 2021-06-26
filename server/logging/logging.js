@@ -30,8 +30,6 @@ function logAction (actionObj, userId) {
       .then(result => {
         const groups = result.recordset
 
-        console.log(groups)
-
         groups.forEach(group => {
           db.pools
             .then((pool) => {
@@ -73,17 +71,6 @@ function logAction (actionObj, userId) {
         `)
       })
   }
-  // Send back the result
-//   .then(result => {
-//     res.send(result)
-//     // console.log('Requests have been sent')
-//   })
-  // If there's an error, return that with some description
-//   .catch(err => {
-//     res.send({
-//       Error: err
-//     })
-//   })
 }
 
 module.exports = { logAction, formatAction }
