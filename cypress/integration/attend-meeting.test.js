@@ -185,11 +185,7 @@ function configureAttendanceTest () {
   cy.get('[data-cy=sign-in-login]')
     .click()
 
-  // Navigate to the 'Scotland' group chat
-  // cy.visit('/chat?group=Scotland')
-  // navigate to view meetings using click
   cy.wait(2000)
-
   cy.visit('/attend-meeting?group=Scotland&meetingID=2')
 }
 

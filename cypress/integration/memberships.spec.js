@@ -1,5 +1,5 @@
 'use strict'
-describe('My groups contents and links', () => {
+describe('The user can view their personal/profile details', () => {
   before('Log in', () => {
     configureTests()
   })
@@ -22,8 +22,8 @@ describe('My groups contents and links', () => {
   })
 })
 
-describe('My groups contents and links', () => {
-  before('Log in', () => {
+describe('User can view and navigate between their groups', () => {
+  beforeEach('Log in', () => {
     configureTests()
   })
 
@@ -52,7 +52,7 @@ describe('My groups contents and links', () => {
   it('redirects to the correct page when clicking the group-name', () => {
     // Navigate to the 'Scotland' group
     cy.getIframeBody('dashboard-iframe').within(() => {
-      cy.wait(2000)
+      cy.wait(1000)
       cy.get('#6-group-name')
         .within(() => {
           cy.get('a')
@@ -63,6 +63,12 @@ describe('My groups contents and links', () => {
             .click()
         })
     })
+    cy.getIframeBody('dashboard-iframe').within(() => {
+      cy.wait(1000)
+      cy.get('[data-cy=group-header-name]')
+        .should('have.text', 'Scotland')
+    })
+
     // cy.wait(25000)
     // cy.get('#sign-out').click()
   })
