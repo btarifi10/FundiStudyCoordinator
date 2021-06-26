@@ -200,6 +200,8 @@ function loadButtons (meeting) {
   a.appendChild(text)
   a.setAttribute('class', 'btn btn-primary')
   a.setAttribute('data-id', 'onlineMeet')
+  a.setAttribute('id', 'onlineMeet')
+  a.setAttribute('data-cy', 'onlineMeetingView')
   a.setAttribute('type', 'submit')
 
   const i = document.createElement('i')
@@ -212,6 +214,7 @@ function loadButtons (meeting) {
   a2.appendChild(text2)
   a2.setAttribute('class', 'btn btn-primary')
   a2.setAttribute('data-id', 'faceMeet')
+  a2.setAttribute('data-cy', 'face2faceMeetingView')
   a2.setAttribute('type', 'submit')
   const i2 = document.createElement('i')
   i2.setAttribute('class', 'fa fa-map-marker')
@@ -254,15 +257,15 @@ function loadHTMLTable (data, option) {
     }
 
     tableHtml += '<tr>'
-    tableHtml += `<td id='${meeting_id}-meeting-id'>${meeting_id}</td>`
-    tableHtml += `<td id='${meeting_id}-meeting-group-name'>${group_name}</td>`
-    tableHtml += `<td id='${meeting_id}-creator-id'>${creator_id}</td>`
-    tableHtml += `<td id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
-    tableHtml += `<td id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
+    tableHtml += `<td data-cy='meeting-id-${meeting_id}' id='${meeting_id}-meeting-id'>${meeting_id}</td>`
+    tableHtml += `<td data-cy='meeting-group-${meeting_id}' id='${meeting_id}-meeting-group-name'>${group_name.trim()}</td>`
+    tableHtml += `<td data-cy='creator-id-${meeting_id}' id='${meeting_id}-creator-id'>${creator_id}</td>`
+    tableHtml += `<td data-cy='meeting-time-${meeting_id}' id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
+    tableHtml += `<td data-cy='meeting-place-${meeting_id}' id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
     if (option == 0) {
       tableHtml += `<td id = '${meeting_id}-time-diff'>
       ${sign}${remaining.days}days ${remaining.hours}hours ${remaining.minutes}minutes ${remaining.seconds}seconds
-      <br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-id='attend-${meeting_id}-btn' 
+      <br><button class = "btn btn-secondary" id="attend-${meeting_id}-btn" data-cy='attend-meeting-${meeting_id}-btn' data-id='attend-${meeting_id}-btn' 
       onclick="move(${meeting_id})"> Attend</button></td>`
     } else {
       tableHtml += `<td id = '${meeting_id}-time-diff'>

@@ -66,7 +66,7 @@ meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
         .input('group_name', db.sql.VarChar, group_name)
         .input('user_id', db.sql.Int, user_id)
         .input('online', db.sql.Bit, online)
-        .query(`SELECT passed 
+        .query(`SELECT passed, date_screened 
         FROM screening 
         WHERE (@user_id) = screening.user_id
         AND date_screened > DATEADD(hour, -72, GETDATE())
