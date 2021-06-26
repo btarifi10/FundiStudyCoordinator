@@ -30,7 +30,7 @@ These are the permanent entries in the test database that should not be altered.
 | user_id | username |  user_password* |             first_name             | last_name | rating | number_ratings |   address_line_1  |   address_line_2   |        city        | postal_code |
 |:-------:|:--------:|:---------------:|:----------------------------------:|:---------:|:------:|:--------------:|:-----------------:|:------------------:|:------------------:|:-----------:|
 |    4    |  Archie  |     sh33p123    |              Archibald             | Armstrong |    5   |        1       | 4 Kentucky Circle | Saddlebrook Estate |    Johannesburg    |     1684    |
-|    5    | James VI | longlivetheking | 2021-06-25 10:37:16.0110000 +02:00 |   James   |  NULL  |      NULL      |  6 Shelley Street |      Ridgeway      | Johannesburg South |     2091    |
+|    5    | James VI | longlivetheking | James |   Stuart   |  NULL  |      NULL      |  6 Shelley Street |      Ridgeway      | Johannesburg South |     2091    |
 |    28   |   barry  |      flash      |                Barry               |   Allen   |   3.5  |        2       |   6 North Avenue  |       Riviera      |    Johannesburg    |     2193    |
 |    34   |   Sheep  |      wool      |                Shaun                |  Shababi  |  NULL  |      NULL      |  Montecasino Blvd |      Fourways      |    Johannesburg    |     2055    |
 
