@@ -39,8 +39,8 @@ const io = socketio(server)
 /* ----------------------------- Login Functonality ----------------------------- */
 
 // Use the loginRouter for the login and register functionality.
-const loginRouter = require('./loginRouter.js')(app, passport)
-app.use('/', loginRouter)
+const { loginRouter } = require('./loginRouter.js')
+app.use('/', loginRouter(app, passport))
 
 /* ----------------------------- Taliya's Code ----------------------------- */
 

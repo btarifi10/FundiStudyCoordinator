@@ -27,13 +27,12 @@ profileRouter.get('/api/getInvites', checkAuthenticated, (req, res) => {
                 SELECT invites.invite_id, groups.group_id, groups.group_name, groups.course_code, invites.time_sent
                 FROM invites
                 INNER JOIN groups ON invites.group_id=groups.group_id
-                WHERE invites.receiver_id=@user ;
+                WHERE invites.receiver_id=@user;
             `)
     })
     // Send back the result
     .then(result => {
       if (result.recordset) {
-        console.log(result.recordset)
         res.send(result.recordset)
       } else {
         res.send(null)

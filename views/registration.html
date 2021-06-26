@@ -21,54 +21,54 @@
                     
                     <form class="align-items-center" action="/register" method="POST" id="registration-form">
                         <div class="form-floating mb-2">
-                            <input class="form-control" type="text" name="firstName" placeholder="" maxlength="20" required>
+                            <input class="form-control" type="text" name="firstName" placeholder="" maxlength="20" required data-cy="firstName">
                             <label for="firstName" class="form-label">First name</label>
                         </div>
                         <div class="form-floating mb-2">
-                            <input class="form-control" type="text" name="lastName" placeholder="" maxlength="20" required>
+                            <input class="form-control" type="text" name="lastName" placeholder="" maxlength="20" required data-cy="lastName">
                             <label for="lastName" class="form-label">Last name</label>
                         </div>
                         <div class="form-floating mb-2">
-                            <input class="form-control" type="text" name="username" placeholder="" maxlength="20" required>
+                            <input class="form-control" type="text" name="username" placeholder="" maxlength="20" required data-cy="username">
                             <label for="username" class="form-label">Username</label>
                             <div id="usernameHelp" class="form-text">Unique and not more than 20 characters</div>
                         </div>
                         <div class="form-floating mb-2">
-                            <input class="form-control" type="password" name="password" placeholder="" maxlength="20" required>
+                            <input class="form-control" type="password" name="password" placeholder="" maxlength="20" required data-cy="password">
                             <label for="password" class="form-label">Password</label>
                             <div id="passwordHelp" class="form-text">Not more than 20 characters</div>
                         </div>
                         <div id="address-section" class="d-none">
                             <div class="form-floating mb-2">
-                                <input class="form-control" type="text" id="address-line-1" name="addressLine1" placeholder="" maxlength="50">
+                                <input class="form-control" type="text" id="address-line-1" name="addressLine1" placeholder="" maxlength="50" data-cy="addressLine1">
                                 <label for="addressLine1" class="form-label">Address Line 1</label>
                             </div>
                             <div class="form-floating mb-2">
-                                <input class="form-control" type="text" name="addressLine2" placeholder="" maxlength="50">
+                                <input class="form-control" type="text" name="addressLine2" placeholder="" maxlength="50" data-cy="addressLine2">
                                 <label for="addressLine2" class="form-label">Address Line 2</label>
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-floating mb-2">
-                                        <input class="form-control" type="text" id="city" name="city" placeholder="" maxlength="50">
+                                        <input class="form-control" type="text" id="city" name="city" placeholder="" maxlength="50" data-cy="city">
                                         <label for="city" class="form-label">City</label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-floating mb-2">
-                                        <input class="form-control" type="text" name="postalCode" placeholder="" maxlength="50">
+                                        <input class="form-control" type="text" name="postalCode" placeholder="" maxlength="50" data-cy="postalCode">
                                         <label for="postalCode" class="form-label">Postal Code</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mb-2">
-                           <button class="btn btn-secondary" id="address-button" style="border-radius: 20px;" type="button" onclick="addAddress()">Add address</button>
+                           <button class="btn btn-secondary" id="address-button" style="border-radius: 20px;" type="button" onclick="addAddress()" data-cy="addAddressBtn">Add address</button>
                         </div>
                         <div class="form-group mb-2">
-                            <div class="small alert alert-danger d-none px-3 py-1" id="alert" role="alert">
+                            <div class="small alert alert-danger d-none px-3 py-1" id="alert" role="alert" data-cy="reg-alert">
                             </div>
-                            <button class="btn btn-primary" style="border-radius: 20px;" type="submit">Register</button>
+                            <button class="btn btn-primary" style="border-radius: 20px;" type="submit" data-cy="registerBtn">Register</button>
                         </div>
                        
                     </form>
