@@ -24,7 +24,7 @@ describe('User can navigate between meeting types', () => {
     cy.get('[data-cy=creator-id-3]')
       .should('have.text', '4')
     cy.get('[data-cy=meeting-time-3]')
-      .should('have.text', 'Mon Jul 05 2021 12:00:00 GMT+0200 (South Africa Standard Time)')
+      .should('have.text', 'Mon, 05 Jul 2021 12:00')
     cy.get('[data-cy=meeting-place-3]')
       .should('have.text', 'Microsoft Teams')
 
@@ -46,7 +46,7 @@ describe('User can navigate between meeting types', () => {
     cy.get('[data-cy=creator-id-2]')
       .should('have.text', '4')
     cy.get('[data-cy=meeting-time-2]')
-      .should('have.text', 'Mon Jul 05 2021 12:00:00 GMT+0200 (South Africa Standard Time)')
+      .should('have.text', 'Mon, 05 Jul 2021 12:00')
     cy.get('[data-cy=meeting-place-2]')
       .should('have.text', '1 Jan Smuts Ave, Braamfontein, Johannesburg, 2000')
 

@@ -1,4 +1,4 @@
-
+// import {moment}
 /* --------- Remove previous contents added to the element----------- */
 function removePlace (placeDiv) {
   while (placeDiv.hasChildNodes()) {
@@ -260,7 +260,7 @@ function loadHTMLTable (data, option) {
     tableHtml += `<td data-cy='meeting-id-${meeting_id}' id='${meeting_id}-meeting-id'>${meeting_id}</td>`
     tableHtml += `<td data-cy='meeting-group-${meeting_id}' id='${meeting_id}-meeting-group-name'>${group_name.trim()}</td>`
     tableHtml += `<td data-cy='creator-id-${meeting_id}' id='${meeting_id}-creator-id'>${creator_id}</td>`
-    tableHtml += `<td data-cy='meeting-time-${meeting_id}' id = '${meeting_id}-meeting-time'>${new Date(meeting_time)}</td>`
+    tableHtml += `<td data-cy='meeting-time-${meeting_id}' id = '${meeting_id}-meeting-time'>${moment(meeting_time).format('ddd, DD MMM YYYY HH:mm')}</td>`
     tableHtml += `<td data-cy='meeting-place-${meeting_id}' id = '${meeting_id}-place'><a href=${link} target='_blank'>${place}</a></td>`
     if (option == 0) {
       tableHtml += `<td id = '${meeting_id}-time-diff'>
