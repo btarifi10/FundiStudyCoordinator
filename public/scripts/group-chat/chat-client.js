@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit(JOIN_CHAT_EVENT, { username, group })
       // const rating = document.getElementById('rate-members')
       // loadRatingLink(rating)
-      document.getElementById('rate-members').href = `rating?group=${group}&username=${username}`
+      document.getElementById('rate-members').href = `/rating?group=${group}&username=${username}`
 
       // Record user's entry into the groupchat
       const time_entered = moment()

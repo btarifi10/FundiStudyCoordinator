@@ -18,8 +18,9 @@ describe('Routes correctly to the Rating Page ', () => {
   beforeEach(() => {
     fetch('/reset-ratings')
     login()
-    cy.visit('/chat?group=Scotland')
-    cy.get('[data-cy = rating-option]').click()
+    // cy.visit('/chat?group=Scotland')
+    // cy.get('[data-cy=rating-option]').click()
+    cy.visit('/rating?group=Scotland&username=Archie')
   })
 
   it('Loads Text Correctly', () => {
@@ -66,8 +67,7 @@ describe('Rating Functionality Works As Expected ', () => {
   it('Able to input a rating for a null rated user ', () => {
     login()
     fetch('/reset-ratings')
-    cy.visit('/chat?group=Scotland')
-    cy.get('[data-cy = rating-option]').click()
+    cy.visit('/rating?group=Scotland&username=Archie')
     cy.get('[data-cy = user-selection]').select('James VI').should('have.value', 'James VI')
     cy.get('[type="radio"]').check('2').should('have.value', '2')
     cy.get('[data-cy = Submit]').click()
@@ -84,8 +84,9 @@ describe('Rating Functionality Works As Expected ', () => {
   it('Rating a member gives the correct result for a user with a previous rating ', () => {
     login()
     fetch('/reset-ratings')
-    cy.visit('/chat?group=Hall 30')
-    cy.get('[data-cy = rating-option]').click()
+    // cy.visit('/chat?group=Hall 30')
+    // cy.get('[data-cy = rating-option]').click()
+    cy.visit('/rating?group=Hall 30&username=Archie')
     cy.get('[data-cy = user-selection]').select('barry').should('have.value', 'barry')
     cy.get('[type="radio"]').check('5').should('have.value', '5')
     cy.get('[data-cy = Submit]').click()
@@ -107,7 +108,7 @@ describe('Submit button works as intended ', () => {
   })
 
   it('Correctly displays an alert when a the submit button is pressed', () => {
-    cy.get('[data-cy = rating-option]').click()
+    cy.visit('/rating?group=Scotland&username=Archie')
     const stub = cy.stub()
     cy.on('window:alert', stub)
     cy
