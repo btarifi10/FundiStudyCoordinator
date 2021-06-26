@@ -9,11 +9,16 @@ describe('Invite polling events with a positive outcome', () => {
       .then(() => cy.request('/clear-polls'))
       .then(() => cy.request(`/clear-invites?group_id=${SCOTLAND_GROUP_ID}`))
       .then(() => {
+        removeUserFromGroup(BARRY_USER_ID, SCOTLAND_GROUP_ID)
         signInAsArchie()
         const groupName = 'SCOTLAND'
         cy.visit(`/polls?group=${groupName}`)
         cy.wait(4000)
       })
+  })
+
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
   })
 
   it('The polling page starts at the member admin section', () => {
@@ -142,6 +147,10 @@ describe('Invite polling events with a negative outcome', () => {
       })
   })
 
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
+  })
+
   it('Search for and start a poll to invite the user successfully', () => {
     cy.get('[data-cy=invite-box]').click()
 
@@ -227,6 +236,10 @@ describe('A group request can be voted on and accepted', () => {
         cy.visit(`/polls?group=${groupName}`)
         cy.wait(4000)
       })
+  })
+
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
   })
 
   after('Remove the accepted user from the group', () => {
@@ -332,20 +345,20 @@ describe('A group request can be voted on and accepted', () => {
   })
 
   it('The accepted user is now a member of the group', () => {
-    cy.visit('/')
-    cy.clearCookies()
-    signInAsArchie()
-    cy.visit('/polls?group=SCOTLAND').then(() => {
-      cy.wait(1000)
-      cy.get('[data-cy=member-tab]')
-        .click()
-        .should('have.attr', 'aria-selected', 'true')
-      cy.get('[data-cy=ban-box]').click()
-      cy.get('[data-cy=ban-user-tbl]').find('tr').should('have.length', 4)
-      cy.get('[data-cy=ban-user-tbl]').should('contain', 'Sheep')
-      cy.get('[data-cy=ban-user-tbl]').should('contain', 'barry')
-      cy.get('[data-cy=ban-user-tbl]').should('contain', 'James VI')
-    })
+    // cy.visit('/')
+    // cy.clearCookies()
+    // signInAsArchie()
+    // cy.visit('/polls?group=SCOTLAND').then(() => {
+    cy.wait(1000)
+    cy.get('[data-cy=member-tab]')
+      .click()
+      .should('have.attr', 'aria-selected', 'true')
+    cy.get('[data-cy=ban-box]').click()
+    cy.get('[data-cy=ban-user-tbl]').find('tr').should('have.length', 4)
+    cy.get('[data-cy=ban-user-tbl]').should('contain', 'Sheep')
+    cy.get('[data-cy=ban-user-tbl]').should('contain', 'barry')
+    cy.get('[data-cy=ban-user-tbl]').should('contain', 'James VI')
+    // })
   })
 })
 
@@ -361,6 +374,10 @@ describe('A user can be banned from a group after voting on it', () => {
         cy.visit(`/polls?group=${groupName}`)
         cy.wait(4000)
       })
+  })
+
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
   })
 
   after('Clear polls database', () => {
@@ -453,17 +470,12 @@ describe('A user can be banned from a group after voting on it', () => {
   })
 
   it('The banned user is no longer a member of the group', () => {
-    cy.visit('/')
-    cy.clearCookies()
-    signInAsArchie()
-    cy.visit('/polls?group=SCOTLAND').then(() => {
-      cy.wait(1000)
-      cy.get('[data-cy=member-tab]')
-        .click()
-        .should('have.attr', 'aria-selected', 'true')
-      cy.get('[data-cy=ban-box]').click()
-      cy.get('[data-cy=ban-user-tbl]').should('not.contain', 'barry')
-    })
+    cy.wait(1000)
+    cy.get('[data-cy=member-tab]')
+      .click()
+      .should('have.attr', 'aria-selected', 'true')
+    cy.get('[data-cy=ban-box]').click()
+    cy.get('[data-cy=ban-user-tbl]').should('not.contain', 'barry')
   })
 })
 
@@ -478,6 +490,10 @@ describe('Custom polls can be created and voted on', () => {
         cy.visit(`/polls?group=${groupName}`)
         cy.wait(4000)
       })
+  })
+
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
   })
 
   after('Clear polls database', () => {
@@ -544,10 +560,6 @@ describe('Custom polls can be created and voted on', () => {
   })
 
   it('The new poll can be created with valid inputs', () => {
-    signInAsArchie()
-    const groupName = 'SCOTLAND'
-    cy.visit(`/polls?group=${groupName}`)
-
     cy.get('[data-cy=new-poll-tab]').click()
 
     cy.get('[data-cy=custom-title]').clear().type('Should the sheep stage a coup?')
