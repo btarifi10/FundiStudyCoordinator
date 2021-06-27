@@ -32,7 +32,9 @@ deploy:
     provider: azure_web_apps
 
     on:
-        branch: main
+        branch: fix-deployment
+    
+    verbose: true
 
 ## Uncomment this if necessary
 #after_success:
