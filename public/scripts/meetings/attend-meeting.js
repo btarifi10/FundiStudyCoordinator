@@ -269,6 +269,10 @@ function checkDistance (pos, oldPos, accuracyCheck) {
 /* ------------------------------ Event Listeners ------------------------------ */
 
 document.getElementById('safe-Arrival').addEventListener('click', (event) => {
+  updateLocation = false
+  timeIndex = numChecks + 1 // setting to a value above numchecks
+  sendLocation.setAttribute('class', 'btn btn-primary')
+  sendLocation.innerHTML = 'Continue Sharing'
   socket.emit('arrived', true)
 })
 
@@ -286,7 +290,7 @@ sendLocation.addEventListener('click', (event) => {
     sendLocation.innerHTML = 'Stop Sharing'
   } else {
     updateLocation = false
-    timeIndex = 3 // setting to a value above 2
+    timeIndex = numChecks + 1 // setting to a value above 2
     socket.emit('arrived', false) // stopped sharing their location
     sendLocation.setAttribute('class', 'btn btn-primary')
     sendLocation.innerHTML = 'Continue Sharing'
