@@ -89,8 +89,7 @@ function viewFaceMeetings (data) {
   }
 }
 
-// ------------ from load-meetings.js -----------
-
+/* ------------------- Load the meetings table ---------------------- */
 function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
   if (data.recordset.length === 0) {
