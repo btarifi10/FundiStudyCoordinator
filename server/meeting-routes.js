@@ -155,4 +155,30 @@ meetingRouter.get('/get-distance-matrix', (req, res) => {
     })
 })
 
+meetingRouter.get('/meetingLink', checkAuthenticated, function (req, res) {
+  const meeting_id = req.query.meeting_id
+  // Make a query to the database
+  db.pools
+  // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('meeting_id', db.sql.Int, meeting_id)
+        .query(`SELECT link 
+        FROM meetings
+        WHERE (@meeting_id) = meetings.meeting_id
+        `)
+    })
+  // Send back the result
+    .then(result => {
+      res.send(result)
+      console.log(result)
+    })
+  // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 module.exports = meetingRouter

@@ -48,6 +48,8 @@ const socket = io()
 document.addEventListener('DOMContentLoaded', () => {
   meeting.innerText = group
   meetingId.innerText = meetingID
+  getMeetingLink()
+
   let pos = null
 
   // console.log(group)
@@ -72,6 +74,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
 })
+
+function getMeetingLink () {
+  fetch(`/meetingLink?meeting_id=${meetingID}`)
+    .then(response => response.json())
+    .then(data => {
+      loadMeetingLink(data)
+    })
+}
+
+function loadMeetingLink (link) {
+  const meetingLink = document.getElementById('meeting-link')
+  const a = document.createElement('a')
+  const text = document.createTextNode('Navigate to meeting')
+  a.appendChild(text)
+  a.setAttribute('class', 'btn btn-secondary')
+
+  a.href = link.recordset[0].link
+  a.target = '_blank' // changes whether or not a new window is created
+  meetingLink.appendChild(a)
+}
 
 function createMapScript () {
   // Create the script tag, set the appropriate attributes
