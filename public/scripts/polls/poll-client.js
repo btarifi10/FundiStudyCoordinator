@@ -26,6 +26,8 @@ const group = Qs.parse(location.search, {
 // Once the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   // Get the current user
+  document.getElementById('back-button').href = `/chat?group=${group}`
+
   userService.getCurrentUser().then(u => {
     user = u
     socket.emit('voterConnection', group)

@@ -3,7 +3,13 @@
 import { UserService } from './user-service.js'
 import { addAction } from './action-log.js'
 // import moment from 'moment'
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
 
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('back-button').href = `/chat?group=${group}`
+})
 const userService = UserService.getUserServiceInstance()
 let currentUser = null
 

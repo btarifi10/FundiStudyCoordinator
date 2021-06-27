@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const meeting = document.getElementById('choices')
   loadMeetingLink(meeting)
   loadButtons(meeting)
+  document.getElementById('back-button').href = `/chat?group=${group}`
 })
 
 onlineButton.addEventListener('click', (event) => {

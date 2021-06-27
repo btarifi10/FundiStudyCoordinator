@@ -34,10 +34,13 @@ const ADDR_REGEX = /[^A-z0-9À-ž'.,\s+-º]+/g
 
 const meetingForm = document.getElementById('meeting-form')
 const meetingChoice = document.getElementById('selection')
-const viewMeetings = document.getElementById('View-btn')
 let meetingType = ''
 const io = window.io
 const socket = io()
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('back-button').href = `/chat?group=${group}`
+})
 
 // Update which meeting options should be displayed for the user
 meetingChoice.addEventListener('change', (event) => {
