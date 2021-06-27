@@ -24,8 +24,8 @@ before_install:
 script:
     # - npm run test:coveralls
     - npm run test
-    - npm run cy:setup
-    - npm run cy:run
+    # - npm run cy:setup
+    # - npm run cy:run
     - kill $(jobs -p) || true
 
 deploy:
