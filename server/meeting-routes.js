@@ -144,6 +144,44 @@ meetingRouter.get('/get-member-addresses', (req, res) => {
     })
 })
 
+meetingRouter.get('/get-address', (req, res) => {
+  db.pools
+  // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('user_id', db.sql.Char, req.query.user_id)
+        .query(`
+        SELECT address_line_1, address_line_2, city, postal_code
+        FROM users
+        WHERE @user_id = users.user_id;
+        `)
+    })
+  // Send back the result
+    .then(result => {
+      res.send(result.recordset)
+      console.log(result.recordset)
+    })
+  // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+meetingRouter.get('/get-coords', (req, res) => {
+  const GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json?'
+  const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
+  const URL = `${GEOCODE_URL}address=${req.query.location}&key=${API_KEY}`
+  const encoded_URL = encodeURI(URL)
+  console.log(encoded_URL)
+  fetch(encoded_URL)
+    .then(res => res.json())
+    .then(data => {
+      res.send(data)
+    })
+})
+
 meetingRouter.get('/get-distance-matrix', (req, res) => {
   const DIST_MATRIX_BASE_URL = 'https://maps.googleapis.com/maps/api/distancematrix/json'
   const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
