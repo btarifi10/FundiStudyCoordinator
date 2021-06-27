@@ -1,5 +1,8 @@
 'use strict'
 
+// Retrieves the calculation function
+import { ratingCalculation } from './rating-helpers.js'
+
 // Retrieves the username and group from
 const { username, group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -64,10 +67,6 @@ function submitRating () {
     })
 }
 
-function ratingCalculation (rating, numberRatings, newUserRating) {
-  return ((rating * numberRatings) + newUserRating) / (numberRatings + 1)
-}
-
 // Sends back the updated rating to be posted to the database
 function postNewRating (ratingUpdated) {
   fetch('/update-ranking', {
@@ -88,5 +87,3 @@ function getNewRanking () {
     }
   }
 }
-
-module.exports = ratingCalculation
