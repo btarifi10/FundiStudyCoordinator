@@ -52,7 +52,7 @@ function submitRating () {
         newRating = getNewRanking()
         newNumRating = 1
       } else {
-        newRating = ((ratingInfo.rating * ratingInfo.number_ratings) + getNewRanking()) / (ratingInfo.number_ratings + 1)
+        newRating = ratingCalculation(ratingInfo.rating, ratingInfo.number_ratings, getNewRanking())
         newNumRating = ratingInfo.number_ratings + 1
       }
       const ratingUpdated = {
@@ -62,6 +62,10 @@ function submitRating () {
       }
       postNewRating(ratingUpdated)
     })
+}
+
+function ratingCalculation (rating, numberRatings, newUserRating) {
+  return ((rating * numberRatings) + newUserRating) / (numberRatings + 1)
 }
 
 // Sends back the updated rating to be posted to the database
@@ -84,3 +88,5 @@ function getNewRanking () {
     }
   }
 }
+
+module.exports = ratingCalculation
