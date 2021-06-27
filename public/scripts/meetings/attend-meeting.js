@@ -27,7 +27,7 @@ const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
 // Setting up map variables and marker array
 let map = null
 const gmarkers = []
-const numChecks = 4
+const numChecks = 5 // checks if the user has been in the proximity for 5min
 
 /* ------------------------------ DOM Elements ------------------------------ */
 
