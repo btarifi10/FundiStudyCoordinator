@@ -13,6 +13,7 @@ function getRecommendations () {
     .then(response => response.json())
     .then(data => {
       groups = data
+
       populateRecommendedGroups(groups)
     })
 }
@@ -55,7 +56,7 @@ function populateRecommendedGroups (data) {
     tableHtml += `<td id = '${group_id}-group-name'>${group_name}</td>`
     tableHtml += `<td id = '${group_id}-course-code'>${course_code}</td>`
     tableHtml += `<td><button class="btn btn-outline-warning border-0 join-row-btn" style="border-radius:25px;width:60px"
-    id="${group_id}-btn" data-id=${group_id} onclick='joinGroup(this.dataset.id)' >
+    id="${group_id}-btn" data-id=${group_id} onclick="joinGroup(this.dataset.id)" data-cy="join-btn">
           <i class="bi bi-plus-square"></i></td>`
     tableHtml += '</tr>'
   })
