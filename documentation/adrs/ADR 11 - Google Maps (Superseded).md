@@ -1,11 +1,12 @@
-# ADR 11: Google Maps API
+# ADR 11: Google Maps API (Superseded)
 _Author: Tarryn Maggs (719597)_
 
 ## Date: 
 16 June 2021
 
 ## Status:
-Accepted
+Superseded
+Updated ADR: [ADR 20: Google maps](https://github.com/witseie-elen4010/2021-008-project/blob/8d57d2cb03b5fae4b35941fefed23e49b4098eef/documentation/adrs/ADR%2020%20-%20Google%20Maps.md)
 
 ## Context: 
 This website requires the option to choose between creating an online or face-to-face meeting. In order to create a face-to-face meeting, the user needs to be able to choose an applicable address. Furthermore, when a user elects to attend a face-to-face meeting, the website needs to be able to track and display the user's location. 
