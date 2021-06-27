@@ -109,6 +109,7 @@ describe('Submit button works as intended ', () => {
 
   it('Correctly displays an alert when a the submit button is pressed', () => {
     cy.visit('/rating?group=Scotland&username=Archie')
+    cy.wait(1000)
     const stub = cy.stub()
     cy.on('window:alert', stub)
     cy
@@ -116,6 +117,7 @@ describe('Submit button works as intended ', () => {
       .then(() => {
         expect(stub.getCall(0)).to.be.calledWith('Rating Captured')
       })
+    cy.wait(1000)
   })
 })
 
