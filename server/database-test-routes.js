@@ -360,4 +360,49 @@ testRouter.get('/get-user-invites-to-group', (req, res) => {
     })
 })
 
+/* ---------------------------- Recommended Groups Test Routes ---------------------------- */
+
+testRouter.get('/delete-new-user', (req, res) => {
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query(`DELETE FROM users
+        WHERE user_id=(select user_id from users where username= 'Beyonce'); `)
+    })
+    // Send back the result
+    .then(result => {
+      res.send(result)
+      resetUsers()
+    })
+    // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+
+testRouter.get('/clear-Scotland-request', function (req, res) {
+  // Make a query to the database
+  db.pools
+    // Run query
+    .then((pool) => {
+      return pool.request()
+        .query(`DELETE FROM group_requests WHERE group_id IN
+         (SELECT group_id FROM groups WHERE group_name ='Scotland');`)
+        .then(result => {
+          res.send(result)
+          console.log("called")
+        })
+      // If there's an error, return that with some description
+        .catch(err => {
+          res.send({
+            Error: err
+          })
+        })
+    })
+})
+
 module.exports = testRouter
