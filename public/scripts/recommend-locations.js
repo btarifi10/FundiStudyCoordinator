@@ -80,7 +80,7 @@ function getDistanceMatrix (originList, destList) {
       fetch(`/get-distance-matrix?origins=${origins}&destinations=${destinations}`)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
+          // console.log(data)
           resolve(data)
         })
     } catch (error) {

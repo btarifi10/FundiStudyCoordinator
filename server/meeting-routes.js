@@ -43,7 +43,6 @@ meetingRouter.get('/getMeetings', checkAuthenticated, function (req, res) {
     })
   // Send back the result
     .then(result => {
-      console.log(result)
       res.send(result)
     })
   // If there's an error, return that with some description
@@ -76,7 +75,6 @@ meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
   // Send back the result
     .then(result => {
       res.send(result)
-      console.log(result)
     })
   // If there's an error, return that with some description
     .catch(err => {
@@ -89,7 +87,6 @@ meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
 meetingRouter.post('/record-meeting', checkAuthenticated, function (req, res) {
   // Retrieve the message data
   const meeting = req.body
-  console.log(meeting)
   // Make a query to the database
   db.pools
   // Run query
@@ -109,7 +106,6 @@ meetingRouter.post('/record-meeting', checkAuthenticated, function (req, res) {
     })
   // Send back the result
     .then(result => {
-      // console.log(result)
       res.send(result)
     })
   // If there's an error, return that with some description
@@ -159,7 +155,7 @@ meetingRouter.get('/get-address', (req, res) => {
   // Send back the result
     .then(result => {
       res.send(result.recordset)
-      console.log(result.recordset)
+      // console.log(result.recordset)
     })
   // If there's an error, return that with some description
     .catch(err => {
@@ -174,7 +170,6 @@ meetingRouter.get('/get-coords', (req, res) => {
   const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
   const URL = `${GEOCODE_URL}address=${req.query.location}&key=${API_KEY}`
   const encoded_URL = encodeURI(URL)
-  console.log(encoded_URL)
   fetch(encoded_URL)
     .then(res => res.json())
     .then(data => {
@@ -209,7 +204,6 @@ meetingRouter.get('/meetingLink', checkAuthenticated, function (req, res) {
   // Send back the result
     .then(result => {
       res.send(result)
-      console.log(result)
     })
   // If there's an error, return that with some description
     .catch(err => {

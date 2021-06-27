@@ -43,7 +43,7 @@ function getTags () {
 }
 
 function getTagGroups (tag) {
-  console.log('Into Function')
+  // console.log('Into Function')
 
   fetch(`/get-matched-terms?tag=${tag[0].tag}`)
     .then(response => response.json())

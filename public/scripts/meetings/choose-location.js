@@ -118,7 +118,7 @@ meetingForm.addEventListener('submit', (event) => {
       sendMessage(group, currentUser.username, meeting_time, socket)
 
       // log the meeting creation
-      console.log('LOGGING IN PROCESS')
+      // console.log('LOGGING IN PROCESS')
       addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
     })
 

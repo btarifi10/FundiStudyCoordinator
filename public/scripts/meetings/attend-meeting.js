@@ -93,7 +93,7 @@ function getAddress (id) {
 
 function setUPAddress (data) {
   if (data.length === 0) {
-    console.log('no address saved')
+    // console.log('no address saved')
     savedAdress = false
   }
   printSaved(savedAdress, data)
