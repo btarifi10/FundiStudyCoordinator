@@ -39,8 +39,8 @@ These are the permanent entries in the test database that should not be altered.
 ### Table: groups
 | group_id | group_name | course_code |            date_created            | tag |
 |:--------:|:----------:|:-----------:|:----------------------------------:|:----:|
-|     6    |  Scotland  |  UNICORN007 | 2021-06-24 07:20:48.6580000 +02:00 | NULL |
-|    29    |   Hall 30  |    HALL30   | 2021-06-25 10:37:16.0110000 +02:00 | NULL |
+|     6    |  Scotland  |  UNICORN007 | 2021-06-24 07:20:48.6580000 +02:00 | 146 |
+|    29    |   Hall 30  |    HALL30   | 2021-06-25 10:37:16.0110000 +02:00 | 146 |
 
 ### Table: memberships
 | membership_id | user_id | group_id |             date_joined            |
