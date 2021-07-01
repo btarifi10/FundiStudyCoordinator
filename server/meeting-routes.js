@@ -155,7 +155,6 @@ meetingRouter.get('/get-address', (req, res) => {
   // Send back the result
     .then(result => {
       res.send(result.recordset)
-      // console.log(result.recordset)
     })
   // If there's an error, return that with some description
     .catch(err => {

@@ -121,7 +121,6 @@ meetingForm.addEventListener('submit', (event) => {
       sendMessage(group, currentUser.username, meeting_time, socket)
 
       // log the meeting creation
-      // console.log('LOGGING IN PROCESS')
       addAction({ action: 'MEETING', groupName: group, timestamp: time_made, description: meetString })
     })
 
@@ -160,7 +159,6 @@ function setUPMeeting (group_name, creator_id, meeting_time, place, link, is_onl
 
 // record the meeting to the database
 function recordMeeting (meetingBody) {
-  // console.log(meetingBody)
   fetch('/record-meeting', {
     method: 'POST',
     headers: {

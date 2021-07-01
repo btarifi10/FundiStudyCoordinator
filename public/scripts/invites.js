@@ -40,7 +40,6 @@ function acceptInvite (id) {
   const groupId = invites.find(i => i.invite_id === inviteId).group_id
 
   // If a member of 10 groups - tell them they must leave a group to accept the invitation
-  // console.log(membershipNum)
   if (membershipNum >= 10) {
     window.alert('You must leave a group to accept this invite. You can only be a member of 10 groups')
     return

@@ -23,8 +23,6 @@ function handleVoting (io, socket) {
       }
     }
 
-    // Show the poll in the console for testing
-
     // Tell everybody else about the new vote
     const groupPolls = getGroupActivePolls(currentPolls[pollId].group)
     io.to(currentPolls[pIndex].group).emit('updateCurrentPolls', groupPolls)

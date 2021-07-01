@@ -9,50 +9,6 @@ const currentPolls = []
 
 // Return the up to date currentPolls
 function getCurrentPolls () {
-  // Just for testing: creates a few custom polls
-  // if (currentPolls.length === 0) {
-  //   createPoll({
-  //     title: 'This is a test poll',
-  //     type: 'Custom',
-  //     group: 'Software Development III',
-  //     date: new Date(),
-  //     duration: 1,
-  //     options: ['option1', 'option2', 'option3'],
-  //     voters: [],
-  //     outcome: null
-  //   })
-
-  //   currentPolls[0].options[0].votes = 5
-  //   currentPolls[0].options[1].votes = 4
-  //   currentPolls[0].options[2].votes = 6
-
-  //   createPoll({
-  //     title: 'This is another test poll',
-  //     type: 'Custom',
-  //     group: 'Software Development III',
-  //     date: new Date(),
-  //     duration: 1,
-  //     options: ['option1', 'option2', 'option3'],
-  //     voters: [14],
-  //     outcome: null
-  //   })
-
-  //   currentPolls[1].options[0].votes = 2
-  //   currentPolls[1].options[1].votes = 4
-  //   currentPolls[1].options[2].votes = 7
-
-  //   createPoll({
-  //     title: 'This is a sociology test poll',
-  //     type: 'Custom',
-  //     group: 'Sociology',
-  //     date: new Date(),
-  //     duration: 1,
-  //     options: ['option1', 'option2', 'option3'],
-  //     voters: [],
-  //     outcome: null
-  //   })
-  // }
-
   return currentPolls
 }
 
@@ -197,11 +153,8 @@ function createPoll (pollDetails) {
       handleInviteOutcome(poll)
     } else if (poll.type === 'Request') {
       handleGroupRequestOutcome(poll)
-      // console.log(poll.title, 'completed')
     } else if (poll.type === 'Ban') {
       handleBanOutcome(poll)
-    } else {
-      // console.log(poll.title, 'completed')
     }
 
     // Record end of the poll

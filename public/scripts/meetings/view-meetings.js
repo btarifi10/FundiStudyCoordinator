@@ -85,7 +85,6 @@ function viewFaceMeetings (data) {
   }
   // currently grabbing the first result
   if (data.recordset[0].passed == true) {
-    // console.log("You're clear")
     retrieveMeetings(0)
   }
 }
