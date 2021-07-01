@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
   // Populate member filter with group members
-  fetch(`/get-members?group=${group}`)
+  fetch(`/get-all-members?group=${group}`)
     .then(response => response.json())
     .then(members => {
       populateMemberFilter(members.recordset)
