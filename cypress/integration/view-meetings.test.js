@@ -82,6 +82,9 @@ describe('User cannot view face-to-face meetings if they have not passed covid s
     cy.get('[data-cy="face2faceMeetingView"]').click()
     cy.get('[data-cy=empty-table-text]')
       .should('have.text', 'Please complete the covid screening to view the face to face meetings')
+    cy.get('[data-cy=covid-reroute]')
+      .should('have.attr', 'href', 'covid-screening?group=Scotland')
+      .and('have.text', 'Click here to navigate to the covid screening page')
   })
 })
 
