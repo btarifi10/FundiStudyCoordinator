@@ -19,7 +19,7 @@ submissionButton.addEventListener('click', (event) => {
   event.preventDefault()
   updateScreening()
   alert('Screening results captured')
-  location.href = '/chat'
+  location.href = `/chat?group=${group}`
 })
 
 // Determines whether the person has passed the screening or not based on logic
