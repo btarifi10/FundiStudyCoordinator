@@ -64,7 +64,6 @@ function loadUsersGroups () {
 
 function populateUsersGroups (groups) {
   usersGroups = [...groups]
-  console.log(usersGroups)
 }
 
 function loadRequestsList () {
@@ -76,7 +75,6 @@ function loadRequestsList () {
 
 function populateRequestsList (groups) {
   requestsList = [...groups]
-  console.log(requestsList)
 }
 
 function loadGroupInviteList () {
@@ -217,7 +215,6 @@ function createGroup (newGroup, membershipInfo, inviteObj) {
     })
     .then(result => {
       if (inviteObj.invited_members.length > 0) {
-        console.log('function sendInvites')
         fetch('/sendInvites', {
           method: 'POST',
           headers: {

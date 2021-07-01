@@ -1,7 +1,9 @@
 /* ------------------------------ Functionality ------------------------------ */
 'use strict'
 import { UserService } from '../user-service.js'
+import { loadMeetingLink, createDirectionLink, removePlace } from './attend-meeting-helpers.js'
 import { sendMessage } from './attend-meeting-messages.js'
+import { calcDistance } from './distance.js'
 // retrieve group name and meeting id from the URL
 const { group, meetingID } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -22,13 +24,10 @@ const SERVER_MESSAGE = 'Mmessage'
 const BASE_URL = 'https://maps.googleapis.com/maps/api/js?'
 const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
 
-// Defining constants used for directions links
-const URL_BASE = 'https://www.google.com/maps/'
-const API_NUM = '1'
-
 // Setting up map variables and marker array
 let map = null
 const gmarkers = []
+const numChecks = 5 // checks if the user has been in the proximity for 5min
 
 /* ------------------------------ DOM Elements ------------------------------ */
 
@@ -39,24 +38,30 @@ const chatMembers = document.getElementById('chat-members')
 const meeting = document.getElementById('group-name')
 const meetingId = document.getElementById('meeting-id')
 const sendLocation = document.getElementById('send-location')
-
+const savedLocation = document.getElementById('saved-location')
+const safeArrival = document.getElementById('safe-Arrival')
 /* ------------------------------ DOM Elements ------------------------------ */
 
+// does the user have a saved address
+let savedAdress = true
+// saves the user's saved address coordinates if applicable
+let user_address_coords = null
 // create the attendance client socket
 const socket = io()
 // Join the meeting
 document.addEventListener('DOMContentLoaded', () => {
   meeting.innerText = group
   meetingId.innerText = meetingID
+  getMeetingLink()
+
   let pos = null
 
-  // console.log(group)
-  // console.log(meetingID)
   userService.getCurrentUser()
     .then(user => {
       currentUser = user
       const username = user.username
       createMapScript()
+      getAddress(currentUser.id)
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -67,11 +72,81 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.emit('joinMeeting', { username, group, meetingID, position: pos })
           },
           function () {},
-          { enableHighAccuracy: true }
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+          }
         )
       }
     })
 })
+
+function getAddress (id) {
+  fetch(`/get-address?user_id=${id}`)
+    .then(response => response.json())
+    .then(data => {
+      // return data
+      setUPAddress(data)
+    })
+}
+
+function setUPAddress (data) {
+  if (data.length === 0) {
+    savedAdress = false
+  }
+  printSaved(savedAdress, data)
+}
+
+function printSaved (check, location) {
+  if (check == true) {
+    savedLocation.innerHTML = `Your safe destination is recorded as: ${formatLocation(location)}`
+    // find and save the coordinate locations
+    findCoordinates(formatLocation(location))
+  } else if (check == false) {
+    // const span = document.createElement('span')
+    let text = document.createTextNode('You have no address saved, please click ')
+    savedLocation.insertBefore(text, savedLocation.childNodes[0])
+
+    safeArrival.setAttribute('class', 'btn btn-secondary')
+    text = document.createTextNode('here')
+    safeArrival.appendChild(text)
+
+    text = document.createTextNode(' to indicate your safe arrival')
+    savedLocation.appendChild(text)
+  }
+}
+
+function convertJSONcoords (output) {
+  user_address_coords = output.results[0].geometry.location
+}
+
+function findCoordinates (location) {
+  return new Promise((resolve, reject) => {
+    try {
+      fetch(`get-coords?location=${location}`)
+        .then(res => res.json())
+        .then(data => {
+          resolve(data)
+          convertJSONcoords(data)
+        })
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function formatLocation (location) {
+  return `${location[0].address_line_1}, ${location[0].address_line_2}, ${location[0].city}, ${location[0].postal_code}`
+}
+
+function getMeetingLink () {
+  fetch(`/meetingLink?meeting_id=${meetingID}`)
+    .then(response => response.json())
+    .then(data => {
+      loadMeetingLink(data)
+    })
+}
 
 function createMapScript () {
   // Create the script tag, set the appropriate attributes
@@ -143,7 +218,7 @@ socket.on('sendPosition', function (data) {
   let pos = null
   // only check/send for change in position if the user has elected to update their location
   // and there has not been two successive requests wherein the user position has remained the same
-  if (timeIndex < 2 && updateLocation == true) {
+  if (timeIndex < numChecks && updateLocation == true) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -151,18 +226,13 @@ socket.on('sendPosition', function (data) {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           }
-          // Check if the position is different to the old position
-          if (oldPos.lat == pos.lat && oldPos.lng == pos.lng) {
-            timeIndex++
-            // console.log(`timeIndex= ${timeIndex}`)
-          } else {
-            // reset the timeIndex to zero since the position is different
-            timeIndex = 0
-          }
+          const accuracyCheck = position.coords.accuracy
+          checkDistance(pos, oldPos, accuracyCheck)
+
           // request time will change to either every 5min or every 2min.
           if (timeIndex == 0) {
             socket.emit('changePosition', { newPosition: pos })
-          } else if (timeIndex == 2) {
+          } else if (timeIndex == numChecks) {
             // send a message to other members to say the current user has arrived if their
             // position is the same after 2 requests
             socket.emit('arrived', true)
@@ -176,7 +246,34 @@ socket.on('sendPosition', function (data) {
   }
 })
 
+function checkDistance (pos, oldPos, accuracyCheck) {
+  // Check if the user is within the accuracy distance of their saved location
+  // assuming 1km as the average accuracy if safe address is not provided
+  let accuracy = 1000
+  let pos2 = null
+  if (savedAdress) {
+    accuracy = accuracyCheck
+    pos2 = user_address_coords
+  } else {
+    pos2 = oldPos
+  }
+
+  if (calcDistance(pos, pos2) < accuracy) {
+    timeIndex++
+  } else {
+    timeIndex = 0
+  }
+}
+
 /* ------------------------------ Event Listeners ------------------------------ */
+
+document.getElementById('safe-Arrival').addEventListener('click', (event) => {
+  updateLocation = false
+  timeIndex = numChecks + 1 // setting to a value above numchecks
+  sendLocation.setAttribute('class', 'btn btn-primary')
+  sendLocation.innerHTML = 'Continue Sharing'
+  socket.emit('arrived', true)
+})
 
 // Run when a message is sent
 chatForm.addEventListener('submit', (event) => {
@@ -192,7 +289,7 @@ sendLocation.addEventListener('click', (event) => {
     sendLocation.innerHTML = 'Stop Sharing'
   } else {
     updateLocation = false
-    timeIndex = 3 // setting to a value above 2
+    timeIndex = numChecks + 1 // setting to a value above 2
     socket.emit('arrived', false) // stopped sharing their location
     sendLocation.setAttribute('class', 'btn btn-primary')
     sendLocation.innerHTML = 'Continue Sharing'
@@ -247,22 +344,6 @@ function loadMemberLink (member) {
   li.appendChild(a)
   chatMembers.appendChild(li)
 }
-
-// ***********************************
-// remove child elements from an element
-function removePlace (placeDiv) {
-  while (placeDiv.hasChildNodes()) {
-    placeDiv.removeChild(placeDiv.lastChild)
-  }
-}
-// ***********************************
-// Build a valid URL
-function createDirectionLink (location) {
-  const URL = `${URL_BASE}dir/?api=${API_NUM}&destination=${location.lat},${location.lng}`
-  const encodedURL = encodeURI(URL)
-  return encodedURL
-}
-// ***********************************
 
 /* ---------------------------- STATIC LOCATION TESTING ---------------------------- */
 // to show a position change

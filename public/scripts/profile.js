@@ -11,7 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
       displayProfile(currentUser)
     })
 })
-
+function showAddress (currentUser) {
+  if (currentUser.addressLine1 == ' ' || currentUser.addressLine1 == null) {
+    return 'No address saved'
+  } else {
+    const text = `${currentUser.addressLine1}, ${currentUser.addressLine2} <br> ${currentUser.city}, ${currentUser.postalCode}`
+    return text
+  }
+}
 function displayProfile (currentUser) {
   document.getElementById('username').innerHTML = `<h3><strong>${currentUser.username}</strong></h3>`
   const profileHtml = `
@@ -24,6 +31,10 @@ function displayProfile (currentUser) {
         <tr>
             <th>Rating</th> <td data-cy='user-rating'>${currentUser.rating}</td>
         </tr>
+        <tr>
+            <th>Address</th> <td data-cy='user-address'>${showAddress(currentUser)}
+        </td>
+      </tr>
     `
 
   profileTable.innerHTML = profileHtml

@@ -26,6 +26,8 @@ const group = Qs.parse(location.search, {
 // Once the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   // Get the current user
+  document.getElementById('back-button').href = `/chat?group=${group}`
+
   userService.getCurrentUser().then(u => {
     user = u
     socket.emit('voterConnection', group)
@@ -33,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get all group members and display the data
   }).then(data => {
     groupMembers = data.filter(mem => mem.user_id !== user.id)
-    // console.log(groupMembers)
     updateMembersTable(groupMembers)
   })
 
@@ -62,8 +63,6 @@ const socket = io()
 
 // Update all the polls while filtering polls specific to banning the user
 socket.on('updateCurrentPolls', (polls) => {
-  // console.log('updatemsg')
-  // console.log(polls)
   const myPolls = polls.filter(poll => (poll.type !== 'Ban' || poll.userId !== user.id))
   displayCurrentPolls(myPolls)
 })

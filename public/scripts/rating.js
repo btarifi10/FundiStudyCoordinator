@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(data => {
       populateAllMembers(data)
     })
+  document.getElementById('back-button').href = `/chat?group=${group}`
 })
 
 // Functionality to create more options to the dropdown list to accomodate the number of users

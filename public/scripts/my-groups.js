@@ -18,7 +18,6 @@ function retrieveInvites () {
 
 function loadHTMLTable (data) {
   const table = document.querySelector('table tbody')
-  // console.log(data.recordset.length)
   if (data.length === 0) {
     table.innerHTML = "<tr><td class='no-data' colspan='4'>No Memberships</td></tr>"
     return

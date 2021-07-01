@@ -263,7 +263,6 @@ app.get('/get-matched-terms', function (req, res) {
     })
     .then(result => {
       res.send(result)
-      console.log(result)
     })
     .catch(err => {
       res.send({
