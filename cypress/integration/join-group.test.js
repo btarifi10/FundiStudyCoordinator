@@ -36,7 +36,29 @@ describe('The correct page is displayed to the user when entering the Join-group
   })
 })
 
-describe('User can search for groups', () => {
+describe('User can search for groups by Tag ', () => {
+  it('User can find group that they are not a member of', () => {
+    cy.get('[data-cy=group-search-tag]')
+      .clear()
+      .type('Political Science')
+      .type('{enter}')
+
+    cy.get('[data-cy=groups-table]')
+      .contains('Scotland')
+  })
+
+  it('User cannot find groups that do not exist', () => {
+    cy.get('[data-cy=group-search-tag]')
+      .clear()
+      .type('Ding Dong Dope')
+      .type('{enter}')
+
+    cy.get('[data-cy=groups-table]')
+      .contains('No Matching Groups')
+  })
+})
+
+describe('User can search for groups by name ', () => {
   it('User can find group that they are not a member of', () => {
     cy.get('[data-cy=group-search]')
       .clear()
