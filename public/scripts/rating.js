@@ -1,5 +1,8 @@
 'use strict'
 
+// Retrieves the calculation function
+import { ratingCalculation } from './rating-helpers.js'
+
 // Retrieves the username and group from
 const { username, group } = Qs.parse(location.search, {
   ignoreQueryPrefix: true
@@ -53,7 +56,7 @@ function submitRating () {
         newRating = getNewRanking()
         newNumRating = 1
       } else {
-        newRating = ((ratingInfo.rating * ratingInfo.number_ratings) + getNewRanking()) / (ratingInfo.number_ratings + 1)
+        newRating = ratingCalculation(ratingInfo.rating, ratingInfo.number_ratings, getNewRanking())
         newNumRating = ratingInfo.number_ratings + 1
       }
       const ratingUpdated = {
