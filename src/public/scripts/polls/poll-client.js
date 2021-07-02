@@ -300,7 +300,7 @@ function startRequestsPoll (id) {
 
   const request = requests.find(r => r.requests_id === reqId)
 
-  const hrs = 48 // 120 seconds, just for testing
+  const hrs = 48
   const details = {
     requestId: request.requests_id,
     userId: request.user_id,
@@ -509,7 +509,6 @@ function createCustomPoll () {
   const pollDetails = {
     title: document.getElementById('new-poll-title').value,
     group: group,
-    //   userId: user.userId,
     date: new Date(),
     duration: document.getElementById('new-poll-duration').value,
     options: pollOptions
