@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const meeting = document.getElementById('choices')
   loadMeetingLink(meeting)
   loadButtons(meeting)
+  document.getElementById('back-button').href = `/chat?group=${group}`
 })
 
 onlineButton.addEventListener('click', (event) => {
@@ -73,18 +74,18 @@ function retrieveFaceMeetings () {
 function viewFaceMeetings (data) {
   if (data.recordset.length === 0) {
     const table = document.querySelector('table tbody')
-    table.innerHTML = "<tr><td class='no-data' data-cy='empty-table-text' colspan='5'>Please complete the covid screening to view the face to face meetings</td></tr>"
+    table.innerHTML = `<tr><td class='no-data' data-cy='empty-table-text' colspan='5'>Please complete the covid screening to view the face to face meetings</td><td><a  class="btn btn-secondary" data-cy='covid-reroute' href='covid-screening?group=${group}'>Click here to navigate to the covid screening page</a>
+    </td></tr>`
     return
   }
   // currently grabbing the first result - this is the most recent result ordered by the query
   if (data.recordset[0].passed == false) {
     const table = document.querySelector('table tbody')
-    table.innerHTML = "<tr><td class='no-data' data-cy='empty-table-text' colspan='5'>In the last 72hours you have failed your most recent covid screening</td></tr>"
+    table.innerHTML = '<tr><td class=\'no-data\' data-cy=\'empty-table-text\' colspan=\'5\'>In the last 72hours you have failed your most recent covid screening</td></tr>'
     return
   }
   // currently grabbing the first result
   if (data.recordset[0].passed == true) {
-    console.log("You're clear")
     retrieveMeetings(0)
   }
 }

@@ -33,7 +33,6 @@ function handleChatMember (io, socket) {
     handleDisconnect(io, socket)
   })
   socket.on('notification', ({ group, message }) => {
-    console.log(group)
     io.to(group).emit(MESSAGE_EVENT, message)
   })
 }
@@ -67,7 +66,6 @@ function handleJoinEvent (io, socket, username, group) {
 function handleChatMessage (io, socket, message) {
   // Retrieve the member who sent the message using their socket id
   const member = getCurrentMember(socket.id)
-  console.log(member.group)
   // Send this message to all members in this member's group chat
   io.to(member.group).emit(MESSAGE_EVENT, message)
 }

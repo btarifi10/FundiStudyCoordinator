@@ -43,7 +43,6 @@ meetingRouter.get('/getMeetings', checkAuthenticated, function (req, res) {
     })
   // Send back the result
     .then(result => {
-      console.log(result)
       res.send(result)
     })
   // If there's an error, return that with some description
@@ -76,7 +75,6 @@ meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
   // Send back the result
     .then(result => {
       res.send(result)
-      console.log(result)
     })
   // If there's an error, return that with some description
     .catch(err => {
@@ -89,7 +87,6 @@ meetingRouter.get('/faceMeetings', checkAuthenticated, function (req, res) {
 meetingRouter.post('/record-meeting', checkAuthenticated, function (req, res) {
   // Retrieve the message data
   const meeting = req.body
-  console.log(meeting)
   // Make a query to the database
   db.pools
   // Run query
@@ -109,7 +106,6 @@ meetingRouter.post('/record-meeting', checkAuthenticated, function (req, res) {
     })
   // Send back the result
     .then(result => {
-      // console.log(result)
       res.send(result)
     })
   // If there's an error, return that with some description
@@ -144,6 +140,42 @@ meetingRouter.get('/get-member-addresses', (req, res) => {
     })
 })
 
+meetingRouter.get('/get-address', (req, res) => {
+  db.pools
+  // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('user_id', db.sql.Char, req.query.user_id)
+        .query(`
+        SELECT address_line_1, address_line_2, city, postal_code
+        FROM users
+        WHERE @user_id = users.user_id;
+        `)
+    })
+  // Send back the result
+    .then(result => {
+      res.send(result.recordset)
+    })
+  // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
+meetingRouter.get('/get-coords', (req, res) => {
+  const GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json?'
+  const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
+  const URL = `${GEOCODE_URL}address=${req.query.location}&key=${API_KEY}`
+  const encoded_URL = encodeURI(URL)
+  fetch(encoded_URL)
+    .then(res => res.json())
+    .then(data => {
+      res.send(data)
+    })
+})
+
 meetingRouter.get('/get-distance-matrix', (req, res) => {
   const DIST_MATRIX_BASE_URL = 'https://maps.googleapis.com/maps/api/distancematrix/json'
   const API_KEY = 'AIzaSyCx_ZKS9QvVboI8DL_D9jDGA4sBHiAR3fU'
@@ -152,6 +184,31 @@ meetingRouter.get('/get-distance-matrix', (req, res) => {
     .then(res => res.json())
     .then(data => {
       res.send(data)
+    })
+})
+
+meetingRouter.get('/meetingLink', checkAuthenticated, function (req, res) {
+  const meeting_id = req.query.meeting_id
+  // Make a query to the database
+  db.pools
+  // Run query
+    .then((pool) => {
+      return pool.request()
+        .input('meeting_id', db.sql.Int, meeting_id)
+        .query(`SELECT link 
+        FROM meetings
+        WHERE (@meeting_id) = meetings.meeting_id
+        `)
+    })
+  // Send back the result
+    .then(result => {
+      res.send(result)
+    })
+  // If there's an error, return that with some description
+    .catch(err => {
+      res.send({
+        Error: err
+      })
     })
 })
 

@@ -15,6 +15,7 @@ const SERVER_MESSAGE = 'Mmessage'
 const BOT_NAME = 'Study Bot'
 const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 let labelIndex = 0
+const locationRequestInterval = 60000 // request every min
 /* ---------------------------- Public Functions ---------------------------- */
 
 function handleMeetingMember (io, socket) {
@@ -46,7 +47,7 @@ function handleMeetingMember (io, socket) {
 
   setInterval(function () {
     socket.emit('news-by-server')
-  }, 120000) // request every 2min
+  }, locationRequestInterval)// 120000) // request every 2min
 }
 
 function handleArrival (socket, check) {

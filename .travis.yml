@@ -28,11 +28,16 @@ script:
     - npm run cy:run
     - kill $(jobs -p) || true
 
+git:
+   depth: 9999999
+
 deploy:
     provider: azure_web_apps
 
     on:
         branch: main
+    
+    verbose: true
 
 ## Uncomment this if necessary
 #after_success:

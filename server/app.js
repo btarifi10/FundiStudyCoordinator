@@ -127,6 +127,28 @@ app.get('/get-members', function (req, res) {
     })
 })
 
+app.get('/get-all-members', function (req, res) {
+  db.pools
+    .then((pool) => {
+      return pool.request()
+        .input('group_name', db.sql.Char, req.query.group)
+        .query(`select username
+        from users U 
+        inner join memberships M
+        on U.user_id = M.user_id
+        where M.group_id = (select group_id from groups
+        where group_name =@group_name); `)
+    })
+    .then(result => {
+      res.send(result)
+    })
+    .catch(err => {
+      res.send({
+        Error: err
+      })
+    })
+})
+
 // Retrieves the current rating and the number of ratings received for a specific selected user
 app.get('/get-current', function (req, res) {
   db.pools
@@ -241,7 +263,6 @@ app.get('/get-matched-terms', function (req, res) {
     })
     .then(result => {
       res.send(result)
-      console.log(result)
     })
     .catch(err => {
       res.send({

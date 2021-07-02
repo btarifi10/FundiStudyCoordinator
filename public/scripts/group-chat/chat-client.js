@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('create-meeting').href = `choose-location?group=${group}`
   document.getElementById('link-group-polls').href = `polls?group=${group}`
   document.getElementById('view-log-tab').href = `view-log?group=${group}`
+  document.getElementById('view-covid-tab').href = `covid-screening?group=${group}`
 })
 
 // function loadRatingLink (rating) {
