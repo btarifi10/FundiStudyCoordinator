@@ -1,5 +1,5 @@
 'use-strict'
-import { getTimeRemaining } from '../public/scripts/meetings/load-meetings'
+import { getTimeRemaining } from '../public/scripts/meetings/get-remaining-time'
 
 describe('The time difference between two dates can be calculated correctly', () => {
   test('can get the hours', () => {
