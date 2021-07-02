@@ -92,7 +92,7 @@ function getAddress (id) {
 }
 
 function setUPAddress (data) {
-  if (data.length === 0) {
+  if (data.length === 0 || data[0].address_line_1 === ' ' || data[0].address_line_1 == null) {
     savedAdress = false
   }
   printSaved(savedAdress, data)
