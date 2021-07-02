@@ -1,4 +1,9 @@
 // import {moment}
+import { getTimeRemaining } from './get-remaining-time.js'
+
+const { group } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+})
 /* --------- Remove previous contents added to the element----------- */
 function removePlace (placeDiv) {
   while (placeDiv.hasChildNodes()) {
@@ -222,10 +227,33 @@ function loadButtons (meeting) {
   meeting.appendChild(a2)
 }
 
+// /* ------------- Calculate the remaining time ------------- */
+// function getTimeRemaining (chosenTime, current_time) {
+//   // to seconds
+//   let sec_remaining = Math.abs(chosenTime.getTime() - current_time.getTime()) / (1000)
+
+//   // first calculate thenumber of whole days
+//   const days_remaining = Math.floor(sec_remaining / 86400)
+//   sec_remaining -= days_remaining * 86400 // subtract the number of days
+
+//   const hours_remaining = Math.floor(sec_remaining / 3600) % 24
+//   sec_remaining -= hours_remaining * 3600
+
+//   const min_remaining = Math.floor(sec_remaining / 60) % 60
+//   sec_remaining -= min_remaining * 60
+
+//   sec_remaining = Math.floor(sec_remaining % 60)
+//   // }
+
+//   return {
+//     days: days_remaining,
+//     hours: hours_remaining,
+//     minutes: min_remaining,
+//     seconds: sec_remaining
+//   }
+// }
+
 /* ------------------- Load the meetings table ---------------------- */
-const { group } = Qs.parse(location.search, {
-  ignoreQueryPrefix: true
-})
 function loadHTMLTable (data, option) {
   const table = document.querySelector('table tbody')
   if (data.recordset.length === 0) {
@@ -251,7 +279,7 @@ function loadHTMLTable (data, option) {
     // retrieve time remaining until the meeting in days
     const current_time = new Date()
     let sign = ' '
-    const remaining = getTimeRemaining(meeting_time)
+    const remaining = getTimeRemaining(meeting_time, current_time)
     if (meeting_time.getTime() - current_time.getTime() < 0) {
       sign = '-'
     }
@@ -284,35 +312,9 @@ function move (meeting_id) {
   }
 }
 
-function getTimeRemaining (chosenTime) {
-  const current_time = new Date()
-  // to seconds
-  let sec_remaining = Math.abs(chosenTime.getTime() - current_time.getTime()) / (1000)
-
-  // first calculate thenumber of whole days
-  const days_remaining = Math.floor(sec_remaining / 86400)
-  sec_remaining -= days_remaining * 86400 // subtract the number of days
-
-  const hours_remaining = Math.floor(sec_remaining / 3600) % 24
-  sec_remaining -= hours_remaining * 3600
-
-  const min_remaining = Math.floor(sec_remaining / 60) % 60
-  sec_remaining -= min_remaining * 60
-
-  sec_remaining = Math.floor(sec_remaining % 60)
-  // }
-
-  return {
-    days: days_remaining,
-    hours: hours_remaining,
-    minutes: min_remaining,
-    seconds: sec_remaining
-  }
-}
-
 export {
   loadLocation,
   loadPlatform,
-  loadHTMLTable,
-  loadButtons
+  loadButtons,
+  loadHTMLTable
 }
