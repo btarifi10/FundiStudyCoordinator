@@ -39,7 +39,7 @@ describe('Displays Recommended Groups Correctly ', () => {
     cy.wait(2000)
   })
 
-  it('Displays All Recommeneded Groups With Matching Tags ', () => {
+  it('Displays All Recommended Groups With Matching Tags ', () => {
     cy.wait(3000)
     cy.get('[data-cy="groups-table"]').contains('Hall 30')
 

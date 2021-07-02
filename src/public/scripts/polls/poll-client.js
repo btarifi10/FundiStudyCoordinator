@@ -300,7 +300,7 @@ function startRequestsPoll (id) {
 
   const request = requests.find(r => r.requests_id === reqId)
 
-  const hrs = 2 / 60 // 120 seconds, just for testing
+  const hrs = 48 // 120 seconds, just for testing
   const details = {
     requestId: request.requests_id,
     userId: request.user_id,
@@ -430,7 +430,7 @@ function startInvitesPoll (id) {
 
   const user = usersToInvite.find(u => u.user_id === userId)
 
-  const hrs = 1 / 60
+  const hrs = 48
   const details = {
     userId: userId,
     username: user.username,
