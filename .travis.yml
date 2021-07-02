@@ -22,10 +22,12 @@ before_install:
     - npm update
 
 script:
-    # - npm run test:coveralls
-    - npm run test
+    # - npm run test
+    - npm run test:coveralls
+    - npm run instrument
     - npm run cy:setup
     - npm run cy:run
+    - npx nyc report --reporter=text-summary --cwd $PWD/src
     - kill $(jobs -p) || true
 
 git:

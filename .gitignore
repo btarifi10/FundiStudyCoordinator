@@ -51,15 +51,16 @@
 
 # ignore node/grunt dependency directories
 node_modules/
-coverage/
 cypress/screenshots
 cypress/videos
 
-# ignore generated code coverage report
-coverage/
+# ignore instrumented code folder
+instrumented/
 
 # ignore generated code coverage report
-coverage/
+# src/coverage/
+src/cypress/screenshots
+src/cypress/videos
 
 # ignore composer vendor directory
 /vendor
@@ -69,9 +70,6 @@ coverage/
 
 # ignore jekyll build directory
 /_site
-
-#ignore generated code coverage report
-coverage/
 
 # ignore OS generated files
 ehthumbs.db
