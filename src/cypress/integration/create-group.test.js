@@ -173,14 +173,14 @@ describe('Users cannot input invalid group information for group creation', () =
 })
 
 describe('User can create a new group with chosen members invited automatically', () => {
-  // before('Navigate to Create-Group page', () => {
-  //   loginAsArchie()
-  //   cy.wait(1000)
-  //   cy.visit('/create-group')
-  // })
-  // beforeEach('Stay signed in', () => {
-  //   Cypress.Cookies.preserveOnce('connect.sid')
-  // })
+  before('Navigate to Create-Group page', () => {
+    loginAsArchie()
+    cy.wait(1000)
+    cy.visit('/create-group')
+  })
+  beforeEach('Stay signed in', () => {
+    Cypress.Cookies.preserveOnce('connect.sid')
+  })
   it('Allows user to input Group information and add member to invite to create a new group', () => {
     cy.get('input[data-cy="group-name"]')
       .clear()
