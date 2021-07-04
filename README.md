@@ -2,17 +2,17 @@
 
 [![Build Status](https://travis-ci.com/witseie-elen4010/2021-008-project.svg?token=V5cp52PcqVwRJucANpvU&branch=main)](https://travis-ci.com/witseie-elen4010/2021-008-project) [![Coverage Status](https://coveralls.io/repos/github/witseie-elen4010/2021-008-project/badge.svg?t=Oi7CiE)](https://coveralls.io/github/witseie-elen4010/2021-008-project) ![](https://img.shields.io/badge/e2e%20coverage-83.85%25-brightgreen)
 
-## Current release: v3.0
+## Current release: v5.0 (Final)
 
 ELEN4010 - Group 8 
 
 Nathan Jones (1619191), Yasser Karam (1624228), Tarryn Maggs (719597), Basheq Tarifi (1696842), Taliya Weinstein (1386891)
 
 ## Website Address
-[fundi]( https://fundi.azurewebsites.net/) is deployed using Microsoft Azure 
+[fundi]( https://fundi.azurewebsites.net/) is deployed using Microsoft Azure. Note that on occasions it appears that the Azure server is unable to access our database, thus preventing most of our functionality from working. This happens sporadically, and hence we have been unable to fix this. If this happens, please run the server locally using the .env file provided in the latest release (v5.0). It is advised that the production database is used to experience the full range of features. This is done by choosing `StudyGroupCoordinator` for the `DB_NAME` variable and `PRODUCTION` for the `DEPLOYMENT` variable in the .env file present in the root directory (see Database details below).
 
 ## Database details
-The database(s) for the project are located at the server team8.database.windows.net.
+The database(s) for the project are located at the server team8.database.windows.net. These values must be present in a .env file in the project's root directory.
 
 Environment variables are used for storing the database details and credentials. These are as follows:
 - Username (environment variable `DB_USER`): `Team08` 
@@ -20,6 +20,22 @@ Environment variables are used for storing the database details and credentials.
 - Production database (environment variable `DB_NAME`): `StudyGroupCoordinator`
 - Testing database (environment variable `DB_NAME`): `TestDataBase`
 - Deployment flag (environment variable `DEPLOYMENT`): `PRODUCTION` or `TEST`
+
+## Demo users for production database
+
+Sign in using one the following pre-exsiting users to see an example of an account that is already in use.
+
+username: TaliWeinstein \
+password: spinners
+
+username: natmaxjon \
+password: 123
+
+username: karamy \
+password: asdf
+
+username: btarifi10 \
+password: btarifi10
 
 ## Test database fixed entries
 
